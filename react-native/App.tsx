@@ -7,6 +7,7 @@ import LoginScreen from './screens/LoginScreen';
 import JoinScreen from './screens/JoinScreen';
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
 import HomeScreen from './screens/HomeScreen';
+import TranslateScreen from './screens/TranslateScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -16,9 +17,6 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator 
           initialRouteName="Login"
-          screenOptions={{
-            contentStyle: { backgroundColor: '#fff' }
-          }}
         >
           <Stack.Screen 
             name="Login" 
@@ -38,8 +36,12 @@ export default function App() {
             component={HomeScreen}
             options={{headerShown: false}}
           />
-        </Stack.Navigator>
-      </NavigationContainer>
+          <Stack.Screen
+            name="Translate"
+            component={TranslateScreen}
+          />
+          </Stack.Navigator>
+        </NavigationContainer>
     </PaperProvider>
   );
 }
