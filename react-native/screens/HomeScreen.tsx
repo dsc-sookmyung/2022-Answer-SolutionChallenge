@@ -3,59 +3,55 @@ import { StyleSheet, Text, View, SafeAreaView, TouchableHighlight, Image } from 
 import { theme } from '../core/theme';
 import type { Navigation } from '../types';
 import AppLoading from 'expo-app-loading';
-import {
-  useFonts,
-  Lora_400Regular,
-  Lora_500Medium,
-  Lora_600SemiBold,
-  Lora_700Bold,
-  Lora_400Regular_Italic,
-  Lora_500Medium_Italic,
-  Lora_600SemiBold_Italic,
-  Lora_700Bold_Italic,
-} from '@expo-google-fonts/lora';
-
+import useFonts from '../hooks/useFonts'
 
 export default function HomeScreen({ navigation }: Navigation) {
-    const [fontsLoaded] = useFonts({
-        Lora_700Bold,
-    });
+    const [fontsLoaded, SetFontsLoaded] = React.useState<boolean>(false);
+    const LoadFontsAndRestoreToken = async () => {
+        await useFonts();
+    };
 
     if (!fontsLoaded) {
-        return <AppLoading />;
-    } else {
         return (
-            <SafeAreaView style={styles.container}>
-                <TouchableHighlight onPress={() => navigation.navigate('Login')} style={[styles.bigButton, styles.deepBlue]}>
-                    <View>
-                        <Text style={[styles.buttonName, styles.deepBlue]}>Translate</Text>
-                        <Image
-                            style={styles.buttonImage}
-                            source={require('../assets/images/translate.png')}
-                        />
-                    </View>
-                </TouchableHighlight>
-                <TouchableHighlight onPress={() => navigation.navigate('Login')} style={[styles.bigButton, styles.lightPink, {margin: 20}]}>
-                    <View>
-                        <Text style={[styles.buttonName, styles.lightPink]}>Calendar</Text>
-                        <Image
-                            style={styles.buttonImage}
-                            source={require('../assets/images/calendar.png')}
-                        />
-                    </View>
-                </TouchableHighlight>
-                <TouchableHighlight onPress={() => navigation.navigate('Login')} style={[styles.bigButton, styles.deepBlue]}>
-                    <View>
-                        <Text style={[styles.buttonName, styles.deepBlue]}>Database</Text>
-                        <Image
-                            style={styles.buttonImage}
-                            source={require('../assets/images/database.png')}
-                        />
-                    </View>
-                </TouchableHighlight>
-            </SafeAreaView>
-        )
-    };
+          <AppLoading
+            startAsync={LoadFontsAndRestoreToken}
+            onFinish={() => SetFontsLoaded(true)}
+            onError={() => {}}
+          />
+        );
+    } 
+    
+    return (
+        <SafeAreaView style={styles.container}>
+            <TouchableHighlight onPress={() => navigation.navigate('Translate')} style={[styles.bigButton, styles.deepBlue]}>
+                <View>
+                    <Text style={[styles.buttonName, styles.deepBlue]}>Translate</Text>
+                    <Image
+                        style={styles.buttonImage}
+                        source={require('../assets/images/translate.png')}
+                    />
+                </View>
+            </TouchableHighlight>
+            <TouchableHighlight onPress={() => navigation.navigate('Login')} style={[styles.bigButton, styles.lightPink, {margin: 20}]}>
+                <View>
+                    <Text style={[styles.buttonName, styles.lightPink]}>Calendar</Text>
+                    <Image
+                        style={styles.buttonImage}
+                        source={require('../assets/images/calendar.png')}
+                    />
+                </View>
+            </TouchableHighlight>
+            <TouchableHighlight onPress={() => navigation.navigate('Login')} style={[styles.bigButton, styles.deepBlue]}>
+                <View>
+                    <Text style={[styles.buttonName, styles.deepBlue]}>Database</Text>
+                    <Image
+                        style={styles.buttonImage}
+                        source={require('../assets/images/database.png')}
+                    />
+                </View>
+            </TouchableHighlight>
+        </SafeAreaView>
+    )
 }
 
 const styles = StyleSheet.create({
@@ -93,11 +89,11 @@ const styles = StyleSheet.create({
         },
     },
     deepBlue: {
-        color: theme.colors.accent,
+        color: theme.colors.secondary,
         backgroundColor: theme.colors.primary,
     },
     lightPink: {
         color: theme.colors.primary,
-        backgroundColor: theme.colors.accent,
+        backgroundColor: theme.colors.secondary,
     }
 })
