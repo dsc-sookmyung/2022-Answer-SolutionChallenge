@@ -8,7 +8,7 @@ import com.answer.notinote.User.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,18 +18,41 @@ public class UserController {
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
 
+    // 회원가입
     @PostMapping("/join")
     public User join(@RequestBody UserRequestDto requestDto) {
-
         return userService.join(requestDto);
     }
 
+    // 로그인
     @PostMapping("/login")
-    public String login(HttpSession session, @RequestBody UserLoginDto loginDto) {
+    public String login(@RequestBody UserLoginDto loginDto) {
         User user = userService.login(loginDto);
-        String token = jwtTokenProvider.createToken(user.getUemail(), user.getRoles());
+        return jwtTokenProvider.createToken(user.getUemail(), user.getRoles());
+    }
 
-        return token;
+    // 회원정보 수정
+    @PatchMapping()
+    public User update(@RequestParam Long id, @RequestBody UserRequestDto requestDto) {
+        return userService.update(id, requestDto);
+    }
+
+    // 이메일로 회원 조회
+    @GetMapping()
+    public User readByEmail(@RequestParam String email) {
+        return userService.findUserByEmail(email);
+    }
+
+    // 전체 회원 조회
+    @GetMapping("/list")
+    public List<User> readAll() {
+        return userService.findAllUsers();
+    }
+
+    // 회원 삭제
+    @DeleteMapping()
+    public Long delete(@RequestParam Long id) {
+        return userService.delete(id);
     }
 
     //Todo: Logout

@@ -20,14 +20,14 @@ public class UserService {
 
     public User join(UserRequestDto requestDto) {
 
-        if (validateDuplicateEmail(requestDto.getUemail())) {
+        if (validateDuplicateEmail(requestDto.getEmail())) {
             throw new IllegalArgumentException("중복되는 이메일이 존재합니다.");
         }
 
         User user = User.builder()
                 .username(requestDto.getUsername())
-                .upassword(requestDto.getPassword())
-                .uemail(requestDto.getUemail())
+                .upassword(passwordEncoder.encode(requestDto.getPassword()))
+                .uemail(requestDto.getEmail())
                 .roles(Collections.singletonList("ROLE_USER"))
                 .build();
 
@@ -43,15 +43,35 @@ public class UserService {
         return user;
     }
 
-    private User findUserByEmail(String email) {
+    public User update(Long id, UserRequestDto requestDto) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("id가 존재하지 않습니다.")
+        );
+
+        requestDto.setPassword(passwordEncoder.encode(requestDto.getPassword()));
+        user.update(requestDto);
+
+        return user;
+    }
+
+    public Long delete(Long id) {
+        User user = userRepository.findById(id).orElseThrow(
+                () -> new IllegalArgumentException("id가 존재하지 않습니다.")
+        );
+        userRepository.delete(user);
+
+        return id;
+    }
+
+    public User findUserByEmail(String email) {
         return userRepository.findByUemail(email).orElseThrow(
                 () -> new IllegalArgumentException("이메일이 존재하지 않습니다.")
         );
     }
 
-    private boolean validateDuplicateEmail(String email) { return userRepository.existsByUemail(email);}
-
-    private List<User> findAllUsers() {
+    public List<User> findAllUsers() {
         return userRepository.findAll();
     }
+
+    private boolean validateDuplicateEmail(String email) { return userRepository.existsByUemail(email);}
 }

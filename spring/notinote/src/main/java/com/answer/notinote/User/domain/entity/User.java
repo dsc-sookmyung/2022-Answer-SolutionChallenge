@@ -31,7 +31,7 @@ public class User extends Timestamped implements UserDetails {
     @Column(nullable = false, length = 20, unique = true)
     private String uemail;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false)
     private String upassword;
 
     @ElementCollection(fetch = FetchType.EAGER)
@@ -39,7 +39,13 @@ public class User extends Timestamped implements UserDetails {
 
     public User(UserRequestDto requestDto) {
         this.username = requestDto.getUsername();
-        this.uemail = requestDto.getUemail();
+        this.uemail = requestDto.getEmail();
+    }
+
+    public void update(UserRequestDto requestDto) {
+        this.username = requestDto.getUsername();
+        this.uemail = requestDto.getEmail();
+        this.upassword = requestDto.getPassword();
     }
 
     @Override

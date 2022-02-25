@@ -1,10 +1,11 @@
 package com.answer.notinote.User.dto;
 
 import lombok.Getter;
+import lombok.Setter;
 
-@Getter
+@Getter @Setter
 public class UserRequestDto {
-    private String uemail;
+    private String email;
     private String username;
     private String password;
 }
