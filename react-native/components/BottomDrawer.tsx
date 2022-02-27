@@ -10,6 +10,7 @@ interface BottomDrawerProps {
 	showFullText?: boolean,
 	showTranslated?: boolean,
 	isFullDrawer?: boolean,
+	save?: boolean,
 	handleFullText?: () => void,
 	saveResults?: () => void,
 	handleTranslatedText?: () => void,
@@ -39,9 +40,11 @@ function BottomDrawer(props: BottomDrawerProps) {
 							<TouchableOpacity style={styles.rightSpace} onPress={props.handleFullText}>
 								<Entypo name="text" size={32} color="#000"/>
 							</TouchableOpacity>
-							<TouchableOpacity onPress={props.saveResults}>
-								<FontAwesome name="save" size={32} color='#000' />
-							</TouchableOpacity>
+							{props.save &&
+								<TouchableOpacity onPress={props.saveResults}>
+									<FontAwesome name="save" size={32} color='#000' />
+								</TouchableOpacity>
+							}
 						</View>
 					) : (
 						<TouchableOpacity style={styles.rightSpace} onPress={props.handleTranslatedText}>

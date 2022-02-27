@@ -116,6 +116,7 @@ export default function TranslateScreen({ navigation }: Navigation) {
 									showFullText={showFullText}
 									showTranslated={showTranslated}
 									isFullDrawer={isFullDrawer}
+									save={true}
 									handleFullText={handleFullText}
 									saveResults={saveResults}
 									handleTranslatedText={handleTranslatedText}
@@ -130,6 +131,7 @@ export default function TranslateScreen({ navigation }: Navigation) {
 									showFullText={showFullText}
 									showTranslated={showTranslated}
 									isFullDrawer={isFullDrawer}
+									save={true}
 									handleFullText={handleFullText}
 									saveResults={saveResults}
 									handleTranslatedText={handleTranslatedText}
