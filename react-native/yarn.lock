@@ -4757,6 +4757,11 @@ react-native-screens@~3.10.1:
     react-freeze "^1.0.0"
     warn-once "^0.1.0"
 
+react-native-swipe-up-down@^1.1.6:
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/react-native-swipe-up-down/-/react-native-swipe-up-down-1.1.6.tgz#aefc779964e4bf3c27ef832049336ac7db605ada"
+  integrity sha512-i7MtBPmVC1Wztto3YjYDliHqq4nM346gHZ/hIJqzBoNZgjvh5Ie4ey2fauwa9pZytnkMz1nIoXle8XVxpp01oA==
+
 react-native-vector-icons@^9.1.0:
   version "9.1.0"
   resolved "https://registry.npmjs.org/react-native-vector-icons/-/react-native-vector-icons-9.1.0.tgz"
@@ -5043,13 +5048,6 @@ rimraf@~2.2.6:
   version "2.2.8"
   resolved "https://registry.npmjs.org/rimraf/-/rimraf-2.2.8.tgz"
   integrity sha1-5Dm+Kq7jJzIZUnMPmaiSnk/FBYI=
-
-rn-swipeable-panel@^1.2.5, rn-swipeable-panel@^1.2.7:
-  version "1.2.7"
-  resolved "https://registry.yarnpkg.com/rn-swipeable-panel/-/rn-swipeable-panel-1.2.7.tgz#a72f65c91d51715e84cdb9e912db8d94c150b1be"
-  integrity sha512-ibaU2+4J/VliCud8neQLzuLLNv3DP3t3+ySeG6Nn4mibhLQp/lvU47lCzvPiz4WhO6FTzre2k7Q5LqsuH5ThXQ==
-  dependencies:
-    rn-swipeable-panel "^1.2.5"
 
 rsvp@^4.8.4:
   version "4.8.5"
