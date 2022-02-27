@@ -2,12 +2,16 @@ import * as React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Provider as PaperProvider } from 'react-native-paper';
+import { Button } from 'react-native';
 import { theme } from './core/theme';
+
 import LoginScreen from './screens/LoginScreen';
 import JoinScreen from './screens/JoinScreen';
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
 import HomeScreen from './screens/HomeScreen';
 import TranslateScreen from './screens/TranslateScreen';
+import LogoutButton from './components/LogoutButton';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -34,7 +38,11 @@ export default function App() {
           <Stack.Screen
             name="Home"
             component={HomeScreen}
-            options={{headerShown: false}}
+            options={{
+              title: "NotiNote",
+              headerBackVisible: false,
+              headerRight: () => <LogoutButton/>
+            }}
           />
           <Stack.Screen
             name="Translate"
