@@ -3,8 +3,10 @@ package com.answer.notinote.User.controller;
 import com.answer.notinote.User.config.security.jwt.JwtTokenProvider;
 import com.answer.notinote.User.domain.entity.User;
 import com.answer.notinote.User.dto.LoginRequestDto;
+import com.answer.notinote.User.dto.LoginResponseDto;
 import com.answer.notinote.User.dto.UserRequestDto;
 import com.answer.notinote.User.service.UserService;
+import io.swagger.models.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,15 +25,17 @@ public class UserController {
     // 회원가입
     @PostMapping("/join")
     public ResponseEntity<?> join(@RequestBody UserRequestDto requestDto) {
-        
-        return userService.join(requestDto);
+        return ResponseEntity.ok(userService.join(requestDto));
     }
 
     // 로그인
     @PostMapping("/login")
-    public String login(@RequestBody LoginRequestDto loginDto) {
+    public ResponseEntity<?> login(@RequestBody LoginRequestDto loginDto) {
         User user = userService.login(loginDto);
-        return jwtTokenProvider.createToken(user.getUemail(), user.getRoles());
+
+        LoginResponseDto response = new LoginResponseDto(user.getUid(), user.getUsername(), user.getUemail(),
+                jwtTokenProvider.createToken(user.getUemail(), user.getRoles(), ,user.getRoles());
+        return ResponseEntity.ok());
     }
 
     // token 재발급
