@@ -3,7 +3,7 @@ package com.answer.notinote.User.dto;
 import lombok.Getter;
 
 @Getter
-public class UserLoginDto {
+public class LoginRequestDto {
     private String email;
     private String password;
 }

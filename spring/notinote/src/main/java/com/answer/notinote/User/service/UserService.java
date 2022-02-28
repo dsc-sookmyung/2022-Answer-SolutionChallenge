@@ -2,6 +2,7 @@ package com.answer.notinote.User.service;
 
 import com.answer.notinote.User.domain.entity.User;
 import com.answer.notinote.User.domain.repository.UserRepository;
+import com.answer.notinote.User.dto.LoginRequestDto;
 import com.answer.notinote.User.dto.UserLoginDto;
 import com.answer.notinote.User.dto.UserRequestDto;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User login(UserLoginDto loginDto) {
+    public User login(LoginRequestDto loginDto) {
         User user = findUserByEmail(loginDto.getEmail());
 
         if (!passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {

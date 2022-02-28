@@ -2,10 +2,11 @@ package com.answer.notinote.User.controller;
 
 import com.answer.notinote.User.config.security.jwt.JwtTokenProvider;
 import com.answer.notinote.User.domain.entity.User;
-import com.answer.notinote.User.dto.UserLoginDto;
+import com.answer.notinote.User.dto.LoginRequestDto;
 import com.answer.notinote.User.dto.UserRequestDto;
 import com.answer.notinote.User.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,19 +17,29 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+
     private final JwtTokenProvider jwtTokenProvider;
 
     // 회원가입
     @PostMapping("/join")
-    public User join(@RequestBody UserRequestDto requestDto) {
+    public ResponseEntity<?> join(@RequestBody UserRequestDto requestDto) {
+        
         return userService.join(requestDto);
     }
 
     // 로그인
     @PostMapping("/login")
-    public String login(@RequestBody UserLoginDto loginDto) {
+    public String login(@RequestBody LoginRequestDto loginDto) {
         User user = userService.login(loginDto);
         return jwtTokenProvider.createToken(user.getUemail(), user.getRoles());
+    }
+
+    // token 재발급
+    @PostMapping("/refresh")
+    public String validateRefreshToken(@RequestHeader("REFRESH-TOKEN") String refreshToken) {
+
+
+        return "";
     }
 
     // 회원정보 수정
