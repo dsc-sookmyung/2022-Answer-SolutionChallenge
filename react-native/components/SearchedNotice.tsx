@@ -36,6 +36,7 @@ export default function SearchedNotice(props: Notice) {
             <View style={styles.headerContainer}>
                 <Text style={[styles.date, {
                     color: componentOpened ? theme.colors.primary : "#2A2A2A",
+                    textDecorationLine: componentOpened ? "underline": "none"
                 }]}>{props.date}</Text>
                 <TouchableHighlight onPress={updateComponentOpened}>
                     <AntDesign name={componentOpened ? "caretup" : "caretdown"} color={componentOpened ? theme.colors.primary : "#000"} size={14}/>

@@ -1,29 +1,29 @@
 Arguments: 
-  /usr/local/bin/node /opt/homebrew/Cellar/yarn/1.22.17_2/libexec/bin/yarn.js add @expo-google-font/lora
+  /opt/homebrew/Cellar/node/17.6.0/bin/node /opt/homebrew/Cellar/yarn/1.22.17_2/libexec/bin/yarn.js add @react-native-elements/base
 
 PATH: 
-  /opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin
+  /opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin:/opt/homebrew/bin:/opt/homebrew/sbin
 
 Yarn version: 
   1.22.17
 
 Node version: 
-  16.14.0
+  17.6.0
 
 Platform: 
   darwin arm64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/@expo-google-font%2flora: Not found
+  Error: https://registry.yarnpkg.com/@react-native-elements%2fbase: Not found
       at Request.params.callback [as _callback] (/opt/homebrew/Cellar/yarn/1.22.17_2/libexec/lib/cli.js:67029:18)
       at Request.self.callback (/opt/homebrew/Cellar/yarn/1.22.17_2/libexec/lib/cli.js:140883:22)
-      at Request.emit (node:events:520:28)
+      at Request.emit (node:events:527:28)
       at Request.<anonymous> (/opt/homebrew/Cellar/yarn/1.22.17_2/libexec/lib/cli.js:141855:10)
-      at Request.emit (node:events:520:28)
+      at Request.emit (node:events:527:28)
       at IncomingMessage.<anonymous> (/opt/homebrew/Cellar/yarn/1.22.17_2/libexec/lib/cli.js:141777:12)
-      at Object.onceWrapper (node:events:639:28)
-      at IncomingMessage.emit (node:events:532:35)
-      at endReadableNT (node:internal/streams/readable:1346:12)
+      at Object.onceWrapper (node:events:641:28)
+      at IncomingMessage.emit (node:events:539:35)
+      at endReadableNT (node:internal/streams/readable:1342:12)
       at processTicksAndRejections (node:internal/process/task_queues:83:21)
 
 npm manifest: 
@@ -39,17 +39,22 @@ npm manifest:
       "eject": "expo eject"
     },
     "dependencies": {
+      "@expo-google-fonts/lora": "^0.2.2",
       "@react-navigation/native": "^6.0.8",
       "@react-navigation/native-stack": "^6.5.0",
       "expo": "~44.0.0",
-      "expo-font": "^10.0.5",
+      "expo-app-loading": "~1.3.0",
+      "expo-camera": "^12.1.2",
+      "expo-font": "~10.0.4",
       "expo-status-bar": "~1.2.0",
       "react": "17.0.1",
       "react-dom": "17.0.1",
       "react-native": "0.64.3",
+      "react-native-elements": "^3.4.2",
       "react-native-paper": "^4.11.2",
       "react-native-safe-area-context": "3.3.2",
       "react-native-screens": "~3.10.1",
+      "react-native-swipe-up-down": "^1.1.6",
       "react-native-vector-icons": "^9.1.0",
       "react-native-web": "0.17.1",
       "react-navigation": "^4.4.4",
@@ -1143,6 +1148,33 @@ Lockfile:
       exec-sh "^0.3.2"
       minimist "^1.2.0"
   
+  "@expo-google-fonts/lora@^0.2.2":
+    version "0.2.2"
+    resolved "https://registry.yarnpkg.com/@expo-google-fonts/lora/-/lora-0.2.2.tgz#bae5300fee730d4622ea4909f25e345ba0f1c526"
+    integrity sha512-baXHivZfNadrp38ZhviAuj8exznUwR4NFuAh2UvstGVZB6APMBniOadDEI4rVWgOd8BHskWwNAQuHvlNPgNlzQ==
+  
+  "@expo/config-plugins@4.0.18":
+    version "4.0.18"
+    resolved "https://registry.yarnpkg.com/@expo/config-plugins/-/config-plugins-4.0.18.tgz#80cf6a3aed83e78f714ad097d80e5a7cca48591a"
+    integrity sha512-tW4bnrnKhn+PPHF8wf1KAoubICAVUHW8CcagvyFqaRIzeh6yavMIOsQShxOVTbgx7LzSyymZ1nEs45yCGAiMfA==
+    dependencies:
+      "@expo/config-types" "^44.0.0"
+      "@expo/json-file" "8.2.34"
+      "@expo/plist" "0.0.17"
+      "@expo/sdk-runtime-versions" "^1.0.0"
+      "@react-native/normalize-color" "^2.0.0"
+      chalk "^4.1.2"
+      debug "^4.3.1"
+      find-up "~5.0.0"
+      fs-extra "9.0.0"
+      getenv "^1.0.0"
+      glob "7.1.6"
+      resolve-from "^5.0.0"
+      semver "^7.3.5"
+      slash "^3.0.0"
+      xcode "^3.0.1"
+      xml2js "0.4.23"
+  
   "@expo/config-plugins@4.0.6", "@expo/config-plugins@^4.0.2":
     version "4.0.6"
     resolved "https://registry.npmjs.org/@expo/config-plugins/-/config-plugins-4.0.6.tgz"
@@ -1169,6 +1201,28 @@ Lockfile:
     resolved "https://registry.npmjs.org/@expo/config-types/-/config-types-43.0.1.tgz"
     integrity sha512-EtllpCGDdB/UdwAIs5YXJwBLpbFQNdlLLrxIvoILA9cXrpQMWkeDCT9lQPJzFRMFcLUaMuGvkzX2tR4tx5EQFQ==
   
+  "@expo/config-types@^44.0.0":
+    version "44.0.0"
+    resolved "https://registry.yarnpkg.com/@expo/config-types/-/config-types-44.0.0.tgz#d3480fe2c99f9e895dae4ebba58b74ed72d03e26"
+    integrity sha512-d+gpdKOAhqaD5RmcMzGgKzNtvE1w+GCqpFQNSXLliYlXjj+Tv0eL8EPeAdPtvke0vowpPFwd5McXLA90dgY6Jg==
+  
+  "@expo/config@6.0.18":
+    version "6.0.18"
+    resolved "https://registry.yarnpkg.com/@expo/config/-/config-6.0.18.tgz#fb3dd2dcf319a7ced77765c43e6825de4e14dff8"
+    integrity sha512-60z0YICI9eJWlvajl/Wgq8+lKm0jfkZOMdATDQtWz6GvWshUxd+A8EYhtgjJ9eWMGqOYkwrCpRNLHz5TZtCKWA==
+    dependencies:
+      "@babel/code-frame" "~7.10.4"
+      "@expo/config-plugins" "4.0.18"
+      "@expo/config-types" "^44.0.0"
+      "@expo/json-file" "8.2.34"
+      getenv "^1.0.0"
+      glob "7.1.6"
+      require-from-string "^2.0.2"
+      resolve-from "^5.0.0"
+      semver "7.3.2"
+      slugify "^1.3.4"
+      sucrase "^3.20.0"
+  
   "@expo/config@6.0.6", "@expo/config@^6.0.6":
     version "6.0.6"
     resolved "https://registry.npmjs.org/@expo/config/-/config-6.0.6.tgz"
@@ -1186,10 +1240,50 @@ Lockfile:
       slugify "^1.3.4"
       sucrase "^3.20.0"
   
+  "@expo/configure-splash-screen@^0.6.0":
+    version "0.6.0"
+    resolved "https://registry.yarnpkg.com/@expo/configure-splash-screen/-/configure-splash-screen-0.6.0.tgz#07d97ee512fd859fcc09506ba3762fd6263ebc39"
+    integrity sha512-4DyPoNXJqx9bN4nEwF3HQreo//ECu7gDe1Xor3dnnzFm9P/VDxAKdbEhA0n+R6fgkNfT2onVHWijqvdpTS3Xew==
+    dependencies:
+      color-string "^1.5.3"
+      commander "^5.1.0"
+      fs-extra "^9.0.0"
+      glob "^7.1.6"
+      lodash "^4.17.15"
+      pngjs "^5.0.0"
+      xcode "^3.0.0"
+      xml-js "^1.6.11"
+  
+  "@expo/image-utils@0.3.18":
+    version "0.3.18"
+    resolved "https://registry.yarnpkg.com/@expo/image-utils/-/image-utils-0.3.18.tgz#36a41ab2925974ac5707e02cb0d3694349140497"
+    integrity sha512-77/ub2aGuf7SYfaFhvCHE54Hs/jRuU5j+pemS5seLfVHNwHbJSse91TMhsTLLNz3GwwqTxFVe3KMycSccJ73nA==
+    dependencies:
+      "@expo/spawn-async" "1.5.0"
+      chalk "^4.0.0"
+      fs-extra "9.0.0"
+      getenv "^1.0.0"
+      jimp-compact "0.16.1"
+      mime "^2.4.4"
+      node-fetch "^2.6.0"
+      parse-png "^2.1.0"
+      resolve-from "^5.0.0"
+      semver "7.3.2"
+      tempy "0.3.0"
+  
   "@expo/json-file@8.2.33":
     version "8.2.33"
     resolved "https://registry.npmjs.org/@expo/json-file/-/json-file-8.2.33.tgz"
     integrity sha512-CDnhjdirUs6OdN5hOSTJ2y3i9EiJMk7Z5iDljC5xyCHCrUex7oyI8vbRsZEojAahxZccgL/PrO+CjakiFFWurg==
+    dependencies:
+      "@babel/code-frame" "~7.10.4"
+      json5 "^1.0.1"
+      write-file-atomic "^2.3.0"
+  
+  "@expo/json-file@8.2.34":
+    version "8.2.34"
+    resolved "https://registry.yarnpkg.com/@expo/json-file/-/json-file-8.2.34.tgz#2f24e90a677195f7a81e167115460eb2902c3130"
+    integrity sha512-ZxtBodAZGxdLtgKzmsC+8ViUxt1mhFW642Clu2OuG3f6PAyAFsU/SqEGag9wKFaD3x3Wt8VhL+3y5fMJmUFgPw==
     dependencies:
       "@babel/code-frame" "~7.10.4"
       json5 "^1.0.1"
@@ -1214,6 +1308,44 @@ Lockfile:
       "@xmldom/xmldom" "~0.7.0"
       base64-js "^1.2.3"
       xmlbuilder "^14.0.0"
+  
+  "@expo/plist@0.0.17":
+    version "0.0.17"
+    resolved "https://registry.yarnpkg.com/@expo/plist/-/plist-0.0.17.tgz#0f6c594e116f45a28f5ed20998dadb5f3429f88b"
+    integrity sha512-5Ul3d/YOYE6mfum0jCE25XUnkKHZ5vGlU/X2275ZmCtGrpRn1Fl8Nq+jQKSaks3NqTfxdyXROi/TgH8Zxeg2wg==
+    dependencies:
+      "@xmldom/xmldom" "~0.7.0"
+      base64-js "^1.2.3"
+      xmlbuilder "^14.0.0"
+  
+  "@expo/prebuild-config@^3.0.15":
+    version "3.0.18"
+    resolved "https://registry.yarnpkg.com/@expo/prebuild-config/-/prebuild-config-3.0.18.tgz#5eb0358edc0173e9809f515cc1a280c48943cc73"
+    integrity sha512-Eyb+HJCsxYba2sWlDi3rqXWQ3jDjN41rSiYmvApY121Zqdrrj/384ntHZh6cbz0LWPeHXjPZBM3SDbK0ri9FTw==
+    dependencies:
+      "@expo/config" "6.0.18"
+      "@expo/config-plugins" "4.0.18"
+      "@expo/config-types" "^44.0.0"
+      "@expo/image-utils" "0.3.18"
+      "@expo/json-file" "8.2.34"
+      debug "^4.3.1"
+      expo-modules-autolinking "~0.5.1"
+      fs-extra "^9.0.0"
+      resolve-from "^5.0.0"
+      semver "7.3.2"
+      xml2js "0.4.23"
+  
+  "@expo/sdk-runtime-versions@^1.0.0":
+    version "1.0.0"
+    resolved "https://registry.yarnpkg.com/@expo/sdk-runtime-versions/-/sdk-runtime-versions-1.0.0.tgz#d7ebd21b19f1c6b0395e50d78da4416941c57f7c"
+    integrity sha512-Doz2bfiPndXYFPMRwPyGa1k5QaKDVpY806UJj570epIiMzWaYyCtobasyfC++qfIXVb5Ocy7r3tP9d62hAQ7IQ==
+  
+  "@expo/spawn-async@1.5.0":
+    version "1.5.0"
+    resolved "https://registry.yarnpkg.com/@expo/spawn-async/-/spawn-async-1.5.0.tgz#799827edd8c10ef07eb1a2ff9dcfe081d596a395"
+    integrity sha512-LB7jWkqrHo+5fJHNrLAFdimuSXQ2MQ4lA7SQW5bf/HbsXuV2VrT/jN/M8f/KoWt0uJMGN4k/j7Opx4AvOOxSew==
+    dependencies:
+      cross-spawn "^6.0.5"
   
   "@expo/vector-icons@^12.0.4":
     version "12.0.5"
@@ -1274,6 +1406,13 @@ Lockfile:
     dependencies:
       "@jridgewell/resolve-uri" "^3.0.3"
       "@jridgewell/sourcemap-codec" "^1.4.10"
+  
+  "@koale/useworker@^4.0.2":
+    version "4.0.2"
+    resolved "https://registry.yarnpkg.com/@koale/useworker/-/useworker-4.0.2.tgz#cb540a2581cd6025307c3ca6685bc60748773e58"
+    integrity sha512-xPIPADtom8/3/4FLNj7MvNcBM/Z2FleH85Fdx2O869eoKW8+PoEgtSVvoxWjCWMA46Sm9A5/R1TyzNGc+yM0wg==
+    dependencies:
+      dequal "^1.0.0"
   
   "@nodelib/fs.scandir@2.1.5":
     version "2.1.5"
@@ -1559,6 +1698,21 @@ Lockfile:
     version "15.7.4"
     resolved "https://registry.npmjs.org/@types/prop-types/-/prop-types-15.7.4.tgz"
     integrity sha512-rZ5drC/jWjrArrS8BR6SIr4cWpW09RNTYt9AMZo3Jwwif+iacXAqgVjm0B0Bv/S1jhDXKHqRVNCbACkJ89RAnQ==
+  
+  "@types/react-native-vector-icons@^6.4.6":
+    version "6.4.10"
+    resolved "https://registry.yarnpkg.com/@types/react-native-vector-icons/-/react-native-vector-icons-6.4.10.tgz#9bfd6e64dd37b8119425496b5e53ff91d034efa9"
+    integrity sha512-z4sexbuZ7nmYsp7Z9YB5fSQoN3KFn6nZA3QsCkQLOYnVmVlxX4U22v/bM9Xx/6dOA1vClxoRZo2CFDX16uryXQ==
+    dependencies:
+      "@types/react" "*"
+      "@types/react-native" "*"
+  
+  "@types/react-native@*":
+    version "0.67.1"
+    resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.67.1.tgz#b11dad862c850e2556caaf252ad87cff12502f0b"
+    integrity sha512-uUlyohC91eQN0FWYq1pyYFSbwbnIDFjYSoc3ILieRfnH1epvSDXcSklfCVYjDizoD3ByWu2h5Yk6HbcbRJ4oGw==
+    dependencies:
+      "@types/react" "*"
   
   "@types/react-native@~0.64.12":
     version "0.64.23"
@@ -2201,7 +2355,7 @@ Lockfile:
     resolved "https://registry.npmjs.org/color-name/-/color-name-1.1.4.tgz"
     integrity sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==
   
-  color-string@^1.6.0:
+  color-string@^1.5.3, color-string@^1.6.0:
     version "1.9.0"
     resolved "https://registry.npmjs.org/color-string/-/color-string-1.9.0.tgz"
     integrity sha512-9Mrz2AQLefkH1UvASKj6v6hj/7eWgjnT/cVsR8CumieLoT+g900exWeNogqtweI8dxloXN9BDQTYro1oWu/5CQ==
@@ -2241,6 +2395,11 @@ Lockfile:
     version "4.1.1"
     resolved "https://registry.npmjs.org/commander/-/commander-4.1.1.tgz"
     integrity sha512-NOKm8xhkzAjzFx8B2v5OAHT+u5pRQc2UCa2Vq9jYL/31o2wi9mxBA7LIFs3sV5VSC49z6pEhfbMULvShKj26WA==
+  
+  commander@^5.1.0:
+    version "5.1.0"
+    resolved "https://registry.yarnpkg.com/commander/-/commander-5.1.0.tgz#46abbd1652f8e059bddaef99bbdcb2ad9cf179ae"
+    integrity sha512-P0CysNDQ7rtVw4QIQtm+MRxV66vKFSvlsQvGYXZWR3qFU0jlMKHZZZgw8e+8DSah4UDKMqnknRDQz+xuQXQ/Zg==
   
   commander@^7.2.0:
     version "7.2.0"
@@ -2368,6 +2527,11 @@ Lockfile:
       shebang-command "^1.2.0"
       which "^1.2.9"
   
+  crypto-random-string@^1.0.0:
+    version "1.0.0"
+    resolved "https://registry.yarnpkg.com/crypto-random-string/-/crypto-random-string-1.0.0.tgz#a230f64f568310e1498009940790ec99545bca7e"
+    integrity sha1-ojD2T1aDEOFJgAmUB5DsmVRbyn4=
+  
   css-in-js-utils@^2.0.0:
     version "2.0.1"
     resolved "https://registry.npmjs.org/css-in-js-utils/-/css-in-js-utils-2.0.1.tgz"
@@ -2415,6 +2579,11 @@ Lockfile:
     resolved "https://registry.npmjs.org/deepmerge/-/deepmerge-3.3.0.tgz"
     integrity sha512-GRQOafGHwMHpjPx9iCvTgpu9NojZ49q794EEL94JVEw6VaeA8XTUyBKvAkOOjBX9oJNiV6G3P+T+tihFjo2TqA==
   
+  deepmerge@^4.2.2:
+    version "4.2.2"
+    resolved "https://registry.yarnpkg.com/deepmerge/-/deepmerge-4.2.2.tgz#44d2ea3679b8f4d4ffba33f03d865fc1e7bf4955"
+    integrity sha512-FJ3UgI4gIl+PHZm53knsuSFpE+nESMr7M4v9QcgB7S63Kj/6WqMiFQJpBBYz1Pt+66bZpP3Q7Lye0Oo9MPKEdg==
+  
   defaults@^1.0.3:
     version "1.0.3"
     resolved "https://registry.npmjs.org/defaults/-/defaults-1.0.3.tgz"
@@ -2460,6 +2629,11 @@ Lockfile:
     version "1.1.2"
     resolved "https://registry.npmjs.org/depd/-/depd-1.1.2.tgz"
     integrity sha1-m81S4UwJd2PnSbJ0xDRu0uVgtak=
+  
+  dequal@^1.0.0:
+    version "1.0.1"
+    resolved "https://registry.yarnpkg.com/dequal/-/dequal-1.0.1.tgz#dbbf9795ec626e9da8bd68782f4add1d23700d8b"
+    integrity sha512-Fx8jxibzkJX2aJgyfSdLhr9tlRoTnHKrRJuu2XHlAgKioN2j19/Bcbe0d4mFXYZ3+wpE2KVobUVTfDutcD17xQ==
   
   destroy@~1.0.4:
     version "1.0.4"
@@ -2598,6 +2772,13 @@ Lockfile:
       snapdragon "^0.8.1"
       to-regex "^3.0.1"
   
+  expo-app-loading@~1.3.0:
+    version "1.3.0"
+    resolved "https://registry.yarnpkg.com/expo-app-loading/-/expo-app-loading-1.3.0.tgz#2023f11e1420d423478474942c0d1c74e1afa335"
+    integrity sha512-IbMI1w2a79IXw2uH/dgwxWmXW9uR5DNjY/mDKdUCGR0tjMeeliZRq66gGdRLgCkfXS2b2WMIi03gB05l7SiQeg==
+    dependencies:
+      expo-splash-screen "~0.14.0"
+  
   expo-application@~4.0.2:
     version "4.0.2"
     resolved "https://registry.npmjs.org/expo-application/-/expo-application-4.0.2.tgz"
@@ -2613,6 +2794,15 @@ Lockfile:
       md5-file "^3.2.3"
       path-browserify "^1.0.0"
       url-parse "^1.4.4"
+  
+  expo-camera@^12.1.2:
+    version "12.1.2"
+    resolved "https://registry.yarnpkg.com/expo-camera/-/expo-camera-12.1.2.tgz#b549a8054ce5778fbf37a45b5d41003f36f5bb3c"
+    integrity sha512-Rr0Evj1V3LGiZE5/YBuuVimuU9uSTwVoqtSBsZ8QoK11+g9vnu2NgBjFMb938yjWD5tqJiXRH8lVTM2mvzSmIQ==
+    dependencies:
+      "@expo/config-plugins" "^4.0.2"
+      "@koale/useworker" "^4.0.2"
+      invariant "^2.2.4"
   
   expo-constants@~13.0.2:
     version "13.0.2"
@@ -2635,14 +2825,7 @@ Lockfile:
       "@expo/config-plugins" "^4.0.2"
       uuid "^3.4.0"
   
-  expo-font@^10.0.5:
-    version "10.0.5"
-    resolved "https://registry.yarnpkg.com/expo-font/-/expo-font-10.0.5.tgz#8010060ec5326b3b462f7a1ac6b232dc4d1a7317"
-    integrity sha512-x9YwM0xLkDdSvFjeNbyuh33Q1Hk3uc2jbMuuAN5W2ZVcUZqG0M8GCX/KV/D/7rYqdXKbliQA5r44MyDwZe/XRw==
-    dependencies:
-      fontfaceobserver "^2.1.0"
-  
-  expo-font@~10.0.5:
+  expo-font@~10.0.4, expo-font@~10.0.5:
     version "10.0.5"
     resolved "https://registry.npmjs.org/expo-font/-/expo-font-10.0.5.tgz"
     integrity sha512-x9YwM0xLkDdSvFjeNbyuh33Q1Hk3uc2jbMuuAN5W2ZVcUZqG0M8GCX/KV/D/7rYqdXKbliQA5r44MyDwZe/XRw==
@@ -2654,7 +2837,7 @@ Lockfile:
     resolved "https://registry.npmjs.org/expo-keep-awake/-/expo-keep-awake-10.0.2.tgz"
     integrity sha512-Ro1lgyKldbFs4mxhWM+goX9sg0S2SRR8FiJJeOvaRzf8xNhrZfWA00Zpr+/3ocCoWQ3eEL+X9UF4PXXHf0KoOg==
   
-  expo-modules-autolinking@0.5.5:
+  expo-modules-autolinking@0.5.5, expo-modules-autolinking@~0.5.1:
     version "0.5.5"
     resolved "https://registry.npmjs.org/expo-modules-autolinking/-/expo-modules-autolinking-0.5.5.tgz"
     integrity sha512-bILEG0Fg+ZhIhdEaShHzsEN1WC0hUmXJ5Kcd4cd+8rVk1Ead9vRZxA/yLx1cNBDCOwMe0GAMrhF7TKT+A1P+YA==
@@ -2672,6 +2855,14 @@ Lockfile:
     dependencies:
       compare-versions "^3.4.0"
       invariant "^2.2.4"
+  
+  expo-splash-screen@~0.14.0:
+    version "0.14.2"
+    resolved "https://registry.yarnpkg.com/expo-splash-screen/-/expo-splash-screen-0.14.2.tgz#2598d6980e71ecd8b7467ca821fb9dbfb80f355b"
+    integrity sha512-X25D/0E2AWEFGgDWIVXZ5Bl7FhYk7TgVhEWvplBqrDY7G7vg5l1aoH6PelOQINWPsa1dcRyA7REdN2ltO+0LAw==
+    dependencies:
+      "@expo/configure-splash-screen" "^0.6.0"
+      "@expo/prebuild-config" "^3.0.15"
   
   expo-status-bar@~1.2.0:
     version "1.2.0"
@@ -2931,7 +3122,7 @@ Lockfile:
       jsonfile "^4.0.0"
       universalify "^0.1.0"
   
-  fs-extra@^9.1.0:
+  fs-extra@^9.0.0, fs-extra@^9.1.0:
     version "9.1.0"
     resolved "https://registry.npmjs.org/fs-extra/-/fs-extra-9.1.0.tgz"
     integrity sha512-hcg3ZmepS30/7BSFqRvoo3DOMQu7IjqxO5nCDt+zM9XWjb33Wg7ziNT+Qvqbuc3+gWpzO02JubVyk2G4Zvo1OQ==
@@ -3435,6 +3626,11 @@ Lockfile:
     version "1.6.8"
     resolved "https://registry.npmjs.org/jetifier/-/jetifier-1.6.8.tgz"
     integrity sha512-3Zi16h6L5tXDRQJTb221cnRoVG9/9OvreLdLU2/ZjRv/GILL+2Cemt0IKvkowwkDpvouAU1DQPOJ7qaiHeIdrw==
+  
+  jimp-compact@0.16.1:
+    version "0.16.1"
+    resolved "https://registry.yarnpkg.com/jimp-compact/-/jimp-compact-0.16.1.tgz#9582aea06548a2c1e04dd148d7c3ab92075aefa3"
+    integrity sha512-dZ6Ra7u1G8c4Letq/B5EzAxj4tLFHL+cGtdpR+PVm4yzPDj+lCk+AbivWt1eOM+ikzkowtyV7qSqX6qr3t71Ww==
   
   joi@^17.2.1:
     version "17.6.0"
@@ -4060,7 +4256,7 @@ Lockfile:
     resolved "https://registry.npmjs.org/mime/-/mime-1.6.0.tgz"
     integrity sha512-x0Vn8spI+wuJ1O6S7gnbaQg8Pxh4NNHb7KSINmEWKiPE4RKOplvijn+NkmYmmRgP68mc70j2EbeTFRsrswaQeg==
   
-  mime@^2.4.1:
+  mime@^2.4.1, mime@^2.4.4:
     version "2.6.0"
     resolved "https://registry.npmjs.org/mime/-/mime-2.6.0.tgz"
     integrity sha512-USPkMeET31rOMiarsBNIHZKLGgvKc/LrjofAnBlOttf5ajRvqiRA8QsenbcooctK6d6Ts6aqZXBA+XbkKthiQg==
@@ -4310,6 +4506,11 @@ Lockfile:
     dependencies:
       is-wsl "^1.1.0"
   
+  opencollective-postinstall@^2.0.3:
+    version "2.0.3"
+    resolved "https://registry.yarnpkg.com/opencollective-postinstall/-/opencollective-postinstall-2.0.3.tgz#7a0fff978f6dbfa4d006238fbac98ed4198c3259"
+    integrity sha512-8AV/sCtuzUeTo8gQK5qDZzARrulB3egtLzFgteqB2tcT4Mw7B8Kt7JcDHmltjz6FOAHsvTevk70gZEbhM4ZS9Q==
+  
   options@>=0.0.5:
     version "0.0.6"
     resolved "https://registry.npmjs.org/options/-/options-0.0.6.tgz"
@@ -4384,6 +4585,13 @@ Lockfile:
     dependencies:
       error-ex "^1.3.1"
       json-parse-better-errors "^1.0.1"
+  
+  parse-png@^2.1.0:
+    version "2.1.0"
+    resolved "https://registry.yarnpkg.com/parse-png/-/parse-png-2.1.0.tgz#2a42ad719fedf90f81c59ebee7ae59b280d6b338"
+    integrity sha512-Nt/a5SfCLiTnQAjx3fHlqp8hRgTL3z7kTQZzvIMS9uCAepnCyjpdEc6M/sz69WqMBdaDBw9sF1F1UaHROYzGkQ==
+    dependencies:
+      pngjs "^3.3.0"
   
   parseurl@~1.3.3:
     version "1.3.3"
@@ -4473,6 +4681,16 @@ Lockfile:
     dependencies:
       base64-js "^1.5.1"
       xmlbuilder "^9.0.7"
+  
+  pngjs@^3.3.0:
+    version "3.4.0"
+    resolved "https://registry.yarnpkg.com/pngjs/-/pngjs-3.4.0.tgz#99ca7d725965fb655814eaf65f38f12bbdbf555f"
+    integrity sha512-NCrCHhWmnQklfH4MtJMRjZ2a8c80qXeMlQMv2uVp9ISJMTt562SbGd6n2oq0PaPgKm7Z6pL9E2UlLIhC+SHL3w==
+  
+  pngjs@^5.0.0:
+    version "5.0.0"
+    resolved "https://registry.yarnpkg.com/pngjs/-/pngjs-5.0.0.tgz#e79dd2b215767fd9c04561c01236df960bce7fbb"
+    integrity sha512-40QW5YalBNfQo5yRYmiw7Yz6TKKVr3h6970B2YE+3fQpsWcrbj1PzJgxeJ19DRQjhMbKPIuMY8rFaXc8moolVw==
   
   posix-character-classes@^0.1.0:
     version "0.1.1"
@@ -4609,9 +4827,23 @@ Lockfile:
       jscodeshift "^0.11.0"
       nullthrows "^1.1.1"
   
+  react-native-elements@^3.4.2:
+    version "3.4.2"
+    resolved "https://registry.yarnpkg.com/react-native-elements/-/react-native-elements-3.4.2.tgz#66602be9c5e0e0a2a831913adec80ff6518d1ee2"
+    integrity sha512-m0eAWOn7JuR1wNTNY0WHuaqst4LI/gFE4N5Bbyfsc4DiryWsMST7aAg5w/Gos4IexWIzhLKCIkPxthND1m/8Xg==
+    dependencies:
+      "@types/react-native-vector-icons" "^6.4.6"
+      color "^3.1.2"
+      deepmerge "^4.2.2"
+      hoist-non-react-statics "^3.3.2"
+      lodash.isequal "^4.5.0"
+      opencollective-postinstall "^2.0.3"
+      react-native-ratings "8.0.4"
+      react-native-size-matters "^0.3.1"
+  
   react-native-iphone-x-helper@^1.3.0, react-native-iphone-x-helper@^1.3.1:
     version "1.3.1"
-    resolved "https://registry.npmjs.org/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.3.1.tgz"
+    resolved "https://registry.yarnpkg.com/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.3.1.tgz#20c603e9a0e765fd6f97396638bdeb0e5a60b010"
     integrity sha512-HOf0jzRnq2/aFUcdCJ9w9JGzN3gdEg0zFE4FyYlp4jtidqU03D5X7ZegGKfT1EWteR0gPBGp9ye5T5FvSWi9Yg==
   
   react-native-paper@^4.11.2:
@@ -4622,6 +4854,13 @@ Lockfile:
       "@callstack/react-theme-provider" "^3.0.7"
       color "^3.1.2"
       react-native-iphone-x-helper "^1.3.1"
+  
+  react-native-ratings@8.0.4:
+    version "8.0.4"
+    resolved "https://registry.yarnpkg.com/react-native-ratings/-/react-native-ratings-8.0.4.tgz#efd5ebad8acc08bf98d34d39b18fb7a6813ef991"
+    integrity sha512-Xczu5lskIIRD6BEdz9A0jDRpEck/SFxRqiglkXi0u67yAtI1/pcJC76P4MukCbT8K4BPVl+42w83YqXBoBRl7A==
+    dependencies:
+      lodash "^4.17.15"
   
   react-native-safe-area-context@3.3.2:
     version "3.3.2"
@@ -4642,6 +4881,16 @@ Lockfile:
     dependencies:
       react-freeze "^1.0.0"
       warn-once "^0.1.0"
+  
+  react-native-size-matters@^0.3.1:
+    version "0.3.1"
+    resolved "https://registry.yarnpkg.com/react-native-size-matters/-/react-native-size-matters-0.3.1.tgz#24d0cfc335a2c730f6d58bd7b43ea5a41be4b49f"
+    integrity sha512-mKOfBLIBFBcs9br1rlZDvxD5+mAl8Gfr5CounwJtxI6Z82rGrMO+Kgl9EIg3RMVf3G855a85YVqHJL2f5EDRlw==
+  
+  react-native-swipe-up-down@^1.1.6:
+    version "1.1.6"
+    resolved "https://registry.yarnpkg.com/react-native-swipe-up-down/-/react-native-swipe-up-down-1.1.6.tgz#aefc779964e4bf3c27ef832049336ac7db605ada"
+    integrity sha512-i7MtBPmVC1Wztto3YjYDliHqq4nM346gHZ/hIJqzBoNZgjvh5Ie4ey2fauwa9pZytnkMz1nIoXle8XVxpp01oA==
   
   react-native-vector-icons@^9.1.0:
     version "9.1.0"
@@ -4974,7 +5223,7 @@ Lockfile:
       minimist "^1.1.1"
       walker "~1.0.5"
   
-  sax@>=0.6.0, sax@^1.2.1:
+  sax@>=0.6.0, sax@^1.2.1, sax@^1.2.4:
     version "1.2.4"
     resolved "https://registry.npmjs.org/sax/-/sax-1.2.4.tgz"
     integrity sha512-NqVDv9TpANUjFm0N8uM5GxL36UgKi9/atZw+x7YFnQ8ckwFGKrl4xX4yWtrey3UJm5nP1kUbnYgLopqWNSRhWw==
@@ -5348,6 +5597,11 @@ Lockfile:
     resolved "https://registry.npmjs.org/supports-preserve-symlinks-flag/-/supports-preserve-symlinks-flag-1.0.0.tgz"
     integrity sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==
   
+  temp-dir@^1.0.0:
+    version "1.0.0"
+    resolved "https://registry.yarnpkg.com/temp-dir/-/temp-dir-1.0.0.tgz#0a7c0ea26d3a39afa7e0ebea9c1fc0bc4daa011d"
+    integrity sha1-CnwOom06Oa+n4OvqnB/AvE2qAR0=
+  
   temp@0.8.3, temp@^0.8.1:
     version "0.8.3"
     resolved "https://registry.npmjs.org/temp/-/temp-0.8.3.tgz"
@@ -5355,6 +5609,15 @@ Lockfile:
     dependencies:
       os-tmpdir "^1.0.0"
       rimraf "~2.2.6"
+  
+  tempy@0.3.0:
+    version "0.3.0"
+    resolved "https://registry.yarnpkg.com/tempy/-/tempy-0.3.0.tgz#6f6c5b295695a16130996ad5ab01a8bd726e8bf8"
+    integrity sha512-WrH/pui8YCwmeiAoxV+lpRH9HpRtgBhSR2ViBPgpGb/wnYDzp21R4MN45fsCGvLROvY67o3byhJRYRONJyImVQ==
+    dependencies:
+      temp-dir "^1.0.0"
+      type-fest "^0.3.1"
+      unique-string "^1.0.0"
   
   thenify-all@^1.0.0:
     version "1.6.0"
@@ -5445,6 +5708,11 @@ Lockfile:
     resolved "https://registry.npmjs.org/tslib/-/tslib-2.3.1.tgz"
     integrity sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==
   
+  type-fest@^0.3.1:
+    version "0.3.1"
+    resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-0.3.1.tgz#63d00d204e059474fe5e1b7c011112bbd1dc29e1"
+    integrity sha512-cUGJnCdr4STbePCgqNFbpVNCepa+kAVohJs1sLhxzdH+gnEoOd8VhbYa7pD3zZYGiURWM2xzEII3fQcRizDkYQ==
+  
   type-fest@^0.7.1:
     version "0.7.1"
     resolved "https://registry.npmjs.org/type-fest/-/type-fest-0.7.1.tgz"
@@ -5505,6 +5773,13 @@ Lockfile:
       get-value "^2.0.6"
       is-extendable "^0.1.1"
       set-value "^2.0.1"
+  
+  unique-string@^1.0.0:
+    version "1.0.0"
+    resolved "https://registry.yarnpkg.com/unique-string/-/unique-string-1.0.0.tgz#9e1057cca851abb93398f8b33ae187b99caec11a"
+    integrity sha1-nhBXzKhRq7kzmPizOuGHuZyuwRo=
+    dependencies:
+      crypto-random-string "^1.0.0"
   
   universalify@^0.1.0:
     version "0.1.2"
@@ -5698,13 +5973,20 @@ Lockfile:
       simple-plist "^1.0.0"
       uuid "^3.3.2"
   
-  xcode@^3.0.1:
+  xcode@^3.0.0, xcode@^3.0.1:
     version "3.0.1"
     resolved "https://registry.npmjs.org/xcode/-/xcode-3.0.1.tgz"
     integrity sha512-kCz5k7J7XbJtjABOvkc5lJmkiDh8VhjVCGNiqdKCscmVpdVUpEAyXv1xmCLkQJ5dsHqx3IPO4XW+NTDhU/fatA==
     dependencies:
       simple-plist "^1.1.0"
       uuid "^7.0.3"
+  
+  xml-js@^1.6.11:
+    version "1.6.11"
+    resolved "https://registry.yarnpkg.com/xml-js/-/xml-js-1.6.11.tgz#927d2f6947f7f1c19a316dd8eea3614e8b18f8e9"
+    integrity sha512-7rVi2KMfwfWFl+GpPg6m80IVMWXLRjO+PxTq7V2CDhoGak0wzYzFgUY2m4XJ47OGdXd8eLE8EmwfAmdjw7lC1g==
+    dependencies:
+      sax "^1.2.4"
   
   xml2js@0.4.23:
     version "0.4.23"
