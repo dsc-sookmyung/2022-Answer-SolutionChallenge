@@ -6,7 +6,7 @@ export type RootStackParamList = {
 	ForgotPassword: undefined;
 	Home: undefined;
 	Translate: undefined;
-	Database: undefined;
+	Search: undefined;
 	Calendar: undefined;
 };
 
@@ -15,4 +15,11 @@ export type Navigation = NativeStackScreenProps<RootStackParamList, 'Home'>;
 export type TextInput = {
 	errorText: string;
 	description: string;
+}
+
+export type Notice = {
+	date: string,
+	notices: string[],
+	fullText: string,
+	TranslatedFullText: string
 }

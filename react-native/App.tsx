@@ -10,6 +10,7 @@ import JoinScreen from './screens/JoinScreen';
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
 import HomeScreen from './screens/HomeScreen';
 import TranslateScreen from './screens/TranslateScreen';
+import SearchScreen from './screens/SearchScreen';
 import LogoutButton from './components/LogoutButton';
 
 
@@ -48,8 +49,12 @@ export default function App() {
             name="Translate"
             component={TranslateScreen}
           />
-          </Stack.Navigator>
-        </NavigationContainer>
+          <Stack.Screen
+            name="Search"
+            component={SearchScreen}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
     </PaperProvider>
   );
 }
