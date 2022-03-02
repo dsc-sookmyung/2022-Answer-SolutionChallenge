@@ -1,6 +1,6 @@
 package com.answer.notinote.Oauth.token;
 
-import com.answer.notinote.User.domain.entity.User;
+import com.answer.notinote.Oauth.exception.TokenValidFailedException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +12,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
@@ -58,8 +59,6 @@ public class JwtTokenProvider {
             User user = new User(claims.getSubject(), "", authorities);
 
             return new UsernamePasswordAuthenticationToken(user, token, authorities);
-        } else {
-            throw new TokenValidFailedException();
-        }
+        } else throw new TokenValidFailedException();
     }
 }

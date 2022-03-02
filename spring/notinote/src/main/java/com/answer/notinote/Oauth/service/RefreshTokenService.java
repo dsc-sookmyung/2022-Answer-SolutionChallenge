@@ -1,8 +1,8 @@
-package com.answer.notinote.User.service;
+package com.answer.notinote.Oauth.service;
 
-import com.answer.notinote.User.domain.entity.RefreshToken;
+import com.answer.notinote.Oauth.token.RefreshToken;
 import com.answer.notinote.User.domain.entity.User;
-import com.answer.notinote.User.domain.repository.RefreshTokenRepository;
+import com.answer.notinote.Oauth.repository.RefreshTokenRepository;
 import com.answer.notinote.User.domain.repository.UserRepository;
 import com.answer.notinote.User.util.exception.TokenRefreshException;
 import lombok.RequiredArgsConstructor;

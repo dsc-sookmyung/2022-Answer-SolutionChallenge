@@ -1,5 +1,6 @@
 package com.answer.notinote.User.service;
 
+import com.answer.notinote.Oauth.data.RoleType;
 import com.answer.notinote.User.domain.entity.User;
 import com.answer.notinote.User.domain.repository.UserRepository;
 import com.answer.notinote.User.dto.LoginRequestDto;
@@ -28,7 +29,7 @@ public class UserService {
                 .username(requestDto.getUsername())
                 .upassword(passwordEncoder.encode(requestDto.getPassword()))
                 .uemail(requestDto.getEmail())
-                .roles(Collections.singletonList("ROLE_USER"))
+                .roleType(RoleType.USER)
                 .build();
 
         return userRepository.save(user);
@@ -37,7 +38,7 @@ public class UserService {
     public User login(LoginRequestDto loginDto) {
         User user = findUserByEmail(loginDto.getEmail());
 
-        if (!passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(loginDto.getPassword(), user.getUpassword())) {
             throw new IllegalArgumentException("패스워드가 틀렸습니다.");
         }
         return user;
