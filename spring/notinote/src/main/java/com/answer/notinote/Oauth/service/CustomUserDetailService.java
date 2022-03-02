@@ -1,4 +1,4 @@
-package com.answer.notinote.User.service;
+package com.answer.notinote.Oauth.service;
 
 import com.answer.notinote.User.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

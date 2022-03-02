@@ -1,12 +1,11 @@
 package com.answer.notinote.User.controller;
 
-import com.answer.notinote.User.config.security.jwt.JwtTokenProvider;
+import com.answer.notinote.Oauth.token.JwtTokenProvider;
 import com.answer.notinote.User.domain.entity.User;
 import com.answer.notinote.User.dto.LoginRequestDto;
 import com.answer.notinote.User.dto.LoginResponseDto;
 import com.answer.notinote.User.dto.UserRequestDto;
 import com.answer.notinote.User.service.UserService;
-import io.swagger.models.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
