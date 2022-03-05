@@ -1,9 +1,10 @@
 import React from 'react';
-import { StyleSheet, Text, View, SafeAreaView, TouchableHighlight, Image } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, TouchableHighlight, Image, Button } from 'react-native';
 import { theme } from '../core/theme';
 import type { Navigation } from '../types';
 import AppLoading from 'expo-app-loading';
 import useFonts from '../hooks/useFonts'
+
 
 export default function HomeScreen({ navigation }: Navigation) {
     const [fontsLoaded, SetFontsLoaded] = React.useState<boolean>(false);
@@ -41,9 +42,9 @@ export default function HomeScreen({ navigation }: Navigation) {
                     />
                 </View>
             </TouchableHighlight>
-            <TouchableHighlight onPress={() => navigation.navigate('Login')} style={[styles.bigButton, styles.deepBlue]}>
+            <TouchableHighlight onPress={() => navigation.navigate('Search')} style={[styles.bigButton, styles.deepBlue]}>
                 <View>
-                    <Text style={[styles.buttonName, styles.deepBlue]}>Database</Text>
+                    <Text style={[styles.buttonName, styles.deepBlue]}>Search</Text>
                     <Image
                         style={styles.buttonImage}
                         source={require('../assets/images/database.png')}
