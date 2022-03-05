@@ -1,7 +1,7 @@
 package com.answer.notinote.Config.security;
 
-import com.answer.notinote.Config.properties.CorsProperties;
 import com.answer.notinote.Oauth.JwtAuthenticationFilter;
+import com.answer.notinote.Oauth.filter.OAuth2AccessTokenAuthenticationFilter;
 import com.answer.notinote.Oauth.token.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -20,9 +20,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final CorsProperties corsProperties;
     private final JwtTokenProvider jwtTokenProvider;
-
+    private final OAuth2AccessTokenAuthenticationFilter oAuth2AccessTokenAuthenticationFilter;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -34,7 +33,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                     .authorizeRequests()
-                    .antMatchers("/", "/user/**").permitAll()
+                    .antMatchers("/", "/user/login").permitAll()
                 .and()
                     .authorizeRequests()
                     .antMatchers("/test/user")
@@ -48,6 +47,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .anyRequest()
                     .authenticated()
                 .and()
+                .addFilterBefore(oAuth2AccessTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
                         UsernamePasswordAuthenticationFilter.class);
     }

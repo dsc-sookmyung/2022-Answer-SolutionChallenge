@@ -4,20 +4,12 @@ import com.answer.notinote.Oauth.data.ProviderType;
 import com.answer.notinote.Oauth.data.RoleType;
 import com.answer.notinote.User.dto.UserRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 @Entity
-@Getter
+@Getter @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -29,14 +21,17 @@ public class User extends Timestamped {
     private Long uid;
 
     @Column(nullable = false, length = 20)
-    private String username;
+    private String firstname;
+
+    @Column(nullable = false, length = 20)
+    private String lastname;
 
     @Column(nullable = false, length = 20, unique = true)
-    private String uemail;
+    private String email;
 
     @JsonIgnore
     @Column(nullable = false)
-    private String upassword;
+    private String password;
 
     @Column(nullable = false, length = 20)
     private ProviderType providerType;
@@ -45,13 +40,24 @@ public class User extends Timestamped {
     private RoleType roleType;
 
     public User(UserRequestDto requestDto) {
-        this.username = requestDto.getUsername();
-        this.uemail = requestDto.getEmail();
+        this.firstname = requestDto.getFirstname();
+        this.lastname = requestDto.getLastname();
+        this.email = requestDto.getEmail();
+    }
+
+    public User(com.answer.notinote.Oauth.data.dto.UserRequestDto requestDto) {
+        this.email = requestDto.getEmail();
+        this.providerType = requestDto.getProviderType();
+    }
+
+    public String getFullname() {
+        return this.firstname + this.lastname;
     }
 
     public void update(UserRequestDto requestDto) {
-        this.username = requestDto.getUsername();
-        this.uemail = requestDto.getEmail();
-        this.upassword = requestDto.getPassword();
+        this.firstname = requestDto.getFirstname();
+        this.lastname = requestDto.getLastname();
+        this.email = requestDto.getEmail();
+        this.password = requestDto.getPassword();
     }
 }

@@ -1,6 +1,6 @@
 package com.answer.notinote.Oauth.service;
 
-import com.answer.notinote.Oauth.CustomUserDetails;
+import com.answer.notinote.Oauth.userdetails.CustomUserDetails;
 import com.answer.notinote.User.domain.entity.User;
 import com.answer.notinote.User.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

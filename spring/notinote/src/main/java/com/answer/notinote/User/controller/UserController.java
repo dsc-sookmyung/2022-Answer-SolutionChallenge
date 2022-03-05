@@ -33,7 +33,7 @@ public class UserController {
         User user = userService.login(loginDto);
 
         LoginResponseDto response = new LoginResponseDto(user.getUid(), user.getUsername(), user.getUemail(),
-                jwtTokenProvider.createToken(user.getUemail(), user.getRoles(), ,user.getRoles());
+                jwtTokenProvider.createToken(user.getEmail(), user.getRoles(), ,user.getRoles());
         return ResponseEntity.ok());
     }
 
