@@ -72,8 +72,8 @@ export default function SearchResultScreen(props: SearchResultScreenProps) {
     return (
         <View style={styles.container}>
             <Swiper>
-                {notice && notice.notices.notice_body.length > 0 && notice.notices.notice_body.map(notice =>
-					<ImageBackground style={styles.container} resizeMode="cover" imageStyle={{ opacity: 0.5 }} source={{ uri: imageUri }}>
+                {notice && notice.notices.notice_body.length > 0 && notice.notices.notice_body.map((notice, index) =>
+					<ImageBackground style={styles.container} resizeMode="cover" imageStyle={{ opacity: 0.5 }} source={{ uri: imageUri }} key={"ib_" + index}>
 						<SwipeUpDown
 							itemMini={
 								<BottomDrawer 

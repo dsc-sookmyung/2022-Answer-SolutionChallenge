@@ -143,8 +143,8 @@ export default function SearchScreen({ navigation }: Navigation) {
                 value={search}
             />
             <Text style={styles.smallDescription}>RESULTS</Text>
-            {filteredNotices.map(notice => 
-                <SearchedNotice date={notice.date} summariedNotices={notice.notices.total_results}/>
+            {filteredNotices?.map((notice, index) => 
+                <SearchedNotice date={notice.date} summariedNotices={notice.notices.total_results} key={"nt_" + index}/>
             )}
         </View> 
     );
