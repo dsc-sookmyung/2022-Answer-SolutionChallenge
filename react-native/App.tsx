@@ -76,6 +76,6 @@ export default function App() {
           />
         </Stack.Navigator>
       </NavigationContainer>
-    </PaperProvider>
+    </NativeBaseProvider>
   );
 }

@@ -6,7 +6,7 @@ import { theme } from '../core/theme';
 
 
 interface BottomDrawerProps {
-	results?: {"content": string; "highlight": boolean}[],
+	results?: {"id": number, "content": string; "highlight": boolean}[],
 	fullText?: {"translated": string; "korean": string},
 	showFullText?: boolean,
 	showTranslated?: boolean,
@@ -36,7 +36,8 @@ function BottomDrawer(props: BottomDrawerProps) {
 	}
 
 	const closePopup = () => {
-		setCurrentEvent();
+		console.log("hi");
+		setCurrentEvent(0);
 	}
 
 	const addEvent = (resultId) => (event) => {
@@ -88,7 +89,7 @@ function BottomDrawer(props: BottomDrawerProps) {
 								<Popover 
 									key={result.id} 
 									isOpen={result.id===currentEvent}
-									onOpen={openPopup(result.id)}									
+									onOpen={() => openPopup(result.id)}									
 									onClose={closePopup}
 									trigger={triggerProps => {
 										return <Text {...triggerProps}>

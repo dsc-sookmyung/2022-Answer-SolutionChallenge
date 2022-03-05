@@ -26,7 +26,7 @@ export type Notice = {
 		notice_body: {
 			id: number,
 			title: string,
-			summary: {content: string, highlight: boolean}[],
+			summary: {id: number, content: string, highlight: boolean}[],
 			fullText: string,
 			korean: string
 		}[]
