@@ -1,9 +1,10 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Provider as PaperProvider } from 'react-native-paper';
-import { Button } from 'react-native';
-import { theme } from './core/theme';
+import { NativeBaseProvider } from 'native-base';
+import { nativeBaseTheme } from './core/theme';
+import AppLoading from 'expo-app-loading';
+import useFonts from './hooks/useFonts'
 
 import LoginScreen from './screens/LoginScreen';
 import JoinScreen from './screens/JoinScreen';
@@ -18,8 +19,23 @@ import SearchResultScreen from './screens/SearchResultScreen';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  const [fontsLoaded, SetFontsLoaded] = React.useState<boolean>(false);
+  const LoadFontsAndRestoreToken = async () => {
+    await useFonts();
+  };
+
+  if (!fontsLoaded) {
+    return (
+      <AppLoading
+        startAsync={LoadFontsAndRestoreToken}
+        onFinish={() => SetFontsLoaded(true)}
+        onError={() => {}}
+      />
+    );
+  } 
+
   return (
-    <PaperProvider theme={theme}>
+    <NativeBaseProvider theme={nativeBaseTheme}>
       <NavigationContainer>
         <Stack.Navigator 
           initialRouteName="Login"
