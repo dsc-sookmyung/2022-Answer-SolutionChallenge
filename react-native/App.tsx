@@ -12,6 +12,7 @@ import HomeScreen from './screens/HomeScreen';
 import TranslateScreen from './screens/TranslateScreen';
 import SearchScreen from './screens/SearchScreen';
 import LogoutButton from './components/LogoutButton';
+import SearchResultScreen from './screens/SearchResultScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -52,6 +53,10 @@ export default function App() {
           <Stack.Screen
             name="Search"
             component={SearchScreen}
+          />
+          <Stack.Screen
+            name="SearchResult"
+            component={SearchResultScreen}
           />
         </Stack.Navigator>
       </NavigationContainer>
