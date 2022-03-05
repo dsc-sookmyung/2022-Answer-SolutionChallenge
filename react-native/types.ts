@@ -8,6 +8,8 @@ export type RootStackParamList = {
 	Translate: undefined;
 	Search: undefined;
 	Calendar: undefined;
+	FullText: undefined;
+	SearchResult: undefined;
 };
 
 export type Navigation = NativeStackScreenProps<RootStackParamList, 'Home'>;
@@ -19,7 +21,14 @@ export type TextInput = {
 
 export type Notice = {
 	date: string,
-	notices: string[],
-	fullText: string,
-	TranslatedFullText: string
+	notices: {
+		total_results: string[],
+		notice_body: {
+			id: number,
+			title: string,
+			summary: {content: string, highlight: boolean}[],
+			fullText: string,
+			korean: string
+		}[]
+	}
 }

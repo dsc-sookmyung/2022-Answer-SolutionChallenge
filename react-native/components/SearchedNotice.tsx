@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Button, TouchableHighlight } from 'react-native';
+import { StyleSheet, Text, View, TouchableHighlight } from 'react-native';
+import { useNavigation, StackActions } from '@react-navigation/native';
 import type { Notice } from '../types';
 import useFonts from '../hooks/useFonts'
 import AppLoading from 'expo-app-loading';
 import { AntDesign } from '@expo/vector-icons';
 import { theme } from '../core/theme';
 
+interface SearchedNoticeProps {
+    date: string
+    summariedNotices: string[]
+}
 
-export default function SearchedNotice(props: Notice) {
+export default function SearchedNotice(props: SearchedNoticeProps) {
+    const navigation = useNavigation<any>();
     const [componentOpened, setComponentOpened] = useState<boolean>(false);
     const [fontsLoaded, SetFontsLoaded] = useState<boolean>(false);
     const LoadFontsAndRestoreToken = async () => {
@@ -30,7 +36,7 @@ export default function SearchedNotice(props: Notice) {
 
     return (
         <View style={[styles.container, {
-            height: componentOpened ? (80 + props.notices.length * 22): 60,
+            height: componentOpened ? (80 + props.summariedNotices.length * 22): 60,
             paddingBottom: componentOpened ? 20: 0
         }]}>
             <View style={styles.headerContainer}>
@@ -43,9 +49,9 @@ export default function SearchedNotice(props: Notice) {
                 </TouchableHighlight>
             </View>
              {componentOpened && (
-                <TouchableHighlight>
+                <TouchableHighlight onPress={() => navigation.navigate('SearchResult', {date: props.date})}>
                     <View>
-                        {props.notices.map((notice, index) => 
+                        {props.summariedNotices.map((notice, index) => 
                             <Text style={styles.notices}>{(index + 1) + ". " + notice}</Text>
                         )}
                     </View>

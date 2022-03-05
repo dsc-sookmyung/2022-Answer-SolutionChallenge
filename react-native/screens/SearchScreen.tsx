@@ -8,46 +8,120 @@ import SearchBar from 'react-native-elements/dist/searchbar/SearchBar-ios';
 export default function SearchScreen({ navigation }: Navigation) {
     const [search, setSearch] = useState<string>('');
     const [filteredNotices, setFilteredNotices] = useState<Notice[]>([{
-        date: "2022-02-28",
-        notices: [
-            "개학일은 3월 2일입니다.",
-            "3월 2일에는 4교시 이후 하교합니다.",
-            "우유 급식 신청은 3월 8일까지 받습니다."
-        ],
-        fullText: "학부모님 안녕하십니까? 학부모님 댁내에 건강과 행복이 가득하기를 기원합니다. 3월 2일에 진행될 입학식을 진행하기에 앞서 몇 가지 안내 말씀을 드리고자 합니다.",
-        TranslatedFullText: "Hello, parents. I hope your home will be full of health and happiness. Before the entrance ceremony, which will be held on March 2, I would like to give you some guidance."
+        date: "2022-02-10",
+        notices: {
+            total_results: [
+                "17th Graduation Ceremony",
+                "School Day"
+            ],
+            notice_body: [{
+                id: 1,
+                title: "17th Graduation Ceremony",
+                summary: [
+                    {content: "17th Graduation Ceremony is on February 14th", highlight: true},
+                    {content: "held  in classrooms to prevent the spread of COVID-19", highlight: false}
+                ],
+                fullText: "We wish you good health and happiness in your family",
+                korean: "희망찬 새해를 맞이하여 학부모님의 가정에 건강과 행복이 함께 하시기를 기원합니다."
+            }, {
+                id: 2,
+                title: "School Day",
+                summary: [
+                    {content: "School day is March 2nd", highlight: true},
+                    {content: "Parents participate is available", highlight: false}
+                ],
+                fullText: "The school starts on March 2nd, and parents who want to participate in the opening ceremony are request to com to auditorium",
+                korean: "개학일은 3월 2일이며, 개학식에 참여하고자 하는 학부모님께서는 10시까지 강당으로 오시기 바랍니다."
+            }]
+        }
     }, {
-        date: "2022-03-02",
-        notices: [
-            "개학일은 3월 2일입니다.",
-            "3월 2일에는 4교시 이후 하교합니다."
-        ],
-        fullText: "학부모님 안녕하십니까? 학부모님 댁내에 건강과 행복이 가득하기를 기원합니다. 3월 2일에 진행될 입학식을 진행하기에 앞서 몇 가지 안내 말씀을 드리고자 합니다.",
-        TranslatedFullText: "Hello, parents. I hope your home will be full of health and happiness. Before the entrance ceremony, which will be held on March 2, I would like to give you some guidance."
+        date: "2022-02-10",
+        notices: {
+            total_results: [
+                "17th Graduation Ceremony",
+                "School Day"
+            ],
+            notice_body: [{
+                id: 1,
+                title: "17th Graduation Ceremony",
+                summary: [
+                    {content: "17th Graduation Ceremony is on February 14th", highlight: true},
+                    {content: "held  in classrooms to prevent the spread of COVID-19", highlight: false}
+                ],
+                fullText: "We wish you good health and happiness in your family",
+                korean: "희망찬 새해를 맞이하여 학부모님의 가정에 건강과 행복이 함께 하시기를 기원합니다."
+            }, {
+                id: 2,
+                title: "School Day",
+                summary: [
+                    {content: "School day is March 2nd", highlight: true},
+                    {content: "Parents participate is available", highlight: false}
+                ],
+                fullText: "The school starts on March 2nd, and parents who want to participate in the opening ceremony are request to com to auditorium",
+                korean: "개학일은 3월 2일이며, 개학식에 참여하고자 하는 학부모님께서는 10시까지 강당으로 오시기 바랍니다."
+            }]
+        }
     }]);
     const [notices, setNotices] = useState<Notice[]>([{
-        date: "2022-02-28",
-        notices: [
-            "개학일은 3월 2일입니다.",
-            "3월 2일에는 4교시 이후 하교합니다.",
-            "우유 급식 신청은 3월 8일까지 받습니다."
-        ],
-        fullText: "학부모님 안녕하십니까? 학부모님 댁내에 건강과 행복이 가득하기를 기원합니다. 3월 2일에 진행될 입학식을 진행하기에 앞서 몇 가지 안내 말씀을 드리고자 합니다.",
-        TranslatedFullText: "Hello, parents. I hope your home will be full of health and happiness. Before the entrance ceremony, which will be held on March 2, I would like to give you some guidance."
+        date: "2022-02-10",
+        notices: {
+            total_results: [
+                "17th Graduation Ceremony",
+                "School Day"
+            ],
+            notice_body: [{
+                id: 1,
+                title: "17th Graduation Ceremony",
+                summary: [
+                    {content: "17th Graduation Ceremony is on February 14th", highlight: true},
+                    {content: "held  in classrooms to prevent the spread of COVID-19", highlight: false}
+                ],
+                fullText: "We wish you good health and happiness in your family",
+                korean: "희망찬 새해를 맞이하여 학부모님의 가정에 건강과 행복이 함께 하시기를 기원합니다."
+            }, {
+                id: 2,
+                title: "School Day",
+                summary: [
+                    {content: "School day is March 2nd", highlight: true},
+                    {content: "Parents participate is available", highlight: false}
+                ],
+                fullText: "The school starts on March 2nd, and parents who want to participate in the opening ceremony are request to com to auditorium",
+                korean: "개학일은 3월 2일이며, 개학식에 참여하고자 하는 학부모님께서는 10시까지 강당으로 오시기 바랍니다."
+            }]
+        }
     }, {
-        date: "2022-03-02",
-        notices: [
-            "개학일은 3월 2일입니다.",
-            "3월 2일에는 4교시 이후 하교합니다."
-        ],
-        fullText: "학부모님 안녕하십니까? 학부모님 댁내에 건강과 행복이 가득하기를 기원합니다. 3월 2일에 진행될 입학식을 진행하기에 앞서 몇 가지 안내 말씀을 드리고자 합니다.",
-        TranslatedFullText: "Hello, parents. I hope your home will be full of health and happiness. Before the entrance ceremony, which will be held on March 2, I would like to give you some guidance."
+        date: "2022-02-10",
+        notices: {
+            total_results: [
+                "17th Graduation Ceremony",
+                "School Day"
+            ],
+            notice_body: [{
+                id: 1,
+                title: "17th Graduation Ceremony",
+                summary: [
+                    {content: "17th Graduation Ceremony is on February 14th", highlight: true},
+                    {content: "held  in classrooms to prevent the spread of COVID-19", highlight: false}
+                ],
+                fullText: "We wish you good health and happiness in your family",
+                korean: "희망찬 새해를 맞이하여 학부모님의 가정에 건강과 행복이 함께 하시기를 기원합니다."
+            }, {
+                id: 2,
+                title: "School Day",
+                summary: [
+                    {content: "School day is March 2nd", highlight: true},
+                    {content: "Parents participate is available", highlight: false}
+                ],
+                fullText: "The school starts on March 2nd, and parents who want to participate in the opening ceremony are request to com to auditorium",
+                korean: "개학일은 3월 2일이며, 개학식에 참여하고자 하는 학부모님께서는 10시까지 강당으로 오시기 바랍니다."
+            }]
+        }
     }])
 
     const searchFilter = (text: string | void) => {
         if (text) {
             const newData = notices.filter((notice) => {
-                const noticeData = notice.notices.join().toUpperCase();
+                const noticeData = notice.notices.total_results.join().toUpperCase();
                 const textData = text.toUpperCase();
                 return noticeData.indexOf(textData) > -1;
             })
@@ -62,7 +136,6 @@ export default function SearchScreen({ navigation }: Navigation) {
         <View style={styles.container}>
             <Text style={styles.smallDescription}>SEARCH BY TEXT</Text>
             <SearchBar
-                style={styles.searchbar}
                 platform='ios'
                 onChangeText={(text: string | void) => searchFilter(text)}
                 onClear={() => searchFilter('')}
@@ -71,12 +144,7 @@ export default function SearchScreen({ navigation }: Navigation) {
             />
             <Text style={styles.smallDescription}>RESULTS</Text>
             {filteredNotices.map(notice => 
-                <SearchedNotice
-                    date={notice.date}
-                    notices={notice.notices}
-                    fullText={notice.fullText}
-                    TranslatedFullText={notice.TranslatedFullText}
-                />    
+                <SearchedNotice date={notice.date} summariedNotices={notice.notices.total_results}/>
             )}
         </View> 
     );
