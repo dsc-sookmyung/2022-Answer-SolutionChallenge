@@ -36,7 +36,6 @@ function BottomDrawer(props: BottomDrawerProps) {
 	}
 
 	const closePopup = () => {
-		console.log("hi");
 		setCurrentEvent(0);
 	}
 
