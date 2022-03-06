@@ -24,7 +24,7 @@ interface SearchResultScreenProps {
 
 export default function SearchResultScreen(props: SearchResultScreenProps) {
     const [imageUri, setImageUri] = useState("../assets/images/calendar.png");
-	const [notice, setNotice] = useState<Notice>({date: "", notices: {total_results: [], notice_body: []}});
+	const [notice, setNotice] = useState<Notice>({userId: 1, childId: 2, date: "", notices: {total_results: [], notice_body: []}});
 	const [showFullText, setShowFullText] = useState<boolean>(false);
 	const [showTranslated, setShowTranslated] = useState<boolean>(true);
 	const [isFullDrawer, setFullDrawer] = useState<boolean>(false);
@@ -32,6 +32,8 @@ export default function SearchResultScreen(props: SearchResultScreenProps) {
     React.useEffect(() => {
         // TODO: Fetch API
         setNotice({
+            userId: 1,
+            childId: 1,
             date: "2022-02-10",
             notices: {
                 total_results: [
