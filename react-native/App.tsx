@@ -5,11 +5,11 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NativeBaseProvider } from 'native-base';
 import { nativeBaseTheme } from './core/theme';
 import AppLoading from 'expo-app-loading';
-import useFonts from './hooks/useFonts'
+import useFonts from './hooks/useFonts';
+import { theme } from './core/theme';
 
 import LoginScreen from './screens/LoginScreen';
 import JoinScreen from './screens/JoinScreen';
-import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
 import HomeScreen from './screens/HomeScreen';
 import TranslateScreen from './screens/TranslateScreen';
 import SearchScreen from './screens/SearchScreen';
@@ -20,7 +20,7 @@ import SearchResultScreen from './screens/SearchResultScreen';
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const [fontsLoaded, SetFontsLoaded] = React.useState<boolean>(false);
+  const [fontsLoaded, SetFontsLoaded] = useState<boolean>(false);
   const LoadFontsAndRestoreToken = async () => {
     await useFonts();
   };
@@ -51,14 +51,10 @@ export default function App() {
             component={JoinScreen}
           />
           <Stack.Screen
-            name="ForgotPassword"
-            component={ForgotPasswordScreen}
-          />
-          <Stack.Screen
             name="Home"
             component={HomeScreen}
             options={{
-              headerStyle: { backgroundColor: '#333D79' },
+              headerStyle: { backgroundColor: theme.colors.primary },
               title: "NotiNote",
               headerBackVisible: false,
               headerRight: () => <LogoutButton/>,
