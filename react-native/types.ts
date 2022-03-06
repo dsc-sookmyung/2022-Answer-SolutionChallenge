@@ -37,9 +37,18 @@ interface Notice {
 			id: number,
 			summary: {id: number, content: string, highlight: boolean, registered: boolean}[],
 			fullText: string,
-			korean: string
+			korean: string,
 		}[]
 	}
+}
+
+export interface UserProfile {
+	userId: number;
+	username: string;
+	gmail: string;
+	profileImageType: number; // 1 or 2
+	language: string; // 'english', 'japanese', 'chinese', ...
+	children: {childName: string, childId: number}[];
 }
 
 interface BottomDrawerProps {

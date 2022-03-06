@@ -31,7 +31,7 @@ const LogoutButton = () => {
     <TouchableOpacity
       style={{ width: 24, height: 18 }}
       onPress={LogoutConfirm}>
-      <AntDesign name="logout" color="#000" size={18}/>
+      <AntDesign name="logout" color="#fff" size={18}/>
     </TouchableOpacity>
   );
 };
