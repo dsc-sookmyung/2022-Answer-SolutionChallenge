@@ -10,8 +10,8 @@ import useFonts from '../hooks/useFonts'
 export default function HomeScreen({ navigation }: Navigation) {
     const [fontsLoaded, SetFontsLoaded] = useState<boolean>(false);
     const [userProfile, setUserProfile] = useState<UserProfile>({userId: 0, username: "", gmail: "", profileImageType: 0, language: "", children: []});
-    const [summariedNotices, setSummariedNotices] = useState<{childId: number, childName: string, summaried_notices: string[]}[]>();
-    const [totalNoticesCount, setTotalNoticesCount] = useState<number>(0);
+    const [events, setEvents] = useState<{childId: number, childName: string, events: {time: string, content: string}[]}[]>();
+    const [totalEventsCount, setTotalEventsCount] = useState<number>(4);
     const [nowSelectedChildId, setNowSelectedChildId] = useState<number>(1);
 
     useEffect(()=> {
@@ -24,21 +24,26 @@ export default function HomeScreen({ navigation }: Navigation) {
             children: [{childName: "Soo", childId: 1}, {childName: "Hee", childId: 2}]
         })
 
-        setSummariedNotices([{
+        setEvents([{
             childId: 1,
             childName: "Soo",
-            summaried_notices: [
-                "the 17th Graduate Seremony",
-                "Do-Dream Festival",
-                "I'm about to have dinner",
-            ]
+            events: [{
+                time: "10:00",
+                content: "the 17th Graduate Seremony"
+            }, {
+                time: "13:00",
+                content: "Do-Dream Festival"
+            }]
         }, {
             childId: 2,
             childName: "Hee",
-            summaried_notices: [
-                "the 18th Matriculation",
-                "Do-Dream Festival"
-            ]
+            events: [{
+                time: "11:00",
+                content: "the 18th Matriculation"
+            }, {
+                time: "13:00",
+                content: "Do-Dream Festival"
+            }]
         }])
         // TODO: fetch API
         // .then => set nowSelectedChild 
@@ -50,21 +55,21 @@ export default function HomeScreen({ navigation }: Navigation) {
     
     return (
         <>{
-            userProfile && summariedNotices && (
+            userProfile && events && (
             <SafeAreaView style={styles.container}>
                 <View style={styles.profile}>
                     <ImageBackground style={styles.backgroundImage} source={require("../assets/images/pink-background-cropped.png")} resizeMode="cover" imageStyle={{ borderRadius: 12 }}>
                         <Image style={styles.profileImage} source={require(`../assets/images/profile-images/profile-1.png`)} />
                         <View style={styles.profielTextWrapper}>
                             <Text fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="xl">{"Hi, " + userProfile.username + "!"}</Text>
-                            <Text fontFamily="mono" fontWeight={400} fontStyle="normal" fontSize="sm">You've got 4 notices today.</Text>
+                            <Text fontFamily="mono" fontWeight={400} fontStyle="normal" fontSize="sm">You've got {totalEventsCount} events today.</Text>
                         </View>
                     </ImageBackground>
                 </View>
                 <View style={styles.noticeWrapper}>
-                    <Text style={styles.smallTitle} fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="xl">Today's Notices</Text>
+                    <Text style={styles.smallTitle} fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="xl">Today's Events</Text>
                     <View style={styles.childButtonWrapper}>
-                        {summariedNotices?.map(notice =>
+                        {events?.map(notice =>
                             <TouchableHighlight style={[styles.childButton, {
                                 backgroundColor: nowSelectedChildId === notice.childId ? theme.colors.primary : "#ffffff",
                             }]} onPress={() => handleNowSelectedChildId(notice.childId)}>
@@ -75,8 +80,12 @@ export default function HomeScreen({ navigation }: Navigation) {
                         )}
                     </View>
                     <View style={styles.todayNoticeWrapper}>
-                        {summariedNotices.filter(notice => notice.childId == nowSelectedChildId)[0].summaried_notices.map(notice =>
-                            <Text fontSize="md" lineHeight={28}>{notice}</Text>
+                        {events.filter(notice => notice.childId == nowSelectedChildId)[0].events.map(event =>
+                            <View style={{flexDirection: "row"}}>
+                                <Text fontWeight={500} fontSize="md" lineHeight={28} pr={4} style={{color: theme.colors.primary}}>{event.time}</Text>
+                                <Text fontSize="md" lineHeight={28}>{event.content}</Text>
+                            </View>
+                            
                         )}
                     </View>
                 </View>
@@ -85,13 +94,13 @@ export default function HomeScreen({ navigation }: Navigation) {
                     <TouchableHighlight onPress={() => navigation.navigate('Translate')} style={[styles.bigButton, styles.deepBlue]}>
                         <View>
                             <Text style={[styles.buttonName, styles.deepBlue]} fontWeight={700} fontSize="xl" pb={2}>Translate</Text>
-                            <Text style={styles.deepBlue} fontSize="xs">Translation, summarization, and calendar registration are all possible just by taking a picture of the notice.</Text>
+                            <Text style={styles.deepBlue} fontSize="sm">Translation, summarization, and calendar registration are all possible just by taking a picture of the notice.</Text>
                         </View>
                     </TouchableHighlight>
                     <TouchableHighlight onPress={() => navigation.navigate('Search')} style={[styles.bigButton, styles.deepBlue]}>
                         <View>
                             <Text style={[styles.buttonName, styles.deepBlue]} fontWeight={700} fontSize="xl" pb={2}>Search</Text>
-                            <Text style={styles.deepBlue} fontSize="xs">You can find notices you have translated.</Text>
+                            <Text style={styles.deepBlue} fontSize="sm">You can find notices you have translated.</Text>
                         </View>
                     </TouchableHighlight>
                 </View>
@@ -133,9 +142,9 @@ const styles = StyleSheet.create({
         justifyContent: "space-evenly"
     },
     noticeWrapper: {
-        width: "90%",
+        width: "88%",
         flex: 1,
-        marginBottom: 22
+        marginBottom: 18
     },
     childButtonWrapper: {
         flexDirection: "row",
@@ -167,9 +176,9 @@ const styles = StyleSheet.create({
         paddingRight: 30,
     },
     functionButtonWrapper: {
-        flex: 1,
-        width: '90%',
-        paddingBottom: 100,
+        flex: 1.5,
+        width: '88%',
+        paddingBottom: 30,
     },
     smallTitle: {
         marginBottom: 8,
