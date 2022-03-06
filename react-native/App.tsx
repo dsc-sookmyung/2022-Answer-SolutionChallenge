@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
+import { Image } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NativeBaseProvider } from 'native-base';
 import { nativeBaseTheme } from './core/theme';
@@ -57,9 +58,18 @@ export default function App() {
             name="Home"
             component={HomeScreen}
             options={{
+              headerStyle: { backgroundColor: '#333D79' },
               title: "NotiNote",
               headerBackVisible: false,
-              headerRight: () => <LogoutButton/>
+              headerRight: () => <LogoutButton/>,
+              
+              headerTitle: (props) => ( // App Logo
+                <Image
+                  style={{ width: 90, height: 50 }}
+                  source={require('./assets/images/notinote-icon-white.png')}
+                  resizeMode='contain'
+                />
+              ),
             }}
           />
           <Stack.Screen
