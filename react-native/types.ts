@@ -19,16 +19,40 @@ export type TextInput = {
 	description: string;
 }
 
-export type Notice = {
+interface Result {
+	id: number,
+	summary: {id: number, content: string, highlight: boolean, registered: boolean}[],
+	fullText: string,
+	korean: string
+}
+
+interface Notice {
+	userId: number,
+	childId: number,
 	date: string,
 	notices: {
 		total_results: string[],
 		notice_body: {
-			id: number,
 			title: string,
-			summary: {id: number, content: string, highlight: boolean}[],
+			id: number,
+			summary: {id: number, content: string, highlight: boolean, registered: boolean}[],
 			fullText: string,
 			korean: string
 		}[]
 	}
+}
+
+interface BottomDrawerProps {
+	results: Result,
+	showFullText?: boolean,
+	isFullDrawer?: boolean,
+	isTranslateScreen?: boolean,
+	handleFullText?: () => void,
+	saveResults?: () => void,
+	closeResults?: () => void,
+	retakePicture?: () => void,
+}
+
+export type {
+	Result, Notice, BottomDrawerProps
 }
