@@ -1,5 +1,6 @@
 package com.answer.notinote.User.controller;
 
+import com.answer.notinote.auth.data.RoleType;
 import com.answer.notinote.auth.token.JwtTokenProvider;
 import com.answer.notinote.User.domain.entity.User;
 import com.answer.notinote.User.dto.UserRequestDto;
@@ -14,26 +15,29 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/user")
+@RequestMapping("")
 public class UserController {
 
     private final UserService userService;
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    @GetMapping("/auth/{id}")
+    @GetMapping("/join/{id}")
     public ResponseEntity<?> auth_success(@PathVariable("id") long id) {
-        return ResponseEntity.ok(id);
+        User user = userService.findUserById(id);
+        user.setRoleType(RoleType.USER);
+
+        return ResponseEntity.ok(user);
     }
 
     // 회원가입
-    @PostMapping("/auth/join")
+    @PostMapping("/join")
     public ResponseEntity<?> join(@RequestBody UserRequestDto requestDto) {
         return ResponseEntity.ok(userService.join(requestDto));
     }
 
     // 로그인
-    @PostMapping("/auth/login/{id}")
+    @PostMapping("/login/{id}")
     public ResponseEntity<?> login(@PathVariable("id") long id) {
         User user = userService.findUserById(id);
 
@@ -42,7 +46,7 @@ public class UserController {
     }
 
     // token 재발급
-    @PostMapping("/auth/refresh")
+    @PostMapping("/refresh")
     public String validateRefreshToken(@RequestHeader("REFRESH-TOKEN") String refreshToken) {
         return "";
     }
@@ -54,13 +58,13 @@ public class UserController {
     }
 
     // 이메일로 회원 조회
-    @GetMapping("/email")
+    @GetMapping("/user/email")
     public User readByEmail(@RequestParam String email) {
         return userService.findUserByEmail(email);
     }
 
     // 전체 회원 조회
-    @GetMapping("/list")
+    @GetMapping("/user/list")
     public List<User> readAll() {
         return userService.findAllUsers();
     }

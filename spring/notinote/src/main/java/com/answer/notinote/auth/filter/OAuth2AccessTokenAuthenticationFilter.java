@@ -22,7 +22,7 @@ import java.util.Arrays;
 @Component
 public class OAuth2AccessTokenAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
-    private static final String DEFAULT_OAUTH2_LOGIN_REQUEST_URL_PREFIX = "/login/oauth2/";
+    private static final String DEFAULT_OAUTH2_LOGIN_REQUEST_URL_PREFIX = "/login/oauth2";
     private static final String HTTP_METHOD = "GET";
     private static final String ACCESS_TOKEN_HEADER_NAME = "Authorization";  //AccessToken 해더
 

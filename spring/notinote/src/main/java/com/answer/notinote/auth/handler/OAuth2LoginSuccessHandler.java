@@ -31,12 +31,12 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         if (authentication.getAuthorities().stream().anyMatch(s -> s.getAuthority().equals(RoleType.GUEST.getGrantedAuthority()))) {
             System.out.println("회원가입으로 이동합니다.");
-            response.sendRedirect("/user/auth/" + user.getUid());
+            response.sendRedirect("/join/" + user.getUid());
             return;
         }
         else {
             System.out.println("회원가입한 사용자입니다.");
-            response.sendRedirect("/user/auth/login/" + user.getUid());
+            response.sendRedirect("/login/" + user.getUid());
         }
 
     }
