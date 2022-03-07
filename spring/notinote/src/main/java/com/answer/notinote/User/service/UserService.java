@@ -1,6 +1,6 @@
 package com.answer.notinote.User.service;
 
-import com.answer.notinote.Oauth.data.RoleType;
+import com.answer.notinote.auth.data.RoleType;
 import com.answer.notinote.User.domain.entity.User;
 import com.answer.notinote.User.domain.repository.UserRepository;
 import com.answer.notinote.User.dto.LoginRequestDto;
@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -17,7 +16,6 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
 
     public User join(UserRequestDto requestDto) {
 
@@ -26,9 +24,9 @@ public class UserService {
         }
 
         User user = User.builder()
-                .username(requestDto.getUsername())
-                .upassword(passwordEncoder.encode(requestDto.getPassword()))
-                .uemail(requestDto.getEmail())
+                .firstname(requestDto.getFirstname())
+                .lastname(requestDto.getLastname())
+                .email(requestDto.getEmail())
                 .roleType(RoleType.USER)
                 .build();
 
@@ -38,9 +36,6 @@ public class UserService {
     public User login(LoginRequestDto loginDto) {
         User user = findUserByEmail(loginDto.getEmail());
 
-        if (!passwordEncoder.matches(loginDto.getPassword(), user.getUpassword())) {
-            throw new IllegalArgumentException("패스워드가 틀렸습니다.");
-        }
         return user;
     }
 
@@ -48,8 +43,6 @@ public class UserService {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("id가 존재하지 않습니다.")
         );
-
-        requestDto.setPassword(passwordEncoder.encode(requestDto.getPassword()));
         user.update(requestDto);
 
         return user;
@@ -65,7 +58,7 @@ public class UserService {
     }
 
     public User findUserByEmail(String email) {
-        return userRepository.findByUemail(email).orElseThrow(
+        return userRepository.findByEmail(email).orElseThrow(
                 () -> new IllegalArgumentException("이메일이 존재하지 않습니다.")
         );
     }
@@ -74,5 +67,5 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    private boolean validateDuplicateEmail(String email) { return userRepository.existsByUemail(email);}
+    private boolean validateDuplicateEmail(String email) { return userRepository.existsByEmail(email);}
 }

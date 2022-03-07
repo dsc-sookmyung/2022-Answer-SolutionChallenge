@@ -1,13 +1,11 @@
-package com.answer.notinote.Oauth.token;
+package com.answer.notinote.auth.token;
 
-import com.answer.notinote.User.domain.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.Instant;
 
 @Entity
 @Getter
@@ -23,10 +21,10 @@ public class RefreshToken {
     private String userEmail;
 
     @Column(nullable = false, unique = true)
-    private String refreshToken;
+    private String token;
 
-    public RefreshToken(String userEmail, String refreshToken) {
+    public RefreshToken(String userEmail, String token) {
         this.userEmail = userEmail;
-        this.refreshToken = refreshToken;
+        this.token = token;
     }
 }

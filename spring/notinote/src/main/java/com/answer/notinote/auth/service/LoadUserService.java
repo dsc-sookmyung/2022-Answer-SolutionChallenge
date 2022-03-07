@@ -1,10 +1,10 @@
-package com.answer.notinote.Oauth.service;
+package com.answer.notinote.auth.service;
 
-import com.answer.notinote.Oauth.GoogleLoadStrategy;
-import com.answer.notinote.Oauth.ProviderLoadStrategy;
-import com.answer.notinote.Oauth.data.ProviderType;
-import com.answer.notinote.Oauth.token.AccessTokenSocialTypeToken;
-import com.answer.notinote.Oauth.userdetails.CustomUserDetails;
+import com.answer.notinote.auth.strategy.GoogleLoadStrategy;
+import com.answer.notinote.auth.strategy.ProviderLoadStrategy;
+import com.answer.notinote.auth.data.ProviderType;
+import com.answer.notinote.auth.token.AccessTokenProviderTypeToken;
+import com.answer.notinote.auth.userdetails.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -15,18 +15,27 @@ public class LoadUserService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public CustomUserDetails getOAuth2UserDetails(AccessTokenSocialTypeToken authentication) {
+    /**
+     * 해당 ProviderType의 url에 요청을 보내 유저 정보 조회
+     * @param authentication
+     * @return customUserDetails
+     */
+    public CustomUserDetails getOAuth2UserDetails(AccessTokenProviderTypeToken authentication) {
         ProviderType providerType = authentication.getProviderType();
         ProviderLoadStrategy providerLoadStrategy = getProviderLoadStrategy(providerType);
 
-        String socialPk = providerLoadStrategy.getSocialPk(authentication.getAccessToken());
+        String socialEmail = providerLoadStrategy.getSocialPk(authentication.getAccessToken());
 
         return CustomUserDetails.builder()
-                .email(socialPk)
+                .email(socialEmail)
                 .providerType(providerType)
                 .build();
     }
 
+    /**
+     * @param providerType
+     * @return ProviderLoadStrategy
+     */
     private ProviderLoadStrategy getProviderLoadStrategy(ProviderType providerType) {
         switch (providerType) {
             case GOOGLE : return new GoogleLoadStrategy();

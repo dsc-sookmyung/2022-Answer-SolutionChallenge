@@ -1,7 +1,7 @@
-package com.answer.notinote.Oauth.data.dto;
+package com.answer.notinote.auth.data.dto;
 
-import com.answer.notinote.Oauth.data.ProviderType;
-import com.answer.notinote.Oauth.data.RoleType;
+import com.answer.notinote.auth.data.ProviderType;
+import com.answer.notinote.auth.data.RoleType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

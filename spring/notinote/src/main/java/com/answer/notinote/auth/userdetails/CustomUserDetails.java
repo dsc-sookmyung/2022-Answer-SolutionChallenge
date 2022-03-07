@@ -1,8 +1,7 @@
-package com.answer.notinote.Oauth.userdetails;
+package com.answer.notinote.auth.userdetails;
 
-import com.answer.notinote.Oauth.data.ProviderType;
-import com.answer.notinote.Oauth.data.RoleType;
 import com.answer.notinote.User.domain.entity.User;
+import com.answer.notinote.auth.data.ProviderType;
 import io.jsonwebtoken.lang.Assert;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,8 +15,21 @@ import java.util.*;
 @AllArgsConstructor
 public class CustomUserDetails implements UserDetails {
     private String email;
+    private String firstname;
+    private String lastname;
     private ProviderType providerType;
     private Set<GrantedAuthority> authorities;
+
+    public CustomUserDetails(String firstname, String lastname, String email, ProviderType providerType) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.providerType = providerType;
+    }
+
+    public static UserDetails create(User user) {
+        return new CustomUserDetails(user.getFirstname(), user.getLastname(), user.getEmail(), user.getProviderType());
+    }
 
     @Override
     public String getPassword() {
@@ -26,7 +38,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return this.firstname + this.lastname;
     }
 
     @Override
@@ -56,8 +68,8 @@ public class CustomUserDetails implements UserDetails {
 
     public void setRoles(String... roles) {
         List<GrantedAuthority> authorities = new ArrayList<>(roles.length);
-
         for (String role : roles) {
+            Assert.isTrue(!role.startsWith("ROLE_"), role + " cannot start with ROLE_ (it is automatically add)");
             authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
         }
         this.authorities = Set.copyOf(authorities);

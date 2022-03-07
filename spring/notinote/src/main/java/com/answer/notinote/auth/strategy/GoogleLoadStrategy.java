@@ -1,6 +1,7 @@
-package com.answer.notinote.Oauth;
+package com.answer.notinote.auth.strategy;
 
-import com.answer.notinote.Oauth.data.ProviderType;
+import com.answer.notinote.auth.data.ProviderType;
+import org.hibernate.validator.internal.util.logging.Log;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 

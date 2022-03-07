@@ -1,7 +1,7 @@
 package com.answer.notinote.User.domain.entity;
 
-import com.answer.notinote.Oauth.data.ProviderType;
-import com.answer.notinote.Oauth.data.RoleType;
+import com.answer.notinote.auth.data.ProviderType;
+import com.answer.notinote.auth.data.RoleType;
 import com.answer.notinote.User.dto.UserRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
@@ -33,9 +33,11 @@ public class User extends Timestamped {
     @Column(nullable = false)
     private String password;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private ProviderType providerType;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private RoleType roleType;
 
@@ -45,7 +47,7 @@ public class User extends Timestamped {
         this.email = requestDto.getEmail();
     }
 
-    public User(com.answer.notinote.Oauth.data.dto.UserRequestDto requestDto) {
+    public User(com.answer.notinote.auth.data.dto.UserRequestDto requestDto) {
         this.email = requestDto.getEmail();
         this.providerType = requestDto.getProviderType();
     }

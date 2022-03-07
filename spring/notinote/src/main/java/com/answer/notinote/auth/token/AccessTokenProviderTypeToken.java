@@ -1,6 +1,7 @@
-package com.answer.notinote.Oauth.token;
+package com.answer.notinote.auth.token;
 
-import com.answer.notinote.Oauth.data.ProviderType;
+import com.answer.notinote.auth.data.ProviderType;
+import lombok.Builder;
 import lombok.Getter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -8,19 +9,20 @@ import org.springframework.security.core.GrantedAuthority;
 import java.util.Collection;
 
 @Getter
-public class AccessTokenSocialTypeToken extends AbstractAuthenticationToken {
+public class AccessTokenProviderTypeToken extends AbstractAuthenticationToken {
 
-    private Object principal;
+    private Object principal;           // OAuth2UserDetails
     private String accessToken;
     private ProviderType providerType;
 
-    public AccessTokenSocialTypeToken(Object principal, Collection<? extends GrantedAuthority> authorities) {
+    @Builder
+    public AccessTokenProviderTypeToken(Object principal, Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         this.principal = principal;
         super.setAuthenticated(true);
     }
 
-    public AccessTokenSocialTypeToken(String accessToken, ProviderType providerType) {
+    public AccessTokenProviderTypeToken(String accessToken, ProviderType providerType) {
         super(null);
         this.accessToken = accessToken;
         this.providerType = providerType;

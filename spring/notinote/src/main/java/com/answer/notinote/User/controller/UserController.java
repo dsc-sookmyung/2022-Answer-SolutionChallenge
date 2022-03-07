@@ -1,6 +1,6 @@
 package com.answer.notinote.User.controller;
 
-import com.answer.notinote.Oauth.token.JwtTokenProvider;
+import com.answer.notinote.auth.token.JwtTokenProvider;
 import com.answer.notinote.User.domain.entity.User;
 import com.answer.notinote.User.dto.LoginRequestDto;
 import com.answer.notinote.User.dto.LoginResponseDto;
@@ -27,15 +27,12 @@ public class UserController {
         return ResponseEntity.ok(userService.join(requestDto));
     }
 
-    // 로그인
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequestDto loginDto) {
-        User user = userService.login(loginDto);
-
-        LoginResponseDto response = new LoginResponseDto(user.getUid(), user.getUsername(), user.getUemail(),
-                jwtTokenProvider.createToken(user.getEmail(), user.getRoles(), ,user.getRoles());
-        return ResponseEntity.ok());
-    }
+//    // 로그인
+//    @PostMapping("/login")
+//    public ResponseEntity<?> login(@RequestBody LoginRequestDto loginDto) {
+//        User user = userService.login(loginDto);
+//
+//    }
 
     // token 재발급
     @PostMapping("/refresh")

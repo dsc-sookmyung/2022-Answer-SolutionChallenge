@@ -1,8 +1,11 @@
-package com.answer.notinote.Oauth.data;
+package com.answer.notinote.auth.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/**
+ * 유저 권한 enum 클래스
+ */
 @Getter
 @AllArgsConstructor
 public enum RoleType {
@@ -11,12 +14,4 @@ public enum RoleType {
     ADMIN("ROLE_ADMIN");
 
     private String grantedAuthority;
-
-    void Role(String grantedAuthority) {
-        this.grantedAuthority = grantedAuthority;
-    }
-
-    public String getGrantedAuthority() {
-        return grantedAuthority;
-    }
 }
