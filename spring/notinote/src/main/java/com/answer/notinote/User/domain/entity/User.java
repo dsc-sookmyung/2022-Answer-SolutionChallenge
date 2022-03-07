@@ -29,9 +29,8 @@ public class User extends Timestamped {
     @Column(nullable = false, length = 20, unique = true)
     private String email;
 
-    @JsonIgnore
-    @Column(nullable = false)
-    private String password;
+    @Column()
+    private String language;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
@@ -60,6 +59,5 @@ public class User extends Timestamped {
         this.firstname = requestDto.getFirstname();
         this.lastname = requestDto.getLastname();
         this.email = requestDto.getEmail();
-        this.password = requestDto.getPassword();
     }
 }

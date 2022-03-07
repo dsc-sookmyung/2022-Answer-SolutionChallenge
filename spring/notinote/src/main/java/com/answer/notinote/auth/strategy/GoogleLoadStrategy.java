@@ -16,6 +16,9 @@ public class GoogleLoadStrategy extends ProviderLoadStrategy{
                     request,
                     RESPONSE_TYPE);
 
+            // 임시
+            System.out.println(response.getBody());
+
             return (response.getBody().get("email")).toString();
         } catch (Exception e) {
             e.printStackTrace();

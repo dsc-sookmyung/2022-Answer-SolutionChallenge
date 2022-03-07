@@ -10,7 +10,8 @@ import java.util.List;
 @Getter @Setter
 public class LoginResponseDto {
     private Long id;
-    private String username;
+    private String firstname;
+    private String lastname;
     private String email;
     private String access_token;
     private String refresh_token;

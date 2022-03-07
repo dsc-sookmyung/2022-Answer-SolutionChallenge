@@ -1,5 +1,6 @@
 package com.answer.notinote.auth.token;
 
+import com.answer.notinote.auth.data.RoleType;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -32,7 +33,7 @@ public class JwtTokenProvider {
     }
 
     // jwt 토큰 생성
-    public String createToken(String email, List<String> roles) {
+    public String createToken(String email, RoleType roles) {
         Claims claims = Jwts.claims().setSubject(email);
         claims.put("roles", roles);
         Date now = new Date();
