@@ -16,6 +16,10 @@ configurations {
 
 repositories {
 	mavenCentral()
+	maven {
+		url "https://mvnrepository.com/artifact/com.google.cloud/google-cloud-vision"
+	}
+
 }
 
 dependencies {
@@ -30,6 +34,18 @@ dependencies {
 
 	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
 	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+
+	//Image Upload Settings
+	implementation 'commons-io:commons-io:2.11.0'
+	implementation 'commons-fileupload:commons-fileupload:1.4'
+
+	//GCP Settings
+	implementation platform('com.google.cloud:libraries-bom:24.3.0')
+	implementation 'com.google.cloud:google-cloud-storage'
+	implementation 'com.google.cloud:google-cloud-vision:2.0.21'
+	implementation 'org.springframework.cloud:spring-cloud-gcp-starter-vision:1.2.8.RELEASE'
+	implementation 'org.springframework.cloud:spring-cloud-gcp-starter-storage:1.2.8.RELEASE'
+
 }
 
 tasks.named('test') {

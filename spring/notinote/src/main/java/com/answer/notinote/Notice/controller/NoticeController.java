@@ -1,13 +1,41 @@
 package com.answer.notinote.Notice.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+
+import com.answer.notinote.Notice.service.NoticeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.gcp.vision.CloudVisionTemplate;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.web.bind.annotation.*;
+
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+
+
 
 @RestController
 public class NoticeController {
-    @RequestMapping(value = "/notice/ocr", method = RequestMethod.POST)
-    public String ocr () {
-        return "ocr";
+
+    @Autowired
+    private ResourceLoader resourceLoader;
+    @Autowired
+    private CloudVisionTemplate cloudVisionTemplate;
+    @Autowired
+    NoticeService noticeService;
+
+    public NoticeController(NoticeService noticeService) {
+        this.noticeService = noticeService;
     }
+
+    @RequestMapping(value = "/notice/ocr", method = RequestMethod.POST)
+    public String saveImage (@RequestPart MultipartFile uploadfile) throws IOException {
+        Long nid = noticeService.saveImage(uploadfile);
+        String koreantext = noticeService.detectText(nid);
+        return "Text from image: " + koreantext;
+    }
+
+
+
+
+
 }
