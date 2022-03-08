@@ -34,6 +34,7 @@ dependencies {
 
 	implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
 	implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+	implementation 'io.swagger:swagger-annotations:1.6.5'
 
 	//Image Upload Settings
 	implementation 'commons-io:commons-io:2.11.0'
