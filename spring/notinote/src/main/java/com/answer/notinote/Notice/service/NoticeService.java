@@ -1,7 +1,9 @@
 package com.answer.notinote.Notice.service;
 
 
+import com.answer.notinote.Notice.domain.entity.Notice;
 import com.answer.notinote.Notice.domain.repository.NoticeRepository;
+import com.answer.notinote.Notice.dto.ImageRequestDto;
 import com.google.cloud.vision.v1.*;
 import com.google.protobuf.ByteString;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,24 +24,39 @@ public class NoticeService {
     @Autowired
     NoticeRepository noticeRepository;
 
-    public String saveImage(MultipartFile uploadfile){
-        String nimagename = uploadfile.getOriginalFilename();
+    public Long saveImage(MultipartFile uploadfile){
+        String nimageoriginal = uploadfile.getOriginalFilename();
         String uuid = UUID.randomUUID().toString();
-        nimagename = uuid + nimagename;
-        String uploadPath = System.getProperty("user.dir")+"/src/main/resources/static";
+        String nimagename = uuid + nimageoriginal;
+        Long nid = null;
+        String nimageurl = System.getProperty("user.dir")+"/src/main/resources/static";
         try {
-            File saveFile = new File(uploadPath, nimagename);
+            File saveFile = new File(nimageurl, nimagename);
             uploadfile.transferTo(saveFile);
+
+            ImageRequestDto imageRequestDto = ImageRequestDto.builder()
+                    .nimagename(nimagename)
+                    .nimageoriginal(nimageoriginal)
+                    .nimageurl(nimageurl)
+                    .build();
+            nid = noticeRepository.save(imageRequestDto.toNoticeEntity()).getNid();
 
         } catch (Exception e){
             e.printStackTrace();
         }
 
-        return uploadPath+'/'+nimagename;
+        return nid;
     }
 
-    public String detectText(String filePath) throws IOException{
+
+
+    public String detectText(Long nid) throws IOException{
         List<AnnotateImageRequest> requests = new ArrayList<>();
+
+        Notice notice = noticeRepository.findByNid(nid);
+        String nimageurl = notice.getNimageurl();
+        String nimagename = notice.getNimagename();
+        String filePath = nimageurl + '/' + nimagename;
 
         ByteString imgBytes = ByteString.readFrom(new FileInputStream(filePath));
 
@@ -70,6 +87,11 @@ public class NoticeService {
             }
             System.out.println("Text : "+text.get(0));
         }
+
+        notice.update_origin_full(text.get(0));
+        noticeRepository.save(notice);
+        //리턴을 string이 아닌 entity로 하면 조회하는 횟수를 1회 줄일 수 있어서 추후 수정 필요
+
         return text.get(0);
     }
 

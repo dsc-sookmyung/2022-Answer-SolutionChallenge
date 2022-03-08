@@ -13,26 +13,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Entity
 public class Notice {
-    /*
-    @ApiParam(value="notice ID", required = true)
-    private long nid;
-
-    @ApiParam(value="notice Image", required = true)
-    private String nimage;
-
-    @ApiParam(value="origin full text", required = true)
-    private String origin_full;
-
-    @ApiParam(value="translated full text", required = true)
-    private String trans_full;
-
-    @ApiParam(value="translated text summary", required = true)
-    private String trans_sum;
-
-    @ApiParam(value="notice date", required = true)
-    private LocalDate ndate;
-    */
-
     @Id
     @Column(name="nid")
     @GeneratedValue(strategy = GenerationType.IDENTITY) //auto_increment 가능
@@ -42,9 +22,12 @@ public class Notice {
     private String nimagename;
     private String nimageoriginal;
     private String nimageurl;
+
+    @Column(length=2000)
     private String origin_full;
     private String trans_full;
     private String trans_sum;
+
     private LocalDate ndate;
 
     //Not Using Constructor
@@ -59,4 +42,8 @@ public class Notice {
         this.ndate = ndate;
     }
 
+
+    public void update_origin_full(String origin_full){
+        this.origin_full = origin_full;
+    }
 }

@@ -29,9 +29,8 @@ public class NoticeController {
 
     @RequestMapping(value = "/notice/ocr", method = RequestMethod.POST)
     public String saveImage (@RequestPart MultipartFile uploadfile) throws IOException {
-        String nimageurl  = noticeService.saveImage(uploadfile);
-        String koreantext = noticeService.detectText(nimageurl);
-
+        Long nid = noticeService.saveImage(uploadfile);
+        String koreantext = noticeService.detectText(nid);
         return "Text from image: " + koreantext;
     }
 
