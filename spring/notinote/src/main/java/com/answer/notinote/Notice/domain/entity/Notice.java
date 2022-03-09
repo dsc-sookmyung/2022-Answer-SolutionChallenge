@@ -53,4 +53,7 @@ public class Notice {
         this.trans_full = trans_full;
     }
 
+    public void update_trans_sum(String trans_sum){
+        this.trans_sum = trans_sum;
+    }
 }
