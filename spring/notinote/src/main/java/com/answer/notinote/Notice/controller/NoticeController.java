@@ -26,11 +26,8 @@ public class NoticeController {
         String koreantext = noticeService.detectText(nid);
         String transtext = noticeService.transText(nid);
         String trans_summarizedtext = noticeService.transSumText(nid);
-        return "Text from image: " + trans_summarizedtext;
+        String datedetect = noticeService.dateDetect(nid);
+        return "Text from image: " + datedetect;
     }
-
-
-
-
 
 }
