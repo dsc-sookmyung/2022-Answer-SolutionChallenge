@@ -4,6 +4,9 @@ package com.answer.notinote.Notice.service;
 import com.answer.notinote.Notice.domain.entity.Notice;
 import com.answer.notinote.Notice.domain.repository.NoticeRepository;
 import com.answer.notinote.Notice.dto.ImageRequestDto;
+import com.google.cloud.translate.v3.*;
+import com.google.cloud.translate.v3.LocationName;
+import com.google.cloud.translate.v3.Translation;
 import com.google.cloud.vision.v1.*;
 import com.google.protobuf.ByteString;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +17,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -85,7 +89,7 @@ public class NoticeService {
 
                 }
             }
-            System.out.println("Text : "+text.get(0));
+            //System.out.println("Text : "+text.get(0));
         }
 
         notice.update_origin_full(text.get(0));
@@ -95,7 +99,74 @@ public class NoticeService {
         return text.get(0);
     }
 
+    public String transText(Long nid) throws IOException {
+        Notice notice = noticeRepository.findByNid(nid);
+        String text = notice.getOrigin_full();
+        String projectId = "notinote-341918";
+        String targetLanguage = "en"; // 추후 입력받아야함
+        ArrayList <String> textlist = new ArrayList<String>();
 
+        try (TranslationServiceClient client = TranslationServiceClient.create()) {
+            LocationName parent = LocationName.of(projectId, "global");
 
+            // Supported Mime Types: https://cloud.google.com/translate/docs/supported-formats
+            TranslateTextRequest request =
+                    TranslateTextRequest.newBuilder()
+                            .setParent(parent.toString())
+                            .setMimeType("text/plain")
+                            .setTargetLanguageCode(targetLanguage)
+                            .addContents(text)
+                            .build();
+
+            TranslateTextResponse response = client.translateText(request);
+
+            for (Translation translation : response.getTranslationsList()) {
+                textlist.add(String.format("%s", translation.getTranslatedText()));
+            }
+            //System.out.println("Text : "+textlist.get(0));
+        }
+        notice.update_trans_full(textlist.get(0));
+        noticeRepository.save(notice);
+        return textlist.get(0);
+    }
+
+    public String transSumText(Long nid) throws IOException {
+
+        Notice notice = noticeRepository.findByNid(nid);
+        //추후 nid값 이외에도 인공지능에 넘어온 요약 스트링까지 인자값으로 받아야함
+        //List<String> summarizedKoreanlist = Arrays.asList(text.split(","));
+        //System.out.println("Text : "+summarizedKoreanlist.size());
+        List <String> summarizedKoreanlist = new ArrayList<String>();
+        summarizedKoreanlist.add("졸업식은 2월 17일 3시입니다.");
+        summarizedKoreanlist.add("학부모님 모두 참석이 가능합니다.");
+
+        String projectId = "notinote-341918";
+        String targetLanguage = "en"; // 추후 입력받아야함
+        ArrayList <String> textlist = new ArrayList<String>();
+
+        try (TranslationServiceClient client = TranslationServiceClient.create()) {
+            LocationName parent = LocationName.of(projectId, "global");
+
+            // Supported Mime Types: https://cloud.google.com/translate/docs/supported-formats
+            for (String text : summarizedKoreanlist) {
+                TranslateTextRequest request =
+                        TranslateTextRequest.newBuilder()
+                                .setParent(parent.toString())
+                                .setMimeType("text/plain")
+                                .setTargetLanguageCode(targetLanguage)
+                                .addContents(text)
+                                .build();
+
+                TranslateTextResponse response = client.translateText(request);
+
+                for (Translation translation : response.getTranslationsList()) {
+                    textlist.add(String.format("%s", translation.getTranslatedText()));
+                }
+            }
+        }
+        notice.update_trans_sum(textlist.toString());
+        noticeRepository.save(notice);
+        return textlist.toString();
+    }
 
 }

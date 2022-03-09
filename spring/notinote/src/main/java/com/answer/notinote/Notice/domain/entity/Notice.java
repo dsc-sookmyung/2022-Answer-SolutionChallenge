@@ -23,9 +23,11 @@ public class Notice {
     private String nimageoriginal;
     private String nimageurl;
 
-    @Column(length=2000)
+    @Column(length=5000)
     private String origin_full;
+    @Column(length=5000)
     private String trans_full;
+    @Column(length=3000)
     private String trans_sum;
 
     private LocalDate ndate;
@@ -45,5 +47,13 @@ public class Notice {
 
     public void update_origin_full(String origin_full){
         this.origin_full = origin_full;
+    }
+
+    public void update_trans_full(String trans_full){
+        this.trans_full = trans_full;
+    }
+
+    public void update_trans_sum(String trans_sum){
+        this.trans_sum = trans_sum;
     }
 }
