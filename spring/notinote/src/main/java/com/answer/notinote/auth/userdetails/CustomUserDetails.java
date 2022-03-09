@@ -10,6 +10,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.*;
 
+/**
+ * 스프링 시큐리티 내부에서 사용되는 User Entity
+ */
 @Getter @Setter
 @Builder
 @AllArgsConstructor

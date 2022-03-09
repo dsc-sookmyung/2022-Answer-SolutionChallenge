@@ -1,7 +1,7 @@
 package com.answer.notinote.auth.strategy;
 
 import com.answer.notinote.auth.data.ProviderType;
-import org.hibernate.validator.internal.util.logging.Log;
+import com.answer.notinote.auth.data.dto.UserSocialResponseDto;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 
@@ -9,17 +9,19 @@ import java.util.Map;
 
 public class GoogleLoadStrategy extends ProviderLoadStrategy{
     @Override
-    protected String sendRequestToSocialSite(HttpEntity request) {
+    protected UserSocialResponseDto sendRequestToSocialSite(HttpEntity request) {
         try {
             ResponseEntity<Map<String, Object>> response = restTemplate.exchange(ProviderType.GOOGLE.getUserInfoUrl(),
                     ProviderType.GOOGLE.getMethod(),
                     request,
                     RESPONSE_TYPE);
 
-            // 임시
-            System.out.println("Body: \n" + response.getBody());
+            return UserSocialResponseDto.builder()
+                    .email(response.getBody().get("email").toString())
+                    .firstname(response.getBody().get("given_name").toString())
+                    .lastname(response.getBody().get("family_name").toString())
+                    .build();
 
-            return (response.getBody().get("email")).toString();
         } catch (Exception e) {
             e.printStackTrace();
             return null;

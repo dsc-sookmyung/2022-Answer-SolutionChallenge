@@ -1,5 +1,6 @@
 package com.answer.notinote.auth.strategy;
 
+import com.answer.notinote.auth.data.dto.UserSocialResponseDto;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -20,7 +21,7 @@ public abstract class ProviderLoadStrategy {
 
     protected final RestTemplate restTemplate = new RestTemplate();
 
-    public String getSocialPk(String accessToken) {
+    public UserSocialResponseDto getSocialEntity(String accessToken) {
         HttpHeaders headers = new HttpHeaders();
         setHeaders(accessToken, headers);
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -29,7 +30,7 @@ public abstract class ProviderLoadStrategy {
         return sendRequestToSocialSite(request);
     }
 
-    protected abstract String sendRequestToSocialSite(HttpEntity request);
+    protected abstract UserSocialResponseDto sendRequestToSocialSite(HttpEntity request);
 
     public void setHeaders(String accessToken, HttpHeaders headers) {
         headers.set("Authorization", "Bearer " + accessToken);

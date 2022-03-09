@@ -11,6 +11,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class UserRequestDto {
     private String email;
+    private String firstname;
+    private String lastname;
     private ProviderType providerType;
     private RoleType roleType;
 }

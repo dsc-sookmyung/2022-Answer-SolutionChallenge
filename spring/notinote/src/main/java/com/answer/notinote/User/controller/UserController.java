@@ -1,12 +1,10 @@
 package com.answer.notinote.User.controller;
 
-import com.answer.notinote.auth.data.RoleType;
+import com.answer.notinote.User.dto.JoinRequestDto;
 import com.answer.notinote.auth.token.JwtTokenProvider;
 import com.answer.notinote.User.domain.entity.User;
 import com.answer.notinote.User.dto.UserRequestDto;
 import com.answer.notinote.User.service.UserService;
-import io.swagger.models.Response;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,15 +22,14 @@ public class UserController {
 
     @GetMapping("/join/{id}")
     public ResponseEntity<?> auth_success(@PathVariable("id") long id) {
+        System.out.println("/join/id 입니다.");
         User user = userService.findUserById(id);
-        user.setUroleType(RoleType.USER);
-
         return ResponseEntity.ok(user);
     }
 
     // 회원가입
     @PostMapping("/join")
-    public ResponseEntity<?> join(@RequestBody UserRequestDto requestDto) {
+    public ResponseEntity<?> join(@RequestBody JoinRequestDto requestDto) {
         return ResponseEntity.ok(userService.join(requestDto));
     }
 
@@ -70,7 +67,7 @@ public class UserController {
     }
 
     // 회원 삭제
-    @DeleteMapping()
+    @DeleteMapping("/user")
     public Long delete(@RequestParam Long id) {
         return userService.delete(id);
     }

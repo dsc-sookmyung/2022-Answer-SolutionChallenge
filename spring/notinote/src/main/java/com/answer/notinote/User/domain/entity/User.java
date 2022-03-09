@@ -25,10 +25,10 @@ public class User extends Timestamped {
     @Column(length = 20)
     private String ulastname;
 
-    @Column(nullable = false, length = 20, unique = true)
+    @Column(nullable = false, length = 50, unique = true)
     private String uemail;
 
-    @Column()
+    @Column(length = 20)
     private String ulanguage;
 
     @Enumerated(EnumType.STRING)
@@ -47,12 +47,14 @@ public class User extends Timestamped {
 
     public User(com.answer.notinote.auth.data.dto.UserRequestDto requestDto) {
         this.uemail = requestDto.getEmail();
+        this.ufirstname = requestDto.getFirstname();
+        this.ulastname = requestDto.getLastname();
         this.uproviderType = requestDto.getProviderType();
         this.uroleType = requestDto.getRoleType();
     }
 
     public String getFullname() {
-        return this.ufirstname + this.ulastname;
+        return this.ufirstname + " " + this.ulastname;
     }
 
     public void update(UserRequestDto requestDto) {

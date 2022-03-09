@@ -1,5 +1,6 @@
 package com.answer.notinote.auth.service;
 
+import com.answer.notinote.auth.data.dto.UserSocialResponseDto;
 import com.answer.notinote.auth.strategy.GoogleLoadStrategy;
 import com.answer.notinote.auth.strategy.ProviderLoadStrategy;
 import com.answer.notinote.auth.data.ProviderType;
@@ -8,8 +9,6 @@ import com.answer.notinote.auth.userdetails.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.concurrent.TimeoutException;
 
 @Service
 @RequiredArgsConstructor
@@ -26,14 +25,16 @@ public class LoadUserService {
         ProviderType providerType = authentication.getProviderType();
         ProviderLoadStrategy providerLoadStrategy = getProviderLoadStrategy(providerType);
 
-        String socialEmail = providerLoadStrategy.getSocialPk(authentication.getAccessToken());
+        UserSocialResponseDto socialEntity = providerLoadStrategy.getSocialEntity(authentication.getAccessToken());
 
-        if (socialEmail == null) {
+        if (socialEntity == null) {
             throw new IllegalArgumentException("액세스 토큰이 만료되었습니다.");
         }
 
         return CustomUserDetails.builder()
-                .email(socialEmail)
+                .email(socialEntity.getEmail())
+                .firstname(socialEntity.getFirstname())
+                .lastname(socialEntity.getLastname())
                 .providerType(providerType)
                 .build();
     }
