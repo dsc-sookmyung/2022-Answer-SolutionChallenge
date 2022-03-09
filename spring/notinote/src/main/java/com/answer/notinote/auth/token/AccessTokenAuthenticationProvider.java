@@ -35,13 +35,14 @@ public class AccessTokenAuthenticationProvider implements AuthenticationProvider
 
         // DB에서 회원 조회 (없으면 생성)
         User user = saveOrGet(oAuth2User);
-        oAuth2User.setRoles(user.getRoleType().name());
+        System.out.println("Role: " + user.getUroleType());
+        oAuth2User.setRoles(user.getUroleType().name());
 
         return new AccessTokenProviderTypeToken(oAuth2User, oAuth2User.getAuthorities());
     }
 
     private User saveOrGet(CustomUserDetails oAuth2User) {
-        return userRepository.findByEmail(oAuth2User.getEmail())
+        return userRepository.findByUemail(oAuth2User.getEmail())
                 .orElseGet(() -> userRepository.save(new User(new UserRequestDto(oAuth2User.getEmail(), oAuth2User.getProviderType(), RoleType.GUEST))));
     }
 

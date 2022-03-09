@@ -22,10 +22,10 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        System.out.println("로그인 성공 ! : " +authentication.getPrincipal());
+        System.out.println("로그인 성공 !");
 
-        CustomUserDetails userDetails = (CustomUserDetails) authentication;
-        User user = userRepository.findByEmail(userDetails.getEmail()).orElseThrow(
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User user = userRepository.findByUemail(userDetails.getEmail()).orElseThrow(
                 () -> new IllegalArgumentException("이메일이 존재하지 않습니다.")
         );
 

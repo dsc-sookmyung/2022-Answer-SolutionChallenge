@@ -28,7 +28,7 @@ public class CustomUserDetails implements UserDetails {
     }
 
     public static UserDetails create(User user) {
-        return new CustomUserDetails(user.getFirstname(), user.getLastname(), user.getEmail(), user.getProviderType());
+        return new CustomUserDetails(user.getUfirstname(), user.getUlastname(), user.getUemail(), user.getUproviderType());
     }
 
     @Override

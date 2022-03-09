@@ -17,12 +17,12 @@ public class GoogleLoadStrategy extends ProviderLoadStrategy{
                     RESPONSE_TYPE);
 
             // 임시
-            System.out.println(response.getBody());
+            System.out.println("Body: \n" + response.getBody());
 
             return (response.getBody().get("email")).toString();
         } catch (Exception e) {
             e.printStackTrace();
-            throw e;
+            return null;
         }
     }
 }

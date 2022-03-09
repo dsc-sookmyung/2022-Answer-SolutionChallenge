@@ -51,11 +51,11 @@ public class OAuth2AccessTokenAuthenticationFilter extends AbstractAuthenticatio
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         // SNS 로그인 분류 추출
-        ProviderType providerType = extractProviderType(request);
+        //ProviderType providerType = extractProviderType(request);
         String accessToken = request.getHeader(ACCESS_TOKEN_HEADER_NAME);
 
         //AuthenticationManager에 인증 요청 전송
-        return this.getAuthenticationManager().authenticate(new AccessTokenProviderTypeToken(accessToken, providerType));
+        return this.getAuthenticationManager().authenticate(new AccessTokenProviderTypeToken(accessToken, ProviderType.GOOGLE));
     }
 
 

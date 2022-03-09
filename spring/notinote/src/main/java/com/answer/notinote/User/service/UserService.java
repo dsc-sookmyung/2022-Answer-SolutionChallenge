@@ -44,7 +44,7 @@ public class UserService {
     }
 
     public User findUserByEmail(String email) {
-        return userRepository.findByEmail(email).orElseThrow(
+        return userRepository.findByUemail(email).orElseThrow(
                 () -> new IllegalArgumentException("이메일이 존재하지 않습니다.")
         );
     }
@@ -53,5 +53,5 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    private boolean validateDuplicateEmail(String email) { return userRepository.existsByEmail(email);}
+    private boolean validateDuplicateEmail(String email) { return userRepository.existsByUemail(email);}
 }

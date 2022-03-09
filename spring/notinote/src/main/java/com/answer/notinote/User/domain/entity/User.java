@@ -3,7 +3,6 @@ package com.answer.notinote.User.domain.entity;
 import com.answer.notinote.auth.data.ProviderType;
 import com.answer.notinote.auth.data.RoleType;
 import com.answer.notinote.User.dto.UserRequestDto;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -20,44 +19,45 @@ public class User extends Timestamped {
     @Column
     private Long uid;
 
-    @Column(nullable = false, length = 20)
-    private String firstname;
+    @Column(length = 20)
+    private String ufirstname;
 
-    @Column(nullable = false, length = 20)
-    private String lastname;
+    @Column(length = 20)
+    private String ulastname;
 
     @Column(nullable = false, length = 20, unique = true)
-    private String email;
+    private String uemail;
 
     @Column()
-    private String language;
+    private String ulanguage;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private ProviderType providerType;
+    private ProviderType uproviderType;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private RoleType roleType;
+    private RoleType uroleType;
 
     public User(UserRequestDto requestDto) {
-        this.firstname = requestDto.getFirstname();
-        this.lastname = requestDto.getLastname();
-        this.email = requestDto.getEmail();
+        this.ufirstname = requestDto.getFirstname();
+        this.ulastname = requestDto.getLastname();
+        this.uemail = requestDto.getEmail();
     }
 
     public User(com.answer.notinote.auth.data.dto.UserRequestDto requestDto) {
-        this.email = requestDto.getEmail();
-        this.providerType = requestDto.getProviderType();
+        this.uemail = requestDto.getEmail();
+        this.uproviderType = requestDto.getProviderType();
+        this.uroleType = requestDto.getRoleType();
     }
 
     public String getFullname() {
-        return this.firstname + this.lastname;
+        return this.ufirstname + this.ulastname;
     }
 
     public void update(UserRequestDto requestDto) {
-        this.firstname = requestDto.getFirstname();
-        this.lastname = requestDto.getLastname();
-        this.email = requestDto.getEmail();
+        this.ufirstname = requestDto.getFirstname();
+        this.ulastname = requestDto.getLastname();
+        this.uemail = requestDto.getEmail();
     }
 }

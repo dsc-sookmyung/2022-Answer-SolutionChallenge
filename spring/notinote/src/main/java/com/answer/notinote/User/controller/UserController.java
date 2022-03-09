@@ -25,7 +25,7 @@ public class UserController {
     @GetMapping("/join/{id}")
     public ResponseEntity<?> auth_success(@PathVariable("id") long id) {
         User user = userService.findUserById(id);
-        user.setRoleType(RoleType.USER);
+        user.setUroleType(RoleType.USER);
 
         return ResponseEntity.ok(user);
     }
@@ -37,11 +37,11 @@ public class UserController {
     }
 
     // 로그인
-    @PostMapping("/login/{id}")
+    @GetMapping("/login/{id}")
     public ResponseEntity<?> login(@PathVariable("id") long id) {
         User user = userService.findUserById(id);
 
-        String token = jwtTokenProvider.createToken(user.getEmail(), user.getRoleType());
+        String token = jwtTokenProvider.createToken(user.getUemail(), user.getUroleType());
         return ResponseEntity.ok(token);
     }
 

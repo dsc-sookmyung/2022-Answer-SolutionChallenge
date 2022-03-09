@@ -30,7 +30,7 @@ public class RefreshTokenService {
         User user = userRepository.findById(uid).orElseThrow(
                 () -> new IllegalArgumentException("유저 ID가 존재하지 않습니다.")
         );
-        refreshTokenRepository.deleteByUserEmail(user.getEmail());
+        refreshTokenRepository.deleteByUserEmail(user.getUemail());
         return user.getUid();
     }
 }

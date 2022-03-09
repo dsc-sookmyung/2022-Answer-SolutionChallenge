@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.concurrent.TimeoutException;
+
 @Service
 @RequiredArgsConstructor
 public class LoadUserService {
@@ -25,6 +27,10 @@ public class LoadUserService {
         ProviderLoadStrategy providerLoadStrategy = getProviderLoadStrategy(providerType);
 
         String socialEmail = providerLoadStrategy.getSocialPk(authentication.getAccessToken());
+
+        if (socialEmail == null) {
+            throw new IllegalArgumentException("액세스 토큰이 만료되었습니다.");
+        }
 
         return CustomUserDetails.builder()
                 .email(socialEmail)
