@@ -31,7 +31,8 @@ public class NoticeController {
     public String saveImage (@RequestPart MultipartFile uploadfile) throws IOException {
         Long nid = noticeService.saveImage(uploadfile);
         String koreantext = noticeService.detectText(nid);
-        return "Text from image: " + koreantext;
+        String transtext = noticeService.transText(nid);
+        return "Text from image: " + transtext;
     }
 
 
