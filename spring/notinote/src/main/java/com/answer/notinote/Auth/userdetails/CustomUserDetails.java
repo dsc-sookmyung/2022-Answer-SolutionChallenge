@@ -1,7 +1,7 @@
-package com.answer.notinote.auth.userdetails;
+package com.answer.notinote.Auth.userdetails;
 
 import com.answer.notinote.User.domain.entity.User;
-import com.answer.notinote.auth.data.ProviderType;
+import com.answer.notinote.Auth.data.ProviderType;
 import io.jsonwebtoken.lang.Assert;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;

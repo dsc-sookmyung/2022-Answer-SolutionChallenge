@@ -1,9 +1,9 @@
-package com.answer.notinote.auth.handler;
+package com.answer.notinote.Auth.handler;
 
 import com.answer.notinote.User.domain.entity.User;
 import com.answer.notinote.User.domain.repository.UserRepository;
-import com.answer.notinote.auth.data.RoleType;
-import com.answer.notinote.auth.userdetails.CustomUserDetails;
+import com.answer.notinote.Auth.data.RoleType;
+import com.answer.notinote.Auth.userdetails.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -31,7 +31,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         if (authentication.getAuthorities().stream().anyMatch(s -> s.getAuthority().equals(RoleType.GUEST.getGrantedAuthority()))) {
             System.out.println("회원가입으로 이동합니다.");
-            response.sendRedirect("/join/" + user.getUid());
+            response.sendRedirect("/oauth/success/" + user.getUid());
             return;
         }
         else {

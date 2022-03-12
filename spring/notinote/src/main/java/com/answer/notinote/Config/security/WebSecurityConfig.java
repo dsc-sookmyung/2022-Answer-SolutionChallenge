@@ -1,11 +1,10 @@
 package com.answer.notinote.Config.security;
 
-import com.answer.notinote.auth.data.RoleType;
-import com.answer.notinote.auth.filter.JwtAuthenticationFilter;
-import com.answer.notinote.auth.filter.OAuth2AccessTokenAuthenticationFilter;
-import com.answer.notinote.auth.handler.OAuth2LoginFailureHandler;
-import com.answer.notinote.auth.handler.OAuth2LoginSuccessHandler;
-import com.answer.notinote.auth.token.JwtTokenProvider;
+import com.answer.notinote.Auth.filter.JwtAuthenticationFilter;
+import com.answer.notinote.Auth.filter.OAuth2AccessTokenAuthenticationFilter;
+import com.answer.notinote.Auth.handler.OAuth2LoginFailureHandler;
+import com.answer.notinote.Auth.handler.OAuth2LoginSuccessHandler;
+import com.answer.notinote.Auth.token.provider.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -22,10 +21,10 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final JwtTokenProvider jwtTokenProvider;
     private final OAuth2AccessTokenAuthenticationFilter oAuth2AccessTokenAuthenticationFilter;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -34,13 +33,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .csrf().disable()
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
+                // 모두 접근 가능한 URL
                     .authorizeRequests()
-                    .antMatchers("/", "/login/*", "/join", "/join/*").permitAll()
+                    .antMatchers("/","/oauth/success/*", "/oauth/fail","/login/*", "/join").permitAll()
                 .and()
+                // USER만 접근 가능한 URL
                     .authorizeRequests()
                     .antMatchers("/test/user")
-                    .hasRole("USER")
+                    .authenticated()
                 .and()
+                // ADMIN만 접근 가능한 URL
                     .authorizeRequests()
                     .antMatchers("/test/admin")
                     .hasRole("ADMIN")
@@ -53,7 +55,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .successHandler(oAuth2LoginSuccessHandler)
                 .failureHandler(oAuth2LoginFailureHandler)
                 .and()
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
+                UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(oAuth2AccessTokenAuthenticationFilter,
-                        UsernamePasswordAuthenticationFilter.class);
+                UsernamePasswordAuthenticationFilter.class);
     }
 }

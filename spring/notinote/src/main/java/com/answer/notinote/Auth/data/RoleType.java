@@ -1,4 +1,4 @@
-package com.answer.notinote.auth.data;
+package com.answer.notinote.Auth.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

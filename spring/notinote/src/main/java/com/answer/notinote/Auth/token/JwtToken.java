@@ -1,4 +1,4 @@
-package com.answer.notinote.auth.token;
+package com.answer.notinote.Auth.token;
 
 import io.jsonwebtoken.*;
 import lombok.Getter;

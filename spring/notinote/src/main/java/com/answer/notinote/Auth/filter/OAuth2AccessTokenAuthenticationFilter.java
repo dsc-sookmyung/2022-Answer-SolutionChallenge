@@ -1,8 +1,8 @@
-package com.answer.notinote.auth.filter;
+package com.answer.notinote.Auth.filter;
 
-import com.answer.notinote.auth.token.AccessTokenAuthenticationProvider;
-import com.answer.notinote.auth.data.ProviderType;
-import com.answer.notinote.auth.token.AccessTokenProviderTypeToken;
+import com.answer.notinote.Auth.token.provider.AccessTokenAuthenticationProvider;
+import com.answer.notinote.Auth.data.ProviderType;
+import com.answer.notinote.Auth.token.AccessTokenProviderTypeToken;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -14,10 +14,9 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
 
 /**
- * 로그인 요청 헤더의 Access Token을 식별하는 헤더
+ * "login/oauth2"로 들어오는 로그인 요청에서 헤더의 Access Token을 식별하는 헤더
  */
 @Component
 public class OAuth2AccessTokenAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
@@ -43,10 +42,6 @@ public class OAuth2AccessTokenAuthenticationFilter extends AbstractAuthenticatio
     /**
      * 로그인 요청이 들어오면 가장 먼저 작동되는 메소드입니다.
      * AuthenticationManager.authenticate()를 호출해 인증을 진행합니다.
-     * @param request
-     * @param response
-     * @return
-     * @throws AuthenticationException
      */
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -56,15 +51,5 @@ public class OAuth2AccessTokenAuthenticationFilter extends AbstractAuthenticatio
 
         //AuthenticationManager에 인증 요청 전송
         return this.getAuthenticationManager().authenticate(new AccessTokenProviderTypeToken(accessToken, ProviderType.GOOGLE));
-    }
-
-
-    private ProviderType extractProviderType(HttpServletRequest request) {
-        return Arrays.stream(ProviderType.values())
-                .filter(providerType ->
-                        providerType.getSocialName()
-                                .equals(request.getRequestURI().substring(DEFAULT_OAUTH2_LOGIN_REQUEST_URL_PREFIX.length())))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("잘못된 URL 주소입니다"));
     }
 }

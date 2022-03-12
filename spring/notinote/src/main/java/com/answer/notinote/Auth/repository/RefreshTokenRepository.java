@@ -1,7 +1,6 @@
-package com.answer.notinote.auth.repository;
+package com.answer.notinote.Auth.repository;
 
-import com.answer.notinote.auth.token.RefreshToken;
-import com.answer.notinote.User.domain.entity.User;
+import com.answer.notinote.Auth.token.RefreshToken;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

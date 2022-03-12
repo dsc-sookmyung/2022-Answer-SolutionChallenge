@@ -1,11 +1,11 @@
-package com.answer.notinote.auth.data;
+package com.answer.notinote.Auth.data;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpMethod;
 
 /**
- * 제공하는 SNS 로그인 enum 클래스
+ * SNS 로그인 enum 클래스
  */
 @Getter
 @AllArgsConstructor

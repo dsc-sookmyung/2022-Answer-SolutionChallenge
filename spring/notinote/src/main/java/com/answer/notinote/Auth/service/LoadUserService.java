@@ -1,11 +1,11 @@
-package com.answer.notinote.auth.service;
+package com.answer.notinote.Auth.service;
 
-import com.answer.notinote.auth.data.dto.UserSocialResponseDto;
-import com.answer.notinote.auth.strategy.GoogleLoadStrategy;
-import com.answer.notinote.auth.strategy.ProviderLoadStrategy;
-import com.answer.notinote.auth.data.ProviderType;
-import com.answer.notinote.auth.token.AccessTokenProviderTypeToken;
-import com.answer.notinote.auth.userdetails.CustomUserDetails;
+import com.answer.notinote.Auth.data.dto.UserSocialResponseDto;
+import com.answer.notinote.Auth.strategy.GoogleLoadStrategy;
+import com.answer.notinote.Auth.strategy.ProviderLoadStrategy;
+import com.answer.notinote.Auth.data.ProviderType;
+import com.answer.notinote.Auth.token.AccessTokenProviderTypeToken;
+import com.answer.notinote.Auth.userdetails.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;

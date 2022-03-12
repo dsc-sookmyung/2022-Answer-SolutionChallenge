@@ -1,7 +1,7 @@
-package com.answer.notinote.auth.data.dto;
+package com.answer.notinote.Auth.data.dto;
 
-import com.answer.notinote.auth.data.ProviderType;
-import com.answer.notinote.auth.data.RoleType;
+import com.answer.notinote.Auth.data.ProviderType;
+import com.answer.notinote.Auth.data.RoleType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class UserRequestDto {
+public class UserAuthRequestDto {
     private String email;
     private String firstname;
     private String lastname;

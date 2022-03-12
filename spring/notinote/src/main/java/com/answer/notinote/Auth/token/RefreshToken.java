@@ -1,4 +1,4 @@
-package com.answer.notinote.auth.token;
+package com.answer.notinote.Auth.token;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;

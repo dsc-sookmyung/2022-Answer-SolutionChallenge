@@ -1,11 +1,13 @@
-package com.answer.notinote.auth.token;
+package com.answer.notinote.Auth.token.provider;
 
-import com.answer.notinote.auth.data.RoleType;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.answer.notinote.Auth.data.RoleType;
+import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,16 +18,19 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Date;
-import java.util.List;
 
-@RequiredArgsConstructor
 @Component
+@RequiredArgsConstructor
+@PropertySource("classpath:application.yml")
 public class JwtTokenProvider {
-    private String secretKey = "notinotenotinotenotinotenotinotenotinotenotinote";
-
-    // 토큰 유효시간 30분
+    @Value("${jwt.secret}")
+    private String secretKey;
+    private String header = "ACCESS-TOKEN";
     private long tokenValidTime = 30 * 60 * 1000L;
+
     private final UserDetailsService userDetailsService;
+
+    private static final Log LOG = LogFactory.getLog(JwtTokenProvider.class);
 
     @PostConstruct
     protected void init() {
@@ -58,16 +63,25 @@ public class JwtTokenProvider {
 
     // Header에서 token 값 불러오기
     public String resolveToken(HttpServletRequest request) {
-        return request.getHeader("JWT-TOKEN");
+        return request.getHeader(header);
     }
 
     // 토큰의 유효성 & 만료일자 확인
-    public boolean validateToekn(String token) {
+    public boolean validateToken(String token) {
         try {
-            Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-            return !claims.getBody().getExpiration().before(new Date());
-        } catch (Exception e) {
-            return false;
+            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            return true;
+        } catch (SignatureException ex) {
+            LOG.error("Invalid JWT signature");
+        } catch (MalformedJwtException ex) {
+            LOG.error("Invalid JWT token");
+        } catch (ExpiredJwtException ex) {
+            LOG.error("Expired JWT token");
+        } catch (UnsupportedJwtException ex) {
+            LOG.error("Unsupported JWT token");
+        } catch (IllegalArgumentException ex) {
+            LOG.error("JWT claims string is empty");
         }
+        return false;
     }
 }

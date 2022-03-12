@@ -1,4 +1,4 @@
-package com.answer.notinote.auth.handler;
+package com.answer.notinote.Auth.handler;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.AuthenticationException;
@@ -10,6 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * OAuth2 로그인 인증이 실패했을 때 실행되는 핸들러
+ */
 @Component
 @RequiredArgsConstructor
 public class OAuth2LoginFailureHandler extends SimpleUrlAuthenticationFailureHandler {

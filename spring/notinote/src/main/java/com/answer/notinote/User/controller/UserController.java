@@ -1,15 +1,13 @@
 package com.answer.notinote.User.controller;
 
 import com.answer.notinote.User.dto.JoinRequestDto;
-import com.answer.notinote.auth.token.JwtTokenProvider;
+import com.answer.notinote.Auth.token.provider.JwtTokenProvider;
 import com.answer.notinote.User.domain.entity.User;
-import com.answer.notinote.User.dto.UserRequestDto;
+import com.answer.notinote.User.dto.LoginResponseDto;
 import com.answer.notinote.User.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,11 +18,35 @@ public class UserController {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    @GetMapping("/join/{id}")
+    /**
+     * OAUTH2 로그인 성공시 회원가입한 user 정보를 반환합니다.
+     * @param id
+     * @return
+     */
+    @GetMapping("/oauth/success/{id}")
     public ResponseEntity<?> auth_success(@PathVariable("id") long id) {
-        System.out.println("/join/id 입니다.");
         User user = userService.findUserById(id);
         return ResponseEntity.ok(user);
+    }
+
+    /**
+     * OAUTH2 로그인 실패시 실패했다는 문구를 리턴합니다.
+     * @return
+     */
+    @GetMapping("/oauth/fail")
+    public ResponseEntity<?> auth_fail() {
+        return ResponseEntity.ok("OAuth2 로그인에 실패했습니다.");
+    }
+
+
+    @GetMapping("/test/user")
+    public ResponseEntity<?> testforUser() {
+        return ResponseEntity.ok("USER입니다.");
+    }
+
+    @GetMapping("/test/admin")
+    public ResponseEntity<?> testforAdmin() {
+        return ResponseEntity.ok("ADMIN입니다.");
     }
 
     // 회원가입
@@ -33,44 +55,50 @@ public class UserController {
         return ResponseEntity.ok(userService.join(requestDto));
     }
 
-    // 로그인
+    /**
+     * 입력받은 id의 유저를 찾아 jwt token을 반환합니다.
+     * @param id
+     * @return
+     */
     @GetMapping("/login/{id}")
     public ResponseEntity<?> login(@PathVariable("id") long id) {
         User user = userService.findUserById(id);
 
-        String token = jwtTokenProvider.createToken(user.getUemail(), user.getUroleType());
-        return ResponseEntity.ok(token);
+        LoginResponseDto response = LoginResponseDto.builder()
+                .id(user.getUid())
+                .email(user.getUemail())
+                .firstname(user.getUfirstname())
+                .lastname(user.getUlastname())
+                .language(user.getUlanguage())
+                .roles(user.getUroleType())
+                .access_token(jwtTokenProvider.createToken(user.getUemail(), user.getUroleType()))
+                .refresh_token(null)
+                .build();
+        return ResponseEntity.ok(response);
     }
 
-    // token 재발급
+    /**
+     * Refresh Token을 재발급합니다. - 미완
+     * @param refreshToken
+     * @return
+     */
     @PostMapping("/refresh")
     public String validateRefreshToken(@RequestHeader("REFRESH-TOKEN") String refreshToken) {
         return "";
     }
 
-    // 회원정보 수정
-    @PatchMapping()
-    public User update(@RequestParam Long id, @RequestBody UserRequestDto requestDto) {
-        return userService.update(id, requestDto);
-    }
-
-    // 이메일로 회원 조회
-    @GetMapping("/user/email")
-    public User readByEmail(@RequestParam String email) {
-        return userService.findUserByEmail(email);
-    }
-
-    // 전체 회원 조회
-    @GetMapping("/user/list")
-    public List<User> readAll() {
-        return userService.findAllUsers();
-    }
-
-    // 회원 삭제
+    /**
+     * 회원을 탙퇴처리 합니다.
+     * @param id
+     * @return
+     */
     @DeleteMapping("/user")
     public Long delete(@RequestParam Long id) {
         return userService.delete(id);
     }
+
+
+
 
     //Todo: Logout
 

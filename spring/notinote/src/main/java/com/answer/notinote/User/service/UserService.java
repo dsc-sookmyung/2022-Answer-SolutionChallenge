@@ -1,7 +1,7 @@
 package com.answer.notinote.User.service;
 
 import com.answer.notinote.User.dto.JoinRequestDto;
-import com.answer.notinote.auth.data.RoleType;
+import com.answer.notinote.Auth.data.RoleType;
 import com.answer.notinote.User.domain.entity.User;
 import com.answer.notinote.User.domain.repository.UserRepository;
 import com.answer.notinote.User.dto.UserRequestDto;
@@ -34,6 +34,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     public User update(Long id, UserRequestDto requestDto) {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("id가 존재하지 않습니다.")
@@ -43,6 +44,7 @@ public class UserService {
         return user;
     }
 
+    @Transactional
     public Long delete(Long id) {
         User user = userRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("id가 존재하지 않습니다.")

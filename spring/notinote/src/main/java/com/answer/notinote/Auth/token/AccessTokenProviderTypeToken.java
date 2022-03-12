@@ -1,6 +1,6 @@
-package com.answer.notinote.auth.token;
+package com.answer.notinote.Auth.token;
 
-import com.answer.notinote.auth.data.ProviderType;
+import com.answer.notinote.Auth.data.ProviderType;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;

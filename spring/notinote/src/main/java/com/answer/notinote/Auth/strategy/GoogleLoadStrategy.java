@@ -1,7 +1,7 @@
-package com.answer.notinote.auth.strategy;
+package com.answer.notinote.Auth.strategy;
 
-import com.answer.notinote.auth.data.ProviderType;
-import com.answer.notinote.auth.data.dto.UserSocialResponseDto;
+import com.answer.notinote.Auth.data.ProviderType;
+import com.answer.notinote.Auth.data.dto.UserSocialResponseDto;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 

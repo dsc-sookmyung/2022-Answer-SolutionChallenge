@@ -1,16 +1,13 @@
-package com.answer.notinote.auth.service;
+package com.answer.notinote.Auth.service;
 
-import com.answer.notinote.auth.token.RefreshToken;
+import com.answer.notinote.Auth.token.RefreshToken;
 import com.answer.notinote.User.domain.entity.User;
-import com.answer.notinote.auth.repository.RefreshTokenRepository;
+import com.answer.notinote.Auth.repository.RefreshTokenRepository;
 import com.answer.notinote.User.domain.repository.UserRepository;
-import com.answer.notinote.User.util.exception.TokenRefreshException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
