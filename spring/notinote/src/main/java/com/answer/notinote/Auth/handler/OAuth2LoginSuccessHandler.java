@@ -1,9 +1,11 @@
 package com.answer.notinote.Auth.handler;
 
+import com.answer.notinote.Exception.CustomException;
 import com.answer.notinote.User.domain.entity.User;
 import com.answer.notinote.User.domain.repository.UserRepository;
 import com.answer.notinote.Auth.data.RoleType;
 import com.answer.notinote.Auth.userdetails.CustomUserDetails;
+import com.answer.notinote.User.util.UserException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -26,7 +28,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         User user = userRepository.findByUemail(userDetails.getEmail()).orElseThrow(
-                () -> new IllegalArgumentException("이메일이 존재하지 않습니다.")
+                () -> new CustomException(UserException.NOT_FOUND)
         );
 
         if (authentication.getAuthorities().stream().anyMatch(s -> s.getAuthority().equals(RoleType.GUEST.getGrantedAuthority()))) {

@@ -1,7 +1,7 @@
 package com.answer.notinote.User.controller;
 
 import com.answer.notinote.User.dto.JoinRequestDto;
-import com.answer.notinote.Auth.token.provider.JwtTokenProvider;
+import com.answer.notinote.Auth.token.JwtTokenProvider;
 import com.answer.notinote.User.domain.entity.User;
 import com.answer.notinote.User.dto.LoginResponseDto;
 import com.answer.notinote.User.service.UserService;
@@ -67,8 +67,7 @@ public class UserController {
         LoginResponseDto response = LoginResponseDto.builder()
                 .id(user.getUid())
                 .email(user.getUemail())
-                .firstname(user.getUfirstname())
-                .lastname(user.getUlastname())
+                .username(user.getUusername())
                 .language(user.getUlanguage())
                 .roles(user.getUroleType())
                 .access_token(jwtTokenProvider.createToken(user.getUemail(), user.getUroleType()))
@@ -96,9 +95,6 @@ public class UserController {
     public Long delete(@RequestParam Long id) {
         return userService.delete(id);
     }
-
-
-
 
     //Todo: Logout
 

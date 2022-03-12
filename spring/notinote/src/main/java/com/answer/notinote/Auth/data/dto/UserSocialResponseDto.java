@@ -8,6 +8,4 @@ import lombok.Setter;
 @Builder
 public class UserSocialResponseDto {
     String email;
-    String firstname;
-    String lastname;
 }

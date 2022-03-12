@@ -18,8 +18,6 @@ public class GoogleLoadStrategy extends ProviderLoadStrategy{
 
             return UserSocialResponseDto.builder()
                     .email(response.getBody().get("email").toString())
-                    .firstname(response.getBody().get("given_name").toString())
-                    .lastname(response.getBody().get("family_name").toString())
                     .build();
 
         } catch (Exception e) {

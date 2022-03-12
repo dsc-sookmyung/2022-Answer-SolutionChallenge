@@ -1,9 +1,8 @@
-package com.answer.notinote.Auth.token.provider;
+package com.answer.notinote.Auth.token;
 
 import com.answer.notinote.Auth.data.RoleType;
-import com.answer.notinote.Auth.data.dto.UserAuthRequestDto;
+import com.answer.notinote.Auth.data.dto.UserRequestDto;
 import com.answer.notinote.Auth.service.LoadUserService;
-import com.answer.notinote.Auth.token.AccessTokenProviderTypeToken;
 import com.answer.notinote.Auth.userdetails.CustomUserDetails;
 import com.answer.notinote.User.domain.entity.User;
 import com.answer.notinote.User.domain.repository.UserRepository;
@@ -43,7 +42,7 @@ public class AccessTokenAuthenticationProvider implements AuthenticationProvider
 
     private User saveOrGet(CustomUserDetails oAuth2User) {
         return userRepository.findByUemail(oAuth2User.getEmail())
-                .orElseGet(() -> userRepository.save(new User(new UserAuthRequestDto(oAuth2User.getEmail(), oAuth2User.getProviderType(), RoleType.GUEST))));
+                .orElseGet(() -> userRepository.save(new User(new UserRequestDto(oAuth2User.getEmail(), oAuth2User.getFirstname(), oAuth2User.getLastname(), oAuth2User.getProviderType(), RoleType.GUEST))));
     }
 
     @Override

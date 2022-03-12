@@ -21,10 +21,7 @@ public class User extends Timestamped {
     private Long uid;
 
     @Column(length = 20)
-    private String ufirstname;
-
-    @Column(length = 20)
-    private String ulastname;
+    private String uusername;
 
     @Column(nullable = false, length = 50, unique = true)
     private String uemail;
@@ -41,26 +38,16 @@ public class User extends Timestamped {
     private RoleType uroleType;
 
     public User(UserRequestDto requestDto) {
-        this.ufirstname = requestDto.getFirstname();
-        this.ulastname = requestDto.getLastname();
         this.uemail = requestDto.getEmail();
     }
 
     public User(UserAuthRequestDto requestDto) {
         this.uemail = requestDto.getEmail();
-        this.ufirstname = requestDto.getFirstname();
-        this.ulastname = requestDto.getLastname();
         this.uproviderType = requestDto.getProviderType();
         this.uroleType = requestDto.getRoleType();
     }
 
-    public String getFullname() {
-        return this.ufirstname + " " + this.ulastname;
-    }
-
     public void update(UserRequestDto requestDto) {
-        this.ufirstname = requestDto.getFirstname();
-        this.ulastname = requestDto.getLastname();
         this.uemail = requestDto.getEmail();
     }
 }

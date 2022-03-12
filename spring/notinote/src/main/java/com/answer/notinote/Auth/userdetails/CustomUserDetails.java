@@ -18,20 +18,16 @@ import java.util.*;
 @AllArgsConstructor
 public class CustomUserDetails implements UserDetails {
     private String email;
-    private String firstname;
-    private String lastname;
     private ProviderType providerType;
     private Set<GrantedAuthority> authorities;
 
-    public CustomUserDetails(String firstname, String lastname, String email, ProviderType providerType) {
-        this.firstname = firstname;
-        this.lastname = lastname;
+    public CustomUserDetails(String email, ProviderType providerType) {
         this.email = email;
         this.providerType = providerType;
     }
 
     public static UserDetails create(User user) {
-        return new CustomUserDetails(user.getUfirstname(), user.getUlastname(), user.getUemail(), user.getUproviderType());
+        return new CustomUserDetails(user.getUemail(), user.getUproviderType());
     }
 
     @Override
@@ -41,7 +37,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.firstname + this.lastname;
+        return this.email;
     }
 
     @Override

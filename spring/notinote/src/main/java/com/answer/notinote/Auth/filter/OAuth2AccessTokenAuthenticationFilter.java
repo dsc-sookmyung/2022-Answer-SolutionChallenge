@@ -1,6 +1,7 @@
 package com.answer.notinote.Auth.filter;
 
-import com.answer.notinote.Auth.token.provider.AccessTokenAuthenticationProvider;
+
+import com.answer.notinote.Auth.token.AccessTokenAuthenticationProvider;
 import com.answer.notinote.Auth.data.ProviderType;
 import com.answer.notinote.Auth.token.AccessTokenProviderTypeToken;
 import org.springframework.security.authentication.ProviderManager;
@@ -42,6 +43,10 @@ public class OAuth2AccessTokenAuthenticationFilter extends AbstractAuthenticatio
     /**
      * 로그인 요청이 들어오면 가장 먼저 작동되는 메소드입니다.
      * AuthenticationManager.authenticate()를 호출해 인증을 진행합니다.
+     * @param request
+     * @param response
+     * @return
+     * @throws AuthenticationException
      */
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {

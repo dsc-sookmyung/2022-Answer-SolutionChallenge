@@ -6,6 +6,9 @@ import com.answer.notinote.Auth.strategy.ProviderLoadStrategy;
 import com.answer.notinote.Auth.data.ProviderType;
 import com.answer.notinote.Auth.token.AccessTokenProviderTypeToken;
 import com.answer.notinote.Auth.userdetails.CustomUserDetails;
+
+import com.answer.notinote.Auth.util.AuthException;
+import com.answer.notinote.Exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -28,13 +31,11 @@ public class LoadUserService {
         UserSocialResponseDto socialEntity = providerLoadStrategy.getSocialEntity(authentication.getAccessToken());
 
         if (socialEntity == null) {
-            throw new IllegalArgumentException("액세스 토큰이 만료되었습니다.");
+            throw new CustomException(AuthException.TOKEN_INVALID);
         }
 
         return CustomUserDetails.builder()
                 .email(socialEntity.getEmail())
-                .firstname(socialEntity.getFirstname())
-                .lastname(socialEntity.getLastname())
                 .providerType(providerType)
                 .build();
     }
@@ -46,7 +47,7 @@ public class LoadUserService {
     private ProviderLoadStrategy getProviderLoadStrategy(ProviderType providerType) {
         switch (providerType) {
             case GOOGLE : return new GoogleLoadStrategy();
-            default : throw new IllegalArgumentException("지원하지 않는 로그인 형식입니다");
+            default : throw new CustomException(AuthException.NOT_SUPPORTED_TYPE);
         }
     }
 }
