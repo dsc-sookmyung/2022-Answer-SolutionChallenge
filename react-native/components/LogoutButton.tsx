@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { TouchableOpacity, Alert } from 'react-native';
 import { useNavigation, StackActions } from '@react-navigation/native';
 import { AntDesign } from '@expo/vector-icons';
+import { useAuth } from '../contexts/Auth';
 
 const LogoutButton = () => {
   const navigation = useNavigation();
+  const auth = useAuth();
   const [showBox, setShowBox] = useState(true);
 
   const LogoutConfirm = () => {
@@ -15,9 +17,7 @@ const LogoutButton = () => {
           text: "Yes",
           onPress: () => {
             setShowBox(false);
-            //   await fetch('https://fetch.url/logout').then(
-            //   response => {
-            //     console.log(response);
+            auth.signOut();
             navigation.dispatch(StackActions.popToTop())
           },
         }, {

@@ -18,6 +18,29 @@ export type TextInput = {
 	description: string;
 }
 
+interface Children {
+	cid?: number,
+	cname?: string,
+	color?: string,
+}
+
+interface JoinData {
+	uid?: number,
+	uprofileImg?: number,
+	username?: string,
+	ulanguage?: string,
+	uchildren?: Children[]
+}
+
+interface AuthData extends JoinData {
+    uemail?: string | undefined,
+    uproviderType?: string | undefined,
+    uroleType?: string | undefined,
+
+	jwt_token?: string,
+	refresh_token?: string,
+};
+
 interface Result {
 	id: number,
 	summary: {id: number, content: string, highlight: boolean, registered: boolean}[],
@@ -41,7 +64,7 @@ interface Notice {
 	}
 }
 
-export interface UserProfile {
+interface UserProfile {
 	userId: number;
 	username: string;
 	gmail: string;
@@ -62,5 +85,6 @@ interface BottomDrawerProps {
 }
 
 export type {
-	Result, Notice, BottomDrawerProps
+	AuthData, JoinData, Children, 
+	Result, Notice, UserProfile, BottomDrawerProps
 }
