@@ -1,14 +1,10 @@
 package com.answer.notinote.Exception;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+@Getter
+@AllArgsConstructor
 public class CustomException extends RuntimeException {
-
-    @Getter
-    private final BaseException exceptionType;
-
-    public CustomException(BaseException exceptionType) {
-        super(exceptionType.getErrorMessage());
-        this.exceptionType = exceptionType;
-    }
+    private final ErrorCode errorCode;
 }

@@ -25,7 +25,7 @@ import java.util.Date;
 public class JwtTokenProvider {
     @Value("${jwt.secret}")
     private String secretKey;
-    private String header = "ACCESS-TOKEN";
+    private String header = "JWT-TOKEN";
     private long tokenValidTime = 30 * 60 * 1000L;
 
     private final UserDetailsService userDetailsService;

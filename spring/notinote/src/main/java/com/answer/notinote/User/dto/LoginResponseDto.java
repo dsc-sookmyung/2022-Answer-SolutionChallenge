@@ -1,7 +1,8 @@
 package com.answer.notinote.User.dto;
 
 import com.answer.notinote.Auth.data.RoleType;
-import com.answer.notinote.Child.dto.ChildRequestDto;
+import com.answer.notinote.Child.domain.Child;
+import com.answer.notinote.Child.dto.ChildDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,12 +14,12 @@ import java.util.List;
 @AllArgsConstructor
 @Getter @Setter
 public class LoginResponseDto {
-    private Long id;
+    private Long uid;
     private String username;
-    private String email;
-    private String language;
-    private List<ChildRequestDto> children;
-    private String access_token;
+    private String uemail;
+    private String ulanguage;
+    private List<ChildDto> uchildren;
+    private String jwt_token;
     private String refresh_token;
     private RoleType roles;
 }

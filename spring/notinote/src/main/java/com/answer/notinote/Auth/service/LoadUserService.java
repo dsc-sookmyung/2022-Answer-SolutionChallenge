@@ -7,11 +7,13 @@ import com.answer.notinote.Auth.data.ProviderType;
 import com.answer.notinote.Auth.token.AccessTokenProviderTypeToken;
 import com.answer.notinote.Auth.userdetails.CustomUserDetails;
 
-import com.answer.notinote.Auth.util.AuthException;
 import com.answer.notinote.Exception.CustomException;
+import com.answer.notinote.Exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import javax.security.auth.message.AuthException;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +33,7 @@ public class LoadUserService {
         UserSocialResponseDto socialEntity = providerLoadStrategy.getSocialEntity(authentication.getAccessToken());
 
         if (socialEntity == null) {
-            throw new CustomException(AuthException.TOKEN_INVALID);
+            throw new CustomException(ErrorCode.TOKEN_INVALID);
         }
 
         return CustomUserDetails.builder()
@@ -47,7 +49,7 @@ public class LoadUserService {
     private ProviderLoadStrategy getProviderLoadStrategy(ProviderType providerType) {
         switch (providerType) {
             case GOOGLE : return new GoogleLoadStrategy();
-            default : throw new CustomException(AuthException.NOT_SUPPORTED_TYPE);
+            default : throw new CustomException(ErrorCode.NOT_SUPPORTED_TYPE);
         }
     }
 }

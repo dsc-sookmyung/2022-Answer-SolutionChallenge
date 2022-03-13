@@ -1,5 +1,6 @@
 package com.answer.notinote.User.dto;
 
+import com.answer.notinote.Child.dto.ChildDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,11 +8,9 @@ import java.util.List;
 
 @Getter @Setter
 public class JoinRequestDto {
-    Long id;
-    Long profileImg;
+    Long uid;
+    Long uprofileImg;
     String username;
     String ulanguage;
-    Long childrenNumber;
-    List<String> childrenName;
-    List<String> childrenColor;
+    List<ChildDto> uchildren;
 }

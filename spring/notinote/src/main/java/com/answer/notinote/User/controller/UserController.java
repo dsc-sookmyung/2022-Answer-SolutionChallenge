@@ -1,7 +1,7 @@
 package com.answer.notinote.User.controller;
 
+import com.answer.notinote.Auth.token.provider.JwtTokenProvider;
 import com.answer.notinote.User.dto.JoinRequestDto;
-import com.answer.notinote.Auth.token.JwtTokenProvider;
 import com.answer.notinote.User.domain.entity.User;
 import com.answer.notinote.User.dto.LoginResponseDto;
 import com.answer.notinote.User.service.UserService;
@@ -15,8 +15,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
-
-    private final JwtTokenProvider jwtTokenProvider;
 
     /**
      * OAUTH2 로그인 성공시 회원가입한 user 정보를 반환합니다.
@@ -38,42 +36,24 @@ public class UserController {
         return ResponseEntity.ok("OAuth2 로그인에 실패했습니다.");
     }
 
-
-    @GetMapping("/test/user")
-    public ResponseEntity<?> testforUser() {
-        return ResponseEntity.ok("USER입니다.");
-    }
-
-    @GetMapping("/test/admin")
-    public ResponseEntity<?> testforAdmin() {
-        return ResponseEntity.ok("ADMIN입니다.");
-    }
-
-    // 회원가입
+    /**
+     * 회원가입 폼 정보를 받아 유저의 권한을 USER로 바꾸고 유저 정보를 리턴합니다.
+     * @param requestDto
+     * @return
+     */
     @PostMapping("/join")
     public ResponseEntity<?> join(@RequestBody JoinRequestDto requestDto) {
         return ResponseEntity.ok(userService.join(requestDto));
     }
 
     /**
-     * 입력받은 id의 유저를 찾아 jwt token을 반환합니다.
+     * 로그인한 유저의 ID를 받아 유저 정보와 JWT Token을 반환합니다.
      * @param id
      * @return
      */
     @GetMapping("/login/{id}")
     public ResponseEntity<?> login(@PathVariable("id") long id) {
-        User user = userService.findUserById(id);
-
-        LoginResponseDto response = LoginResponseDto.builder()
-                .id(user.getUid())
-                .email(user.getUemail())
-                .username(user.getUusername())
-                .language(user.getUlanguage())
-                .roles(user.getUroleType())
-                .access_token(jwtTokenProvider.createToken(user.getUemail(), user.getUroleType()))
-                .refresh_token(null)
-                .build();
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(userService.login(id));
     }
 
     /**
@@ -81,7 +61,7 @@ public class UserController {
      * @param refreshToken
      * @return
      */
-    @PostMapping("/refresh")
+    @PostMapping("oauth/refresh")
     public String validateRefreshToken(@RequestHeader("REFRESH-TOKEN") String refreshToken) {
         return "";
     }

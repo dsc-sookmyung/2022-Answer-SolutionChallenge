@@ -18,6 +18,7 @@ import java.util.*;
 @AllArgsConstructor
 public class CustomUserDetails implements UserDetails {
     private String email;
+    private String username;
     private ProviderType providerType;
     private Set<GrantedAuthority> authorities;
 
@@ -37,7 +38,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.email;
+        return this.username;
     }
 
     @Override

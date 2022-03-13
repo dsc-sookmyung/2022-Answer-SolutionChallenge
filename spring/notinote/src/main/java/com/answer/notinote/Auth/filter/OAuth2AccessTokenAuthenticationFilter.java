@@ -1,9 +1,9 @@
 package com.answer.notinote.Auth.filter;
 
 
-import com.answer.notinote.Auth.token.AccessTokenAuthenticationProvider;
 import com.answer.notinote.Auth.data.ProviderType;
 import com.answer.notinote.Auth.token.AccessTokenProviderTypeToken;
+import com.answer.notinote.Auth.token.provider.AccessTokenAuthenticationProvider;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;

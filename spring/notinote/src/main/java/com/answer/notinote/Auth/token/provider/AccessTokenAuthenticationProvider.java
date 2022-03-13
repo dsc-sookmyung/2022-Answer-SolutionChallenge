@@ -43,7 +43,7 @@ public class AccessTokenAuthenticationProvider implements AuthenticationProvider
 
     private User saveOrGet(CustomUserDetails oAuth2User) {
         return userRepository.findByUemail(oAuth2User.getEmail())
-                .orElseGet(() -> userRepository.save(new User(new UserAuthRequestDto(oAuth2User.getEmail(), oAuth2User.getProviderType(), RoleType.GUEST))));
+                .orElseGet(() -> userRepository.save(new User(new UserAuthRequestDto(oAuth2User.getEmail(), oAuth2User.getUsername(), oAuth2User.getProviderType(), RoleType.GUEST))));
     }
 
     @Override
