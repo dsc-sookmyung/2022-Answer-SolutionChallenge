@@ -1,54 +1,83 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, KeyboardAvoidingView, Alert, Platform, ScrollView, Image, GestureResponderEvent } from 'react-native';
 import { FormControl, Input, Button, VStack, Select, CheckIcon } from 'native-base';
 import { nameValidator } from '../core/utils';
-import type { Navigation } from '../types';
+import type { Navigation, AuthData, JoinData } from '../types';
 import { theme } from '../core/theme';
+import { useAuth } from '../contexts/Auth';
 
 export default function JoinScreen({ navigation }: Navigation) {
-	const [profileImg, setProfileImg] = useState<number>(1);
-	const [username, setUsername] = useState<string>('');
-	const [language, setLanguage] = useState<string>('');
 	const [childrenNumber, setChildrenNumber] = useState<string>('1');
-	const [childrenName, setChildrenName] = useState<string[]>([]);
 	const imgSource = [require(`../assets/images/profile-images/profile-1.png`), require(`../assets/images/profile-images/profile-2.png`), require(`../assets/images/profile-images/profile-3.png`),
 	require(`../assets/images/profile-images/profile-4.png`), require(`../assets/images/profile-images/profile-5.png`), require(`../assets/images/profile-images/profile-6.png`), require(`../assets/images/profile-images/profile-7.png`)];
-	const childrenColor = [theme.colors.primary, theme.colors.secondary, theme.colors.skyblue, theme.colors.coral, theme.colors.gray, '#000']
-	
+	const colors = [theme.colors.primary, theme.colors.secondary, theme.colors.skyblue, theme.colors.coral, theme.colors.gray, '#000']
+	const [joinForm, setJoinForm] = useState<JoinData>({
+		uid: undefined,
+		uprofileImg: 1,
+		username: '',
+		ulanguage: '',
+		uchildren: colors.map(color => ({'cname': '', 'color': color}))
+	})
+
+	const [user, setUser] = useState<AuthData>();
+	const auth = useAuth();
+
+	useEffect(() => {
+		if (auth?.authData?.uroleType==='USER') {
+			Alert.alert(
+				"Success",
+				"Congratulations, your account has been successfully created."
+			)
+			navigation.navigate('Home');
+		}
+		else if (auth?.authData?.uroleType==='GUEST') {
+			setUser(auth?.authData);
+		}
+	}, [auth]);
+
+	useEffect(() => {
+		if (user?.username) {
+			setJoinForm({ ...joinForm, ['username']: user.username });
+		}
+	}, [user]);
+
 	const errorAlert = (error: string) =>
 		Alert.alert(                    
-		"Join Failed",                 
-		error,                      
-		[
-			{ text: "OK", onPress: () => console.log("OK Pressed") }
-		]
+			"Join Failed",                 
+			error,                      
+			[
+				{ text: "OK", onPress: () => console.log("OK Pressed") }
+			]
 		);
 
 	const handleProfileImg = (profileType: number) => (event: GestureResponderEvent) => {
-		setProfileImg(profileType);
+		setJoinForm({ ...joinForm, ['uprofileImg']: profileType });
 	}
 
-	const handleChildName = (childNum: number, text: string) => {
-		let array = [...childrenName];
-		array[childNum] = text;
-		setChildrenName(array);
+	const handleChildren = (childNum: number, text: string) => {
+		let array = joinForm?.uchildren;
+		if (array) array[childNum].cname = text;
+		setJoinForm({ ...joinForm, ['uchildren']: array });
 	}
 
 	const onJoinPressed = () => {
-		const usernameError = nameValidator(username);
-		const childrenNameError = childrenName.length !== Number(childrenNumber);
+		if (user && joinForm) {
+			joinForm.uid = user?.uid;
 
-		if (usernameError || childrenNameError || !language) {
-			console.log(usernameError);
-			errorAlert("Please fill in all the blanks!");
-			return;
+			let childrenArr = joinForm?.uchildren;
+			childrenArr = childrenArr?.slice(0, Number(childrenNumber));
+			joinForm.uchildren = childrenArr;
+
+			const usernameError = nameValidator(joinForm.username);
+			const childrenNameError = joinForm.uchildren?.some(child => child.cname === '');
+	
+			if (usernameError || childrenNameError || !joinForm.ulanguage) {
+				errorAlert("Please fill in all the blanks!");
+				return;
+			}
+	
+			auth.signUp(joinForm);
 		}
-
-		Alert.alert(
-		"Success",
-		"Congratulations, your account has been successfully created."
-		)
-		navigation.navigate('Home');
 	};
 
 	return (
@@ -60,7 +89,7 @@ export default function JoinScreen({ navigation }: Navigation) {
 						<ScrollView horizontal={true}>
 							{Array(7).fill(1).map((num, index) =>
 								<Button key={'b_'+index} variant="unstyled" onPress={handleProfileImg(index+1)}>
-									<Image style={[styles.profileImage, profileImg!==index+1 && styles.disabled]} source={imgSource[index]} />
+									<Image style={[styles.profileImage, joinForm.uprofileImg!==index+1 && styles.disabled]} source={imgSource[index]} />
 								</Button>
 							)}
 						</ScrollView>
@@ -69,8 +98,8 @@ export default function JoinScreen({ navigation }: Navigation) {
 						<FormControl.Label>Username</FormControl.Label>
 						<Input 
 							size="md"
-							value={username}
-							onChangeText={(text) => setUsername(text)}
+							value={joinForm.username}
+							onChangeText={(text) => setJoinForm({ ...joinForm, ['username']: text })}
 							autoFocus
 							autoCapitalize="none"
 							returnKeyType={"next"}
@@ -78,8 +107,8 @@ export default function JoinScreen({ navigation }: Navigation) {
 					</FormControl>
 					<FormControl isRequired style={{ flex: 1 }}>
 						<FormControl.Label>Select Your Language</FormControl.Label>
-						<Select selectedValue={language} size="md" minWidth={200} accessibilityLabel="Select your language" placeholder="Select your language" onValueChange={itemValue => {
-						setLanguage(itemValue);
+						<Select selectedValue={joinForm?.ulanguage} size="md" minWidth={200} accessibilityLabel="Select your language" placeholder="Select your language" onValueChange={itemValue => {
+						setJoinForm({ ...joinForm, ['ulanguage']: itemValue })
 					}} _selectedItem={{
 						bg: "skyblue.500",
 						endIcon: <CheckIcon size={5} />
@@ -121,12 +150,12 @@ export default function JoinScreen({ navigation }: Navigation) {
 									key={'i_'+index}
 									size="md"
 									variant="underlined"
-									value={childrenName[index]}
-									onChangeText={(text) => handleChildName(index, text)}
+									value={joinForm?.uchildren && joinForm.uchildren[index]?.cname}
+									onChangeText={(text) => handleChildren(index, text)}
 									autoCapitalize="none"
 									mb={2}
 									InputRightElement={
-										<Button bg={childrenColor[index]} borderRadius="full" m={1} size="xs" height={childrenNumber==="1" ? "60%": "50%"}>
+										<Button bg={colors[index]} borderRadius="full" m={1} size="xs" height={childrenNumber==="1" ? "60%": "50%"}>
 											&nbsp;
 										</Button>
 									}

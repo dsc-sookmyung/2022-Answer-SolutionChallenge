@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, View, KeyboardAvoidingView, Image, Platform, TouchableOpacity } from 'react-native';
+import { StyleSheet, View, KeyboardAvoidingView, Image, Platform, TouchableOpacity, Alert } from 'react-native';
 import { Button, Text } from 'native-base';
 import { theme } from '../core/theme';
 import type { Navigation } from '../types';
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
 import { GOOGLE_CLIENT_ID_WEB } from '@env';
+import { useAuth } from '../contexts/Auth';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -16,29 +17,33 @@ export default function LoginScreen({ navigation }: Navigation) {
 		webClientId: GOOGLE_CLIENT_ID_WEB,
 		// responseType: 'id_token'
 	})
+	const auth = useAuth();
 
 	useEffect(() => {
 		// WebBrowser.dismissAuthSession();
 		if (response?.type === 'success') {
-		const { authentication } = response;
-		// console.log('success!')
-		console.log(authentication);
-		// console.log(response.params);
-		// TODO: fetch API
-		// TEST
-		let status = 'join';
-		switch(status) {
-			case 'login':   // if account exists
-			navigation.navigate('Home');
-			case 'join':    // if no account
-			navigation.navigate('Join');
-		}
+			const { authentication } = response;
+
+			if (authentication) {
+				auth.signIn(authentication?.accessToken);
+			}
+			else {
+				Alert.alert("Authentication failed. Please try again.");
+			}
 		}
 		else {
-			console.log('fail')
 			console.log(response)
 		}
 	}, [response]);
+
+	useEffect(() => {
+		console.log('auth',auth?.authData)
+		if (auth?.authData?.uroleType === 'GUEST') {
+			navigation.navigate('Join');
+		} else if (auth?.authData?.uroleType === 'USER') {
+			navigation.navigate('Home');
+		}
+	}, [auth?.authData]);
 
 	const onLoginPressed = () => {
 		navigation.navigate('Home');

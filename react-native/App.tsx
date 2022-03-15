@@ -8,6 +8,8 @@ import AppLoading from 'expo-app-loading';
 import useFonts from './hooks/useFonts';
 import { theme } from './core/theme';
 
+import { AuthProvider } from './contexts/Auth';
+
 import LoginScreen from './screens/LoginScreen';
 import JoinScreen from './screens/JoinScreen';
 import HomeScreen from './screens/HomeScreen';
@@ -36,52 +38,54 @@ export default function App() {
   } 
 
   return (
-    <NativeBaseProvider theme={nativeBaseTheme}>
-      <NavigationContainer>
-        <Stack.Navigator 
-          initialRouteName="Login"
-        >
-          <Stack.Screen 
-            name="Login" 
-            component={LoginScreen} 
-            options={{headerShown: false}} 
-          />
-          <Stack.Screen
-            name="Join"
-            component={JoinScreen}
-          />
-          <Stack.Screen
-            name="Home"
-            component={HomeScreen}
-            options={{
-              headerStyle: { backgroundColor: theme.colors.primary },
-              title: "NotiNote",
-              headerBackVisible: false,
-              headerRight: () => <LogoutButton/>,
-              
-              headerTitle: (props) => ( // App Logo
-                <Image
-                  style={{ width: 90, height: 50 }}
-                  source={require('./assets/images/notinote-icon-white.png')}
-                  resizeMode='contain'
-                />
-              ),
-            }}
-          />
-          <Stack.Screen
-            name="Translate"
-            component={TranslateScreen}
-          />
-          <Stack.Screen
-            name="Search"
-            component={SearchScreen}
-          />
-          <Stack.Screen
-            name="SearchResult"
-            component={SearchResultScreen}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </NativeBaseProvider>
+    <AuthProvider>
+      <NativeBaseProvider theme={nativeBaseTheme}>
+        <NavigationContainer>
+          <Stack.Navigator 
+            initialRouteName="Login"
+          >
+            <Stack.Screen 
+              name="Login" 
+              component={LoginScreen} 
+              options={{headerShown: false}} 
+            />
+            <Stack.Screen
+              name="Join"
+              component={JoinScreen}
+            />
+            <Stack.Screen
+              name="Home"
+              component={HomeScreen}
+              options={{
+                headerStyle: { backgroundColor: theme.colors.primary },
+                title: "NotiNote",
+                headerBackVisible: false,
+                headerRight: () => <LogoutButton/>,
+                
+                headerTitle: (props) => ( // App Logo
+                  <Image
+                    style={{ width: 90, height: 50 }}
+                    source={require('./assets/images/notinote-icon-white.png')}
+                    resizeMode='contain'
+                  />
+                ),
+              }}
+            />
+            <Stack.Screen
+              name="Translate"
+              component={TranslateScreen}
+            />
+            <Stack.Screen
+              name="Search"
+              component={SearchScreen}
+            />
+            <Stack.Screen
+              name="SearchResult"
+              component={SearchResultScreen}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </NativeBaseProvider>
+    </AuthProvider>
   );
 }
