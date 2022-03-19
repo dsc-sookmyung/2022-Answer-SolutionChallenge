@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @CrossOrigin
@@ -67,6 +68,10 @@ public class UserController {
         return ResponseEntity.ok(userService.login(id, response));
     }
 
+    @DeleteMapping("/logout")
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        return ResponseEntity.ok(userService.logout(request));
+    }
     /**
      * 회원을 탙퇴 처리 합니다.
      * @param id
@@ -77,7 +82,4 @@ public class UserController {
         return userService.delete(id);
     }
 
-    //Todo: Logout
-
-    //Todo: find password
 }

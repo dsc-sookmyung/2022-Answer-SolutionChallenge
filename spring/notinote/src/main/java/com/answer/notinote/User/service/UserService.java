@@ -1,6 +1,7 @@
 package com.answer.notinote.User.service;
 
 import com.answer.notinote.Auth.repository.RefreshTokenRepository;
+import com.answer.notinote.Auth.service.RefreshTokenService;
 import com.answer.notinote.Auth.token.RefreshToken;
 import com.answer.notinote.Auth.token.provider.JwtTokenProvider;
 import com.answer.notinote.Child.domain.Child;
@@ -16,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +29,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final RefreshTokenService refreshTokenService;
 
     @Transactional
     public UserResponseDto join(JoinRequestDto requestDto, HttpServletResponse response) {
@@ -73,6 +76,17 @@ public class UserService {
                 .uchildren(children)
                 .uroleType(user.getUroleType())
                 .build();
+    }
+
+    @Transactional
+    public Long logout(HttpServletRequest request) {
+        String token = jwtTokenProvider.resolveToken(request);
+        String email = jwtTokenProvider.getUserEmail(token);
+
+        User user = findUserByEmail(email);
+        refreshTokenService.delete(user);
+
+        return user.getUid();
     }
 
     @Transactional
