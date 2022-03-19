@@ -7,6 +7,7 @@ import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
 import { GOOGLE_CLIENT_ID_WEB } from '@env';
 import { useAuth } from '../contexts/Auth';
+import env from 'react-native-dotenv';
 
 WebBrowser.maybeCompleteAuthSession();
 
