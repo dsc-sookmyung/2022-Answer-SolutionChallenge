@@ -60,16 +60,13 @@ export default function App() {
       <NativeBaseProvider theme={nativeBaseTheme}>
         <NavigationContainer>
           <Stack.Navigator 
-            initialRouteName={isFirstRun ? "Introduction" : "Login"}
+            initialRouteName={isFirstRun == "true" ? "Introduction" : "Login"}
           >
             <Stack.Screen 
               name="Login" 
               component={LoginScreen} 
               options={{
                 headerShown: false,
-                headerStyle: { 
-                  backgroundColor: theme.colors.primary,
-                },
               }} 
             />
             <Stack.Screen
@@ -77,6 +74,7 @@ export default function App() {
               component={JoinScreen}
               options={{
                 headerStyle: { backgroundColor: theme.colors.primary },
+                headerTintColor: '#fff',
               }}
             />
             <Stack.Screen 
@@ -109,6 +107,7 @@ export default function App() {
               component={TranslateScreen}
               options={{
                 headerStyle: { backgroundColor: theme.colors.primary },
+                headerTintColor: '#fff',
               }}
             />
             <Stack.Screen
@@ -116,6 +115,7 @@ export default function App() {
               component={SearchScreen}
               options={{
                 headerStyle: { backgroundColor: theme.colors.primary },
+                headerTintColor: '#fff',
               }}
             />
             <Stack.Screen
@@ -123,6 +123,7 @@ export default function App() {
               component={SearchResultScreen}
               options={{
                 headerStyle: { backgroundColor: theme.colors.primary },
+                headerTintColor: '#fff',
               }}
             />
           </Stack.Navigator>

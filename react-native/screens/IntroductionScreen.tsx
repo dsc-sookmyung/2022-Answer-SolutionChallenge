@@ -11,7 +11,7 @@ export default function HomeScreen({ navigation }: Navigation) {
     useEffect(() => {
         const storeData = async () => {
             try {
-                await AsyncStorage.setItem('isFirstRun', "true");
+                await AsyncStorage.setItem('isFirstRun', "false");
             } catch (error) {
                 console.log("error occured while using AsyncStorage");
             }

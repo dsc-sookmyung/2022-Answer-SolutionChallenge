@@ -97,7 +97,6 @@ export default function SearchResultScreen(props: SearchResultScreenProps) {
 						/>
 					</ImageBackground>
 				)}
-
             </Swiper>
         </View>   
     );
@@ -106,10 +105,5 @@ export default function SearchResultScreen(props: SearchResultScreenProps) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "mistyrose"
     },
-    slideContainer: {
-        flex: 1,
-        backgroundColor: "#333"
-    }
 })
