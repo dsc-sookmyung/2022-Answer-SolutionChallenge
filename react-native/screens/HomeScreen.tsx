@@ -91,17 +91,22 @@ export default function HomeScreen({ navigation }: Navigation) {
                 </View>
                 <View style={styles.functionButtonWrapper}>
                     <Text style={styles.smallTitle} fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="xl">Functions</Text>
-                    <TouchableHighlight onPress={() => navigation.navigate('Translate')} style={[styles.bigButton, styles.deepBlue]}>
-                        <View>
-                            <Text style={[styles.buttonName, styles.deepBlue]} fontWeight={700} fontSize="xl" pb={2}>Translate</Text>
-                            <Text style={styles.deepBlue} fontSize="sm">Translation, summarization, and calendar registration are all possible just by taking a picture of the notice.</Text>
-                        </View>
+                    
+                    <TouchableHighlight onPress={() => navigation.navigate('Translate')}>
+                        <ImageBackground source={require("../assets/images/button-background.png")} style={[styles.bigButton]} imageStyle={{ borderRadius: 12 }}>
+                            <View>
+                                <Text style={[styles.buttonName, styles.deepBlue]} fontWeight={700} fontSize="xl" pb={2}>Translate</Text>
+                                <Text style={styles.deepBlue} fontSize="sm">Translation, summarization, and calendar registration are all possible just by taking a picture of the notice.</Text>
+                            </View>
+                        </ImageBackground>
                     </TouchableHighlight>
-                    <TouchableHighlight onPress={() => navigation.navigate('Search')} style={[styles.bigButton, styles.deepBlue]}>
-                        <View>
-                            <Text style={[styles.buttonName, styles.deepBlue]} fontWeight={700} fontSize="xl" pb={2}>Search</Text>
-                            <Text style={styles.deepBlue} fontSize="sm">You can find notices you have translated.</Text>
-                        </View>
+                    <TouchableHighlight onPress={() => navigation.navigate('Search')}>
+                        <ImageBackground source={require("../assets/images/button-background.png")} style={[styles.bigButton]} imageStyle={{ borderRadius: 12 }}>
+                            <View>
+                                <Text style={[styles.buttonName, styles.deepBlue]} fontWeight={700} fontSize="xl" pb={2}>Search</Text>
+                                <Text style={styles.deepBlue} fontSize="sm">You can find notices you have translated.</Text>
+                            </View>
+                        </ImageBackground>
                     </TouchableHighlight>
                 </View>
             </SafeAreaView> )}
@@ -130,7 +135,6 @@ const styles = StyleSheet.create({
         height: 92,
         width: "90%",
         margin: 22,
-        backgroundColor: "#1134a1",
         borderRadius: 20,
     },
     backgroundImage: {
@@ -200,10 +204,8 @@ const styles = StyleSheet.create({
     },
     deepBlue: {
         color: theme.colors.secondary,
-        backgroundColor: theme.colors.primary,
     },
     lightPink: {
         color: theme.colors.primary,
-        backgroundColor: theme.colors.secondary,
     }
 })
