@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { Image } from 'react-native';
+import { Image, StatusBar, Platform } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NativeBaseProvider } from 'native-base';
 import { nativeBaseTheme } from './core/theme';
@@ -53,10 +53,15 @@ export default function App() {
         onError={() => {}}
       />
     );
-  } 
+  }
+
+  if (Platform.OS == 'ios') {
+      StatusBar.setBarStyle('light-content', true);
+  }
 
   return (
     <AuthProvider>
+      <StatusBar backgroundColor={"#000"} />
       <NativeBaseProvider theme={nativeBaseTheme}>
         <NavigationContainer>
           <Stack.Navigator 
