@@ -1,6 +1,11 @@
 package com.answer.notinote.Auth.token.provider;
 
 import com.answer.notinote.Auth.data.RoleType;
+import com.answer.notinote.Auth.repository.RefreshTokenRepository;
+import com.answer.notinote.Exception.CustomException;
+import com.answer.notinote.Exception.ErrorCode;
+import com.answer.notinote.User.domain.entity.User;
+import com.answer.notinote.User.domain.repository.UserRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Base64;
 import java.util.Date;
 
@@ -23,31 +29,37 @@ import java.util.Date;
 @RequiredArgsConstructor
 @PropertySource("classpath:application.yml")
 public class JwtTokenProvider {
+
     @Value("${jwt.secret}")
     private String secretKey;
-    private String header = "JWT-TOKEN";
+
+    @Value("${jwt.refresh}")
+    private String refreshKey;
+
     private long tokenValidTime = 30 * 60 * 1000L;
+    private long refreshValidTime = 300 * 60 * 1000L;
+
+    private String tokenHeader = "JWT_TOKEN";
+    private String refreshHeader = "REFRESH_TOKEN";
 
     private final UserDetailsService userDetailsService;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final UserRepository userRepository;
 
     private static final Log LOG = LogFactory.getLog(JwtTokenProvider.class);
 
     @PostConstruct
     protected void init() {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+        refreshKey = Base64.getEncoder().encodeToString(refreshKey.getBytes());
     }
 
-    // jwt 토큰 생성
-    public String createToken(String email, RoleType roles) {
-        Claims claims = Jwts.claims().setSubject(email);
-        claims.put("roles", roles);
-        Date now = new Date();
-        return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + tokenValidTime))
-                .signWith(SignatureAlgorithm.HS256, secretKey)
-                .compact();
+    public String createToken(String email) {
+        return convertToToken(email, tokenValidTime, secretKey);
+    }
+
+    public String createRefreshToken(String email) {
+        return convertToToken(email, refreshValidTime, refreshKey);
     }
 
     // 토큰에서 인증 정보 조회
@@ -61,9 +73,20 @@ public class JwtTokenProvider {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     }
 
-    // Header에서 token 값 불러오기
     public String resolveToken(HttpServletRequest request) {
-        return request.getHeader(header);
+        return request.getHeader(tokenHeader);
+    }
+
+    public String resolveRefreshToken(HttpServletRequest request) {
+        return request.getHeader(refreshHeader);
+    }
+
+    public void setHeaderToken(HttpServletResponse response, String token) {
+        response.setHeader(tokenHeader, token);
+    }
+
+    public void setHeaderRefreshToken(HttpServletResponse response, String token) {
+        response.setHeader(refreshHeader, token);
     }
 
     // 토큰의 유효성 & 만료일자 확인
@@ -83,5 +106,26 @@ public class JwtTokenProvider {
             LOG.error("JWT claims string is empty");
         }
         return false;
+    }
+
+    private String convertToToken(String email, Long validTime, String key) {
+        User user = userRepository.findByUemail(email).orElseThrow(
+                () -> new CustomException(ErrorCode.USER_NOT_FOUND)
+        );
+
+        Claims claims = Jwts.claims().setSubject(user.getUemail());
+        claims.put("roles", user.getUroleType());
+        Date now = new Date();
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime() + validTime))
+                .signWith(SignatureAlgorithm.HS256, key)
+                .compact();
+    }
+
+    public boolean existsRefreshToken(String token) {
+        return refreshTokenRepository.existsByToken(token);
     }
 }
