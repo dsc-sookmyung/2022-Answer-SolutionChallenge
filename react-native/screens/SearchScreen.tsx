@@ -144,8 +144,7 @@ export default function SearchScreen({ navigation }: Navigation) {
         setSearchDate(splitedDate);
         if (date) {
             const newData = notices.filter((notice) => {
-                console.log("asdf", notice.date, splitedDate)
-                return notice.date === splitedDate
+                return notice.date === splitedDate;
             })
             setFilteredNotices(newData);
         } else {
@@ -235,7 +234,7 @@ const styles = StyleSheet.create({
         fontSize: 24,
     },
     selectedDate: {
-        fontSize: 16,
+        fontSize: 14,
         color: "#666666",
         marginRight: 30,
         width: "72%"
