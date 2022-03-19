@@ -3,6 +3,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 export type RootStackParamList = {
 	Login: undefined;
 	Join: undefined;
+	Introduction: undefined;
 	Home: undefined;
 	Translate: undefined;
 	Search: undefined;
@@ -41,10 +42,17 @@ interface AuthData extends JoinData {
 	refresh_token?: string,
 };
 
+interface Event {
+	id: number, 
+	content: string, 
+	date?: string, 
+	highlight: boolean, 
+	registered: boolean
+}
+
 interface Result {
 	id: number,
-	summary: {id: number, content: string, highlight: boolean, registered: boolean}[],
-	fullText: string,
+	fullText: Event[],
 	korean: string
 }
 
@@ -75,16 +83,23 @@ interface UserProfile {
 
 interface BottomDrawerProps {
 	results: Result,
-	showFullText?: boolean,
+	showKorean?: boolean,
 	isFullDrawer?: boolean,
 	isTranslateScreen?: boolean,
-	handleFullText?: () => void,
+	handleKorean?: () => void,
 	saveResults?: () => void,
 	closeResults?: () => void,
 	retakePicture?: () => void,
 }
 
+interface EventForm {
+	title: string, 
+	date: string, 
+	childId: number, 
+	description: string
+}
+
 export type {
 	AuthData, JoinData, Children, 
-	Result, Notice, UserProfile, BottomDrawerProps
+	Event, Result, Notice, UserProfile, BottomDrawerProps, EventForm
 }
