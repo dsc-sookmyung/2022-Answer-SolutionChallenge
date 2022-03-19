@@ -2,6 +2,7 @@ package com.answer.notinote.User.controller;
 
 import com.answer.notinote.User.dto.JoinRequestDto;
 import com.answer.notinote.User.domain.entity.User;
+import com.answer.notinote.User.dto.UserResponseDto;
 import com.answer.notinote.User.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,16 @@ public class UserController {
     @GetMapping("/oauth/success/{id}")
     public ResponseEntity<?> auth_success(@PathVariable("id") long id) {
         User user = userService.findUserById(id);
-        return ResponseEntity.ok(user);
+
+        UserResponseDto response = UserResponseDto.builder()
+                .uid(user.getUid())
+                .uemail(user.getUemail())
+                .username(user.getUsername())
+                .ulanguage(user.getUlanguage())
+                .uchildren(null)
+                .uroleType(user.getUroleType())
+                .build();
+        return ResponseEntity.ok(response);
     }
 
     /**

@@ -11,7 +11,7 @@ import com.answer.notinote.User.dto.JoinRequestDto;
 import com.answer.notinote.Auth.data.RoleType;
 import com.answer.notinote.User.domain.entity.User;
 import com.answer.notinote.User.domain.repository.UserRepository;
-import com.answer.notinote.User.dto.LoginResponseDto;
+import com.answer.notinote.User.dto.UserResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,7 +29,7 @@ public class UserService {
     private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional
-    public LoginResponseDto join(JoinRequestDto requestDto, HttpServletResponse response) {
+    public UserResponseDto join(JoinRequestDto requestDto, HttpServletResponse response) {
         User user = findUserById(requestDto.getUid());
 
         List<Child> children = new ArrayList<>();
@@ -52,7 +52,7 @@ public class UserService {
         }
     }
 
-    public LoginResponseDto login(Long id, HttpServletResponse response) {
+    public UserResponseDto login(Long id, HttpServletResponse response) {
         User user = findUserById(id);
         List<ChildDto> children = new ArrayList<>();
         user.getUchildren().forEach(c ->
@@ -65,13 +65,13 @@ public class UserService {
         jwtTokenProvider.setHeaderRefreshToken(response, refreshToken);
         refreshTokenRepository.save(new RefreshToken(user, refreshToken));
 
-        return LoginResponseDto.builder()
+        return UserResponseDto.builder()
                 .uid(user.getUid())
                 .uemail(user.getUemail())
                 .username(user.getUsername())
                 .ulanguage(user.getUlanguage())
                 .uchildren(children)
-                .roles(user.getUroleType())
+                .uroleType(user.getUroleType())
                 .build();
     }
 
