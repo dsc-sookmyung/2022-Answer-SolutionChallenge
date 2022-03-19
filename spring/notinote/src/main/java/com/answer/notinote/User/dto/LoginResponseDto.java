@@ -19,7 +19,5 @@ public class LoginResponseDto {
     private String uemail;
     private String ulanguage;
     private List<ChildDto> uchildren;
-    private String jwt_token;
-    private String refresh_token;
     private RoleType roles;
 }
