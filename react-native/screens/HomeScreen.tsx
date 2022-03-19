@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, SafeAreaView, TouchableHighlight, Image, ImageBackground, GestureResponderEvent } from 'react-native';
+import { StyleSheet, View, SafeAreaView, TouchableHighlight, Button, Image, ImageBackground, GestureResponderEvent } from 'react-native';
 import { Text } from 'native-base'
 import { theme } from '../core/theme';
 import type { Navigation, UserProfile, Notice } from '../types';
