@@ -13,8 +13,8 @@ WebBrowser.maybeCompleteAuthSession();
   
 export default function LoginScreen({ navigation }: Navigation) {
 	const [request, response, promptAsync] = Google.useAuthRequest({
-		expoClientId: GOOGLE_CLIENT_ID_WEB,
-		webClientId: GOOGLE_CLIENT_ID_WEB,
+		expoClientId: '1044354965352-6qsilpb0i9ntmhbmktld5h68fphi85v5.apps.googleusercontent.com',
+		webClientId: '1044354965352-6qsilpb0i9ntmhbmktld5h68fphi85v5.apps.googleusercontent.com',
 		// responseType: 'id_token'
 	})
 	const auth = useAuth();

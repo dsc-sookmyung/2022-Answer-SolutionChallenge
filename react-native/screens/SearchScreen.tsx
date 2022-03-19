@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
+import { StyleSheet, Text, View, Button, TouchableHighlight } from 'react-native';
 import type { Navigation, Notice } from '../types';
 import SearchedNotice from '../components/SearchedNotice';
 import SearchBar from 'react-native-elements/dist/searchbar/SearchBar-ios';
+import DateTimePickerModal from "react-native-modal-datetime-picker"
+import { Column } from 'native-base';
 
 
 export default function SearchScreen({ navigation }: Navigation) {
@@ -10,7 +12,7 @@ export default function SearchScreen({ navigation }: Navigation) {
     const [filteredNotices, setFilteredNotices] = useState<Notice[]>([{
         userId: 1, 
         childId: 1, 
-        date: "2022-02-10",
+        date: "2022-02-19",
         notices: {
             total_results: [
                 "17th Graduation Ceremony",
@@ -69,7 +71,7 @@ export default function SearchScreen({ navigation }: Navigation) {
     const [notices, setNotices] = useState<Notice[]>([{
         userId: 1, 
         childId: 1, 
-        date: "2022-02-10",
+        date: "2022-02-19",
         notices: {
             total_results: [
                 "17th Graduation Ceremony",
@@ -125,6 +127,32 @@ export default function SearchScreen({ navigation }: Navigation) {
             }]
         }
     }])
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+    const [searchDate, setSearchDate] = useState<string>("Click calendar icon to select date.");
+
+    const showDatePicker = () => {
+        setDatePickerVisibility(true);
+    };
+
+    const hideDatePicker = () => {
+        setDatePickerVisibility(false);
+    };
+
+    const handleConfirm = (date: Date) => {
+        console.log("A date has been picked: ", date);
+        const splitedDate = date.toISOString().split("T")[0];
+        setSearchDate(splitedDate);
+        if (date) {
+            const newData = notices.filter((notice) => {
+                console.log("asdf", notice.date, splitedDate)
+                return notice.date === splitedDate
+            })
+            setFilteredNotices(newData);
+        } else {
+            setFilteredNotices(notices);
+        }
+        hideDatePicker();
+    };
 
     const searchFilter = (text: string | void) => {
         if (text) {
@@ -142,18 +170,37 @@ export default function SearchScreen({ navigation }: Navigation) {
         
     return (
         <View style={styles.container}>
-            <Text style={styles.smallDescription}>SEARCH BY TEXT</Text>
-            <SearchBar
-                platform='ios'
-                onChangeText={(text: string | void) => searchFilter(text)}
-                onClear={() => searchFilter('')}
-                placeholder="Type Here..."
-                value={search}
-            />
-            <Text style={styles.smallDescription}>RESULTS</Text>
-            {filteredNotices?.map((notice, index) => 
-                <SearchedNotice date={notice.date} summariedNotices={notice.notices.total_results} key={"nt_" + index}/>
-            )}
+            <View style={styles.searchDateWrapper}>
+                <Text style={styles.smallDescription}>SEARCH BY DATE</Text>
+                <View style={styles.searchDateContainer}>
+                    <TouchableHighlight onPress={showDatePicker}>
+                        <Text style={styles.calendarIcon}>🗓</Text>
+                    </TouchableHighlight>
+                    <Text style={styles.selectedDate}>{searchDate}</Text>
+                    <DateTimePickerModal
+                        isVisible={isDatePickerVisible}
+                        mode="date"
+                        onConfirm={handleConfirm}
+                        onCancel={hideDatePicker}
+                    />
+                </View>
+            </View>
+            <View >
+                <Text style={styles.smallDescription}>SEARCH BY TEXT</Text>
+                <SearchBar
+                    platform='ios'
+                    onChangeText={(text: string | void) => searchFilter(text)}
+                    onClear={() => searchFilter('')}
+                    placeholder="Type Here..."
+                    value={search}
+                />
+            </View>
+            <View style={styles.searchResults}>
+                <Text style={styles.smallDescription}>RESULTS</Text>
+                {filteredNotices?.map((notice, index) => 
+                    <SearchedNotice date={notice.date} summariedNotices={notice.notices.total_results} key={"nt_" + index}/>
+                )}
+            </View>
         </View> 
     );
 }
@@ -169,6 +216,28 @@ const styles = StyleSheet.create({
         alignSelf: "flex-start",
         fontSize: 12,
         marginBottom: 8,
-        color: "#666666"
-    }
+        color: "#666666",
+        width: "100%"
+    },
+    searchDateWrapper: {
+        marginBottom: 20,
+    },
+    searchDateContainer: {
+        flexDirection: 'row',
+        width: '100%',
+        justifyContent: 'space-evenly',
+        alignItems: 'center'
+    },
+    searchResults: {
+        width: '100%'
+    },
+    calendarIcon: {
+        fontSize: 24,
+    },
+    selectedDate: {
+        fontSize: 16,
+        color: "#666666",
+        marginRight: 30,
+        width: "72%"
+    },
 })
