@@ -1,13 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import type { Navigation } from '../types';
-import { StyleSheet, View, Image, SafeAreaView, TouchableHighlight } from 'react-native';
+import { StyleSheet, View, Image, SafeAreaView, TouchableHighlight, Alert } from 'react-native';
 import { Text } from 'native-base'
 import { theme } from '../core/theme';
 import Swiper from 'react-native-swiper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as WebBrowser from 'expo-web-browser';
+import * as Google from 'expo-auth-session/providers/google';
+import { GOOGLE_CLIENT_ID_WEB } from '@env';
+import { useAuth } from '../contexts/Auth';
+import env from 'react-native-dotenv';
+
+WebBrowser.maybeCompleteAuthSession();
 
 
 export default function HomeScreen({ navigation }: Navigation) {
+    const [request, response, promptAsync] = Google.useAuthRequest({
+		expoClientId: GOOGLE_CLIENT_ID_WEB,
+		webClientId: GOOGLE_CLIENT_ID_WEB,
+	})
+	const auth = useAuth();
+
     useEffect(() => {
         const storeData = async () => {
             try {
@@ -17,8 +30,35 @@ export default function HomeScreen({ navigation }: Navigation) {
             }
         }
         storeData();
-    })
-    
+    });
+
+    useEffect(() => {
+		if (response?.type === 'success') {
+			const { authentication } = response;
+
+			if (authentication) {
+				auth.signIn(authentication?.accessToken);
+			}
+			else {
+				Alert.alert("Authentication failed. Please try again.");
+			}
+		}
+		else {
+			console.log('fail',response)
+		}
+	}, [response]);
+
+    useEffect(() => {
+		if (auth?.authData?.uroleType === 'GUEST') {
+			navigation.navigate('Join');
+		} else if (auth?.authData?.uroleType === 'USER') {
+			navigation.navigate('Home');
+		}
+	}, [auth?.authData]);
+
+	const onLoginPressed = () => {
+		navigation.navigate('Home');
+	};
 
     return (
         <SafeAreaView style={styles.container}>
@@ -49,9 +89,14 @@ export default function HomeScreen({ navigation }: Navigation) {
                     <Text fontSize="md" style={styles.description}>
                         Now you're ready! Let's start NotiNote with your Google account. NotiNote will register the events in your Google Calendar.
                     </Text>
-                    <TouchableHighlight style={styles.startButton} onPress={() => navigation.navigate('Home')}>
+                    <TouchableHighlight 
+                        style={styles.startButton} 
+                        onPress={() => {
+                            promptAsync();
+                        }}
+                    >
                         <Text fontWeight={600} style={styles.buttonStyle}>
-                            Start NotiNote
+                            Sign In With Google
                         </Text>
                     </TouchableHighlight>
                 </View>
