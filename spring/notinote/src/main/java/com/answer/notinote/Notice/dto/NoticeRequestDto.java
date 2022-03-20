@@ -14,23 +14,16 @@ public class NoticeRequestDto {
     private String nimageurl;
     private String origin_full;
     private String trans_full;
-    private String trans_sum;
     private LocalDate ndate;
-    private Boolean registered;
-    private Boolean highlight;
 
     @Builder
-    public NoticeRequestDto (String nimagename, String nimageoriginal, String nimageurl, String origin_full, String trans_full, String trans_sum, LocalDate ndate, Boolean registered, Boolean highlight){
+    public NoticeRequestDto (String nimagename, String nimageoriginal, String nimageurl, String origin_full, String trans_full, LocalDate ndate){
         this.nimagename = nimagename;
         this.nimageoriginal = nimageoriginal;
         this.nimageurl = nimageurl;
         this.origin_full = origin_full;
         this.trans_full = trans_full;
-        this.trans_sum = trans_sum;
         this.ndate = ndate;
-        this.registered = registered;
-        this.highlight = highlight;
-
     }
 
     public Notice toNoticeEntity(){
@@ -40,10 +33,7 @@ public class NoticeRequestDto {
                 .nimageurl(nimageurl)
                 .origin_full(origin_full)
                 .trans_full(trans_full)
-                .trans_sum(trans_sum)
                 .ndate(ndate)
-                .registered(registered)
-                .highlight(highlight)
                 .build();
 
     }
@@ -55,10 +45,7 @@ public class NoticeRequestDto {
         this.nimageurl = notice.getNimageurl();
         this.origin_full = notice.getOrigin_full();
         this.trans_full = notice.getTrans_full();
-        this.trans_sum = notice.getTrans_sum();
         this.ndate = notice.getNdate();
-        this.registered = notice.isRegistered();
-        this.highlight = notice.isHighlight();
     }
 
 
