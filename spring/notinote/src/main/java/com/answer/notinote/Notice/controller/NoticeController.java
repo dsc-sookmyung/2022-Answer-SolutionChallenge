@@ -1,6 +1,7 @@
 package com.answer.notinote.Notice.controller;
 
 
+import com.answer.notinote.Notice.dto.NoticeRequestDto;
 import com.answer.notinote.Notice.service.NoticeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -30,4 +31,9 @@ public class NoticeController {
         return "Text from image: " + transtext;
     }
 
+    @RequestMapping(value = "/notice/save/{nid}", method = RequestMethod.POST)
+    public String saveTitle(@PathVariable Long nid, @RequestBody NoticeRequestDto noticeRequestDto, HttpServletRequest request){
+        String savenotice = noticeService.saveNotice(nid, noticeRequestDto, request);
+        return "Success";
+    }
 }

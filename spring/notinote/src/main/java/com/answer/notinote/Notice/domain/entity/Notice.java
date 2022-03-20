@@ -4,6 +4,7 @@ import com.answer.notinote.User.domain.entity.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 
 import javax.persistence.*;
@@ -32,17 +33,23 @@ public class Notice {
     @JoinColumn
     private User user;
 
+    private String title;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate ndate;
 
     //Not Using Constructor
+
+
     @Builder
-    public Notice (String nimagename, String nimageoriginal, String nimageurl, String origin_full, String trans_full, LocalDate ndate, User user){
+    public Notice (String nimagename, String nimageoriginal, String nimageurl, String origin_full, String trans_full, LocalDate ndate, String title, User user){
         this.nimagename = nimagename;
         this.nimageoriginal = nimageoriginal;
         this.nimageurl = nimageurl;
         this.origin_full = origin_full;
         this.trans_full = trans_full;
         this.ndate = ndate;
+        this.title = title;
         this.user = user;
     }
 
@@ -54,5 +61,7 @@ public class Notice {
     public void update_trans_full(String trans_full){
         this.trans_full = trans_full;
     }
+
+    public void update_title_ndate(String title, LocalDate ndate) {this.title = title; this.ndate = ndate;}
 
     }

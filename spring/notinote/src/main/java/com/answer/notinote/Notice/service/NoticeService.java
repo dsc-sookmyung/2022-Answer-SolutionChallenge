@@ -5,6 +5,7 @@ import com.answer.notinote.Auth.token.provider.JwtTokenProvider;
 import com.answer.notinote.Notice.domain.entity.Notice;
 import com.answer.notinote.Notice.domain.repository.NoticeRepository;
 import com.answer.notinote.Notice.dto.ImageRequestDto;
+import com.answer.notinote.Notice.dto.NoticeRequestDto;
 import com.answer.notinote.User.domain.entity.User;
 import com.answer.notinote.User.domain.repository.UserRepository;
 import com.google.cloud.language.v1.*;
@@ -143,6 +144,22 @@ public class NoticeService {
         return textlist.get(0);
     }
 
+    public String saveNotice(Long nid, NoticeRequestDto noticeRequestDto, HttpServletRequest request){
+
+        Notice notice = noticeRepository.findByNid(nid);
+        String token = jwtTokenProvider.resolveToken(request);
+        String useremail = jwtTokenProvider.getUserEmail(token);
+        User user = userRepository.findByUemail(useremail).orElseThrow(IllegalArgumentException::new);
+
+        if ((notice.getUser()).getUid().equals(user.getUid())){
+            notice.update_title_ndate(noticeRequestDto.getTitle(), noticeRequestDto.getNdate());
+            noticeRepository.save(notice);
+            return "successs";
+        }
+        else {
+            return "fail";
+        }
+    }
 
     /*public String dateDetect(Long nid) throws IOException {
         Notice notice = noticeRepository.findByNid(nid);
