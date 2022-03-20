@@ -22,12 +22,11 @@ public class NoticeController {
 
     @RequestMapping(value = "/notice/ocr", method = RequestMethod.POST)
     public String saveImage (@RequestPart MultipartFile uploadfile) throws IOException {
-        Long nid = noticeService.saveImage(uploadfile);
-        String koreantext = noticeService.detectText(nid);
-        String transtext = noticeService.transText(nid);
-        String trans_summarizedtext = noticeService.transSumText(nid);
-        String datedetect = noticeService.dateDetect(nid);
-        return "Text from image: " + datedetect;
+        Long nid = noticeService.saveImage(uploadfile); //이미지 저장
+        String koreantext = noticeService.detectText(nid); //원문 추출
+        String transtext = noticeService.transText(nid); //번역문 추출
+        //String datedetect = noticeService.dateDetect(nid);
+        return "Text from image: " + transtext;
     }
 
 }
