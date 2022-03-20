@@ -6,12 +6,16 @@ import com.answer.notinote.Auth.handler.OAuth2LoginFailureHandler;
 import com.answer.notinote.Auth.handler.OAuth2LoginSuccessHandler;
 import com.answer.notinote.Auth.token.provider.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 /**
  * Spring Security 설정 클래스
@@ -30,6 +34,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                     .httpBasic().disable()
+                    .cors().configurationSource(corsConfigurationSource())
+                .and()
                     .csrf().disable()
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
@@ -59,5 +65,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(oAuth2AccessTokenAuthenticationFilter,
                 UsernamePasswordAuthenticationFilter.class);
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.addAllowedOrigin("*");
+        configuration.addAllowedHeader("*");
+        configuration.addAllowedMethod("*");
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }
