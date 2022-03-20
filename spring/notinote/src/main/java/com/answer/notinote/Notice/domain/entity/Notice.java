@@ -1,5 +1,6 @@
 package com.answer.notinote.Notice.domain.entity;
 
+import com.answer.notinote.User.domain.entity.User;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,18 +28,22 @@ public class Notice {
     @Column(length=5000)
     private String trans_full;
 
-    
+    @ManyToOne
+    @JoinColumn
+    private User user;
+
     private LocalDate ndate;
 
     //Not Using Constructor
     @Builder
-    public Notice (String nimagename, String nimageoriginal, String nimageurl, String origin_full, String trans_full, LocalDate ndate){
+    public Notice (String nimagename, String nimageoriginal, String nimageurl, String origin_full, String trans_full, LocalDate ndate, User user){
         this.nimagename = nimagename;
         this.nimageoriginal = nimageoriginal;
         this.nimageurl = nimageurl;
         this.origin_full = origin_full;
         this.trans_full = trans_full;
         this.ndate = ndate;
+        this.user = user;
     }
 
 

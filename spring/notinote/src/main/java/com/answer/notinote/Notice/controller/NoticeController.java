@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 
@@ -21,8 +22,8 @@ public class NoticeController {
     }
 
     @RequestMapping(value = "/notice/ocr", method = RequestMethod.POST)
-    public String saveImage (@RequestPart MultipartFile uploadfile) throws IOException {
-        Long nid = noticeService.saveImage(uploadfile); //이미지 저장
+    public String saveImage (@RequestPart MultipartFile uploadfile, HttpServletRequest request) throws IOException {
+        Long nid = noticeService.saveImage(uploadfile, request); //이미지 저장
         String koreantext = noticeService.detectText(nid); //원문 추출
         String transtext = noticeService.transText(nid); //번역문 추출
         //String datedetect = noticeService.dateDetect(nid);

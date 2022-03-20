@@ -1,9 +1,12 @@
 package com.answer.notinote.Notice.service;
 
 
+import com.answer.notinote.Auth.token.provider.JwtTokenProvider;
 import com.answer.notinote.Notice.domain.entity.Notice;
 import com.answer.notinote.Notice.domain.repository.NoticeRepository;
 import com.answer.notinote.Notice.dto.ImageRequestDto;
+import com.answer.notinote.User.domain.entity.User;
+import com.answer.notinote.User.domain.repository.UserRepository;
 import com.google.cloud.language.v1.*;
 import com.google.cloud.translate.v3.*;
 import com.google.cloud.translate.v3.LocationName;
@@ -14,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -25,12 +29,22 @@ public class NoticeService {
 
     @Autowired
     NoticeRepository noticeRepository;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    JwtTokenProvider jwtTokenProvider;
 
-    public Long saveImage(MultipartFile uploadfile){
+    public Long saveImage(MultipartFile uploadfile, HttpServletRequest request){
         String nimageoriginal = uploadfile.getOriginalFilename();
         String uuid = UUID.randomUUID().toString();
         String nimagename = uuid + nimageoriginal;
         Long nid = null;
+
+        String token = jwtTokenProvider.resolveToken(request);
+        String useremail = jwtTokenProvider.getUserEmail(token);
+        User user = userRepository.findByUemail(useremail).orElseThrow(IllegalArgumentException::new);
+
+        System.out.println(user);
         String nimageurl = System.getProperty("user.dir")+"/src/main/resources/static";
         try {
             File saveFile = new File(nimageurl, nimagename);
@@ -40,8 +54,9 @@ public class NoticeService {
                     .nimagename(nimagename)
                     .nimageoriginal(nimageoriginal)
                     .nimageurl(nimageurl)
+                    .user(user)
                     .build();
-            nid = noticeRepository.save(imageRequestDto.toNoticeEntity()).getNid();
+            nid = noticeRepository.save(imageRequestDto.toNoticeEntity(user)).getNid();
 
         } catch (Exception e){
             e.printStackTrace();
