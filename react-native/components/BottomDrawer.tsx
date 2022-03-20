@@ -14,13 +14,13 @@ function BottomDrawer(props: BottomDrawerProps) {
 	const [currentEvent, setCurrentEvent] = useState<number>(0);
 	const [openSaveForm, setOpenSaveForm] = useState<boolean>(false);
 	const [resultsTitle, setResultsTitle] = useState<string>('title');
-	const [openEventForm, setOpenEventForm] = useState<boolean>(false);
-	const [eventForm, setEventForm] = useState<EventForm>({title: '', date: date.getFullYear()+'/'+date.getMonth()+'/'+date.getDate(), childId: 1, description: ''});
+	const [openEventForm, setOpenEventForm] = useState<boolean>(false);	
+	const [eventForm, setEventForm] = useState<EventForm>({title: '', date: '', cId: 1, description: ''});
 	// TEST: mockup data
 	const [user, setUser] = useState<AuthData>({uid: 1, uprofileImg: 1, username: 'hee', ulanguage: 'ko', uchildren: [{cid: 1, cname: 'soo', color: '#d06b64'}, {cid: 2, cname: 'joo', color: '#ffad46'}]})
 
 	useEffect(() => {
-		if (currentEvent && eventForm?.childId) {
+		if (currentEvent && eventForm?.cId) {
 			let obj = props?.results?.fullText;
 			let event = obj.find(function(item, index) {
 				if (item.id===currentEvent) {
@@ -28,22 +28,13 @@ function BottomDrawer(props: BottomDrawerProps) {
 				}
 			});
 			if (event?.content && user?.uchildren) {
-				setEventForm({...eventForm, ['title']: '['+user.uchildren[eventForm.childId-1]?.cname+'] ' + event.content});
+				setEventForm({title: '['+user.uchildren[eventForm.cId-1]?.cname+'] ' + event.content, date: event?.date ? event.date : '', cId: eventForm.cId, description: eventForm.description });
 			}
 		}
-	}, [currentEvent, eventForm?.childId])
+	}, [currentEvent, eventForm?.cId])
 
 	const openPopup = (resultId: number) => () => {
 		setCurrentEvent(resultId);
-		let obj = props?.results?.fullText;
-		let event = obj.find(function(item, index) {
-			if (item.id===resultId) {
-				return true;
-			}
-		});
-		if (event?.content && user?.uchildren) {
-			setEventForm({...eventForm, ['title']: '['+user.uchildren[0]?.cname+'] ' + event.content});
-		}
 	}
 
 	const closePopup = () => {
@@ -53,8 +44,13 @@ function BottomDrawer(props: BottomDrawerProps) {
 	const handleOpenSaveForm = (prop?: string) => {
 		if (prop==='save') {
 			// TODO: fetch api
-			// resultsTitle 보내고, success 및 서버에 저장된 제목 받아와서 보여주기!
-			console.log(resultsTitle);
+			// data 보내고, success 라면, 서버에 저장된 제목 받아와서 보여주기!
+			let data = {
+				id: props?.results?.id,
+				title: resultsTitle,
+				date: date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()
+			}
+			console.log(data);
 			Alert.alert(`The result was saved in Search as [${resultsTitle}]`)
 		}
 		if (openSaveForm) {
@@ -177,6 +173,21 @@ function BottomDrawer(props: BottomDrawerProps) {
 														<Modal.Body>
 															<VStack space={2}>
 																<FormControl>
+																	<FormControl.Label>Child</FormControl.Label>
+																		<Select selectedValue={eventForm?.cId.toString()} accessibilityLabel="Child" onValueChange={itemValue => {
+																			setEventForm({ ...eventForm, ['cId']: Number(itemValue) })
+																		}} _selectedItem={{
+																			bg: "skyblue.500",
+																			endIcon: <CheckIcon size={3} />
+																		}}>
+																			{/* Country code 3 digit ISO */}
+																			{user?.uchildren?.map((child => 
+																				child?.cname && child?.cid &&
+																					<Select.Item label={child?.cname} value={child?.cid.toString()} />
+																			))}
+																		</Select>
+																</FormControl>
+																<FormControl>
 																	<FormControl.Label>Title</FormControl.Label>
 																	<Input 
 																		value={eventForm?.title}
@@ -189,21 +200,6 @@ function BottomDrawer(props: BottomDrawerProps) {
 																		value={eventForm?.date}
 																		isDisabled
 																	/>
-																	</FormControl>
-																<FormControl>
-																	<FormControl.Label>Child</FormControl.Label>
-																		<Select selectedValue={eventForm?.childId.toString()} accessibilityLabel="Child" onValueChange={itemValue => {
-																			setEventForm({ ...eventForm, ['childId']: Number(itemValue) })
-																		}} _selectedItem={{
-																			bg: "skyblue.500",
-																			endIcon: <CheckIcon size={3} />
-																		}} mt={1}>
-																			{/* Country code 3 digit ISO */}
-																			{user?.uchildren?.map((child => 
-																				child?.cname && child?.cid &&
-																					<Select.Item label={child?.cname} value={child?.cid.toString()} />
-																			))}
-																		</Select>
 																</FormControl>
 																<FormControl>
 																	<FormControl.Label>Description</FormControl.Label>
