@@ -11,6 +11,7 @@ import BottomDrawer from '../components/BottomDrawer';
 import { useToast, Box } from 'native-base';
 import mime from "mime";
 import * as ImagePicker from 'expo-image-picker';
+import { useAuth } from '../contexts/Auth';
 
 /* TODO:
     - 스크롤 내려가게 하기 (지금은 ScrollView의 스크롤이 안 먹음)
@@ -28,6 +29,7 @@ export default function TranslateScreen({ navigation }: Navigation) {
     const [isFullDrawer, setFullDrawer] = useState<boolean>(false);
 
     const toast = useToast();
+    const auth = useAuth();
 
     const LoadFontsAndRestoreToken = async () => {
         await useFonts();
@@ -108,15 +110,18 @@ export default function TranslateScreen({ navigation }: Navigation) {
                 name: imageUri.split("/").pop()
             });
 
-            fetch("http://localhost:8080/notice/ocr", {
-                method: 'POST',
-                body: formdata,
-                redirect: 'follow'
-            })
-            .then(response => response.text())	// TODO: response.json()
-            .then(data => console.log(data))    // TODO: setResults(data)
-            .catch(error => console.log('error', error));
-
+            if (auth?.authData?.jwt_token) {
+                fetch("http://localhost:8080/notice/ocr", {
+                    method: 'POST',
+                    headers: { 'Authorization': auth.authData.jwt_token },
+                    body: formdata,
+                    redirect: 'follow'
+                })
+                .then(response => response.text())	// TODO: response.json()
+                .then(data => console.log(data))    // TODO: setResults(data)
+                .catch(error => console.log('error', error));
+            }
+           
             // TEST: mockup data
             setResults({
                 id: 1,

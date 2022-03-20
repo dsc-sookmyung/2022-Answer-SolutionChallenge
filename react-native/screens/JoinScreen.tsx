@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, KeyboardAvoidingView, Alert, Platform, ScrollView, Image, GestureResponderEvent } from 'react-native';
 import { FormControl, Input, Button, VStack, Select, CheckIcon } from 'native-base';
 import { nameValidator } from '../core/utils';
-import type { Navigation, AuthData, JoinData } from '../types';
+import type { Navigation, UserData, JoinData } from '../types';
 import { theme } from '../core/theme';
 import { useAuth } from '../contexts/Auth';
 
@@ -10,28 +10,29 @@ export default function JoinScreen({ navigation }: Navigation) {
 	const [childrenNumber, setChildrenNumber] = useState<string>('1');
 	const imgSource = [require(`../assets/images/profile-images/profile-1.png`), require(`../assets/images/profile-images/profile-2.png`), require(`../assets/images/profile-images/profile-3.png`),
 	require(`../assets/images/profile-images/profile-4.png`), require(`../assets/images/profile-images/profile-5.png`), require(`../assets/images/profile-images/profile-6.png`), require(`../assets/images/profile-images/profile-7.png`)];
-	const colors = [theme.colors.primary, theme.colors.secondary, theme.colors.skyblue, theme.colors.coral, theme.colors.gray, '#000']
+	const colors = [{id: 1, hex: '#7986cb'}, {id: 3, hex: '#8e24aa'}, {id: 4, hex: '#e67c73'}, {id: 5, hex: '#f6bf26'}, {id: 7, hex: '#039be5'}, {id: 10, hex: '#0b8043'}]
+	// 1 3 4 5 7 10
 	const [joinForm, setJoinForm] = useState<JoinData>({
 		uid: undefined,
 		uprofileImg: 1,
 		username: '',
 		ulanguage: '',
-		uchildren: colors.map(color => ({'cname': '', 'color': color}))
+		uchildren: colors.map(color => ({'cname': '', 'color': color?.id}))
 	})
 
-	const [user, setUser] = useState<AuthData>();
+	const [user, setUser] = useState<UserData>();
 	const auth = useAuth();
 
 	useEffect(() => {
-		if (auth?.authData?.uroleType==='USER') {
+		if (auth?.userData?.uroleType==='USER') {
 			Alert.alert(
 				"Success",
 				"Congratulations, your account has been successfully created."
 			)
 			navigation.navigate('Home');
 		}
-		else if (auth?.authData?.uroleType==='GUEST') {
-			setUser(auth?.authData);
+		else if (auth?.userData?.uroleType==='GUEST') {
+			setUser(auth?.userData);
 		}
 	}, [auth]);
 
@@ -113,17 +114,15 @@ export default function JoinScreen({ navigation }: Navigation) {
 						bg: "skyblue.500",
 						endIcon: <CheckIcon size={5} />
 					}} mt={1}>
-						{/* Country code 3 digit ISO */}
-						<Select.Item label="Armenian" value="arm" />
-						<Select.Item label="Chinese" value="chn" />
-						<Select.Item label="Japanese" value="jpn" />
-						<Select.Item label="Indonesian" value="idn" />
-						<Select.Item label="Korean" value="kor" />
-						<Select.Item label="Malay" value="mys" />
-						<Select.Item label="Ukrainian" value="ukr" />
-						<Select.Item label="Slovak" value="svk" />
-						<Select.Item label="Uzbek" value="uzb" />
-						<Select.Item label="Vietnamese" value="vnm" />
+							{/* Country code 3 digit ISO */}
+							<Select.Item label="Chinese" value="chn" />
+							<Select.Item label="English" value="eng" />
+							<Select.Item label="Filipino" value="phl" />
+							<Select.Item label="Japanese" value="jpn" />
+							<Select.Item label="Khmer" value="khm" />
+							<Select.Item label="Korean" value="kor" />
+							<Select.Item label="Thai" value="tha" />
+							<Select.Item label="Vietnamese" value="vnm" />
 						</Select>
 					</FormControl>
 					<FormControl isRequired style={{ flex: 1 }}>
@@ -132,7 +131,7 @@ export default function JoinScreen({ navigation }: Navigation) {
 						setChildrenNumber(itemValue);
 					}} _selectedItem={{
 						bg: "skyblue.500",
-						endIcon: <CheckIcon size={5} />
+						endIcon: <CheckIcon size={3} />
 					}} mt={1}>
 						<Select.Item label="1" value="1" />
 						<Select.Item label="2" value="2" />
@@ -155,7 +154,7 @@ export default function JoinScreen({ navigation }: Navigation) {
 									autoCapitalize="none"
 									mb={2}
 									InputRightElement={
-										<Button bg={colors[index]} borderRadius="full" m={1} size="xs" height={childrenNumber==="1" ? "60%": "50%"}>
+										<Button bg={colors[index]?.hex} borderRadius="full" m={1} size="xs" height={childrenNumber==="1" ? "60%": "50%"}>
 											&nbsp;
 										</Button>
 									}

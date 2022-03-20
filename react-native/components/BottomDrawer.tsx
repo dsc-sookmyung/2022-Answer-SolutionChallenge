@@ -3,7 +3,8 @@ import { StyleSheet, Dimensions, View, TouchableOpacity, TouchableHighlight, Scr
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import { Popover, Button, Text, Modal, FormControl, Input, VStack, Select, CheckIcon } from 'native-base';
 import { theme } from '../core/theme';
-import type { BottomDrawerProps, EventForm, AuthData } from '../types';
+import type { BottomDrawerProps, EventForm, UserData } from '../types';
+import { useAuth } from '../contexts/Auth';
 
 
 const highlight = (text: string, registered: boolean) =>
@@ -17,7 +18,13 @@ function BottomDrawer(props: BottomDrawerProps) {
 	const [openEventForm, setOpenEventForm] = useState<boolean>(false);	
 	const [eventForm, setEventForm] = useState<EventForm>({title: '', date: '', cId: 1, description: ''});
 	// TEST: mockup data
-	const [user, setUser] = useState<AuthData>({uid: 1, uprofileImg: 1, username: 'hee', ulanguage: 'ko', uchildren: [{cid: 1, cname: 'soo', color: '#d06b64'}, {cid: 2, cname: 'joo', color: '#ffad46'}]})
+	const [user, setUser] = useState<UserData>({uid: 1, uprofileImg: 1, username: 'hee', ulanguage: 'ko', uchildren: [{cid: 1, cname: 'soo', color: 1}, {cid: 2, cname: 'joo', color: 3}]})
+	// const [user, setUser] = useState<UserData>();
+    const auth = useAuth();
+
+	useEffect(()=> {
+        // setUser(auth?.userData);
+	}, [auth]);
 
 	useEffect(() => {
 		if (currentEvent && eventForm?.cId) {

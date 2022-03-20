@@ -22,7 +22,7 @@ export type TextInput = {
 interface Children {
 	cid?: number,
 	cname?: string,
-	color?: string,
+	color?: number,
 }
 
 interface JoinData {
@@ -33,15 +33,30 @@ interface JoinData {
 	uchildren?: Children[]
 }
 
-interface AuthData extends JoinData {
+interface UserData extends JoinData {
     uemail?: string | undefined,
     uproviderType?: string | undefined,
     uroleType?: string | undefined,
+}
 
+interface AuthData {
 	jwt_token?: string,
 	refresh_token?: string,
-};
+}
 
+interface AuthResponse {
+	header: AuthData,
+	body: UserData
+}
+
+interface AuthContextData {
+    authData?: AuthData;
+    userData?: UserData;
+    loading: boolean;
+    signUp(data: JoinData): Promise<void>;
+    signIn(accessToken: string): Promise<void>;
+    signOut(): void;
+};
 interface Event {
 	id: number, 
 	content: string, 
@@ -72,15 +87,6 @@ interface Notice {
 	}
 }
 
-interface UserProfile {
-	userId: number;
-	username: string;
-	gmail: string;
-	profileImageType: number; // 1 or 2
-	language: string; // 'english', 'japanese', 'chinese', ...
-	children: {childName: string, childId: number}[];
-}
-
 interface BottomDrawerProps {
 	results: Result,
 	showKorean?: boolean,
@@ -95,11 +101,11 @@ interface BottomDrawerProps {
 interface EventForm {
 	title: string, 
 	date: string, 
-	childId: number, 
+	cId: number, 
 	description: string
 }
 
 export type {
-	AuthData, JoinData, Children, 
-	Event, Result, Notice, UserProfile, BottomDrawerProps, EventForm
+	UserData, JoinData, AuthData, AuthResponse, AuthContextData, Children, 
+	Event, Result, Notice, BottomDrawerProps, EventForm
 }

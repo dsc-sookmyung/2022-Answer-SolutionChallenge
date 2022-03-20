@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, Button, TouchableHighlight } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, TouchableHighlight } from 'react-native';
 import type { Navigation, Notice } from '../types';
 import SearchedNotice from '../components/SearchedNotice';
 import SearchBar from 'react-native-elements/dist/searchbar/SearchBar-ios';
 import DateTimePickerModal from "react-native-modal-datetime-picker"
 import { Column } from 'native-base';
+import { useAuth } from '../contexts/Auth';
 
 
 export default function SearchScreen({ navigation }: Navigation) {
+    const auth = useAuth(); // TODO: get notices by send header(`auth.AuthData`) to server
+
     const [search, setSearch] = useState<string>('');
     const [filteredNotices, setFilteredNotices] = useState<Notice[]>([{
         userId: 1, 
