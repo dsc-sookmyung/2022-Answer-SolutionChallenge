@@ -1,7 +1,9 @@
 package com.answer.notinote.Auth.token;
 
+import com.answer.notinote.User.domain.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,14 +19,15 @@ public class RefreshToken {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(nullable = false, length = 30, unique = true)
-    private String userEmail;
+    @ManyToOne
+    @JoinColumn(name = "uid")
+    private User user;
 
     @Column(nullable = false, unique = true)
     private String token;
 
-    public RefreshToken(String userEmail, String token) {
-        this.userEmail = userEmail;
+    public RefreshToken(User user, String token) {
+        this.user = user;
         this.token = token;
     }
 }

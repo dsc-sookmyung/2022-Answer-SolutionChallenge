@@ -1,14 +1,16 @@
 package com.answer.notinote.User.controller;
 
-import com.answer.notinote.Auth.token.provider.JwtTokenProvider;
 import com.answer.notinote.User.dto.JoinRequestDto;
 import com.answer.notinote.User.domain.entity.User;
-import com.answer.notinote.User.dto.LoginResponseDto;
+import com.answer.notinote.User.dto.UserResponseDto;
 import com.answer.notinote.User.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+
+@CrossOrigin
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("")
@@ -24,7 +26,16 @@ public class UserController {
     @GetMapping("/oauth/success/{id}")
     public ResponseEntity<?> auth_success(@PathVariable("id") long id) {
         User user = userService.findUserById(id);
-        return ResponseEntity.ok(user);
+
+        UserResponseDto response = UserResponseDto.builder()
+                .uid(user.getUid())
+                .uemail(user.getUemail())
+                .username(user.getUsername())
+                .ulanguage(user.getUlanguage())
+                .uchildren(null)
+                .uroleType(user.getUroleType())
+                .build();
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -37,13 +48,13 @@ public class UserController {
     }
 
     /**
-     * 회원가입 폼 정보를 받아 유저의 권한을 USER로 바꾸고 유저 정보를 리턴합니다.
+     * 회원가입 폼 정보를 받아 유저의 권한을 USER로 바꾸고 로그인을 진행합니다.
      * @param requestDto
      * @return
      */
     @PostMapping("/join")
-    public ResponseEntity<?> join(@RequestBody JoinRequestDto requestDto) {
-        return ResponseEntity.ok(userService.join(requestDto));
+    public ResponseEntity<?> join(HttpServletResponse response, @RequestBody JoinRequestDto requestDto) {
+        return ResponseEntity.ok(userService.join(requestDto, response));
     }
 
     /**
@@ -52,22 +63,12 @@ public class UserController {
      * @return
      */
     @GetMapping("/login/{id}")
-    public ResponseEntity<?> login(@PathVariable("id") long id) {
-        return ResponseEntity.ok(userService.login(id));
+    public ResponseEntity<?> login(HttpServletResponse response, @PathVariable("id") long id) {
+        return ResponseEntity.ok(userService.login(id, response));
     }
 
     /**
-     * Refresh Token을 재발급합니다. - 미완
-     * @param refreshToken
-     * @return
-     */
-    @PostMapping("oauth/refresh")
-    public String validateRefreshToken(@RequestHeader("REFRESH-TOKEN") String refreshToken) {
-        return "";
-    }
-
-    /**
-     * 회원을 탙퇴처리 합니다.
+     * 회원을 탙퇴 처리 합니다.
      * @param id
      * @return
      */
