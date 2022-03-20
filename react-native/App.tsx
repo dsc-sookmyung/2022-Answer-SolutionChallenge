@@ -10,7 +10,6 @@ import { theme } from './core/theme';
 
 import { AuthProvider } from './contexts/Auth';
 
-import LoginScreen from './screens/LoginScreen';
 import JoinScreen from './screens/JoinScreen';
 import HomeScreen from './screens/HomeScreen';
 import TranslateScreen from './screens/TranslateScreen';
@@ -65,15 +64,8 @@ export default function App() {
       <NativeBaseProvider theme={nativeBaseTheme}>
         <NavigationContainer>
           <Stack.Navigator 
-            initialRouteName={isFirstRun == "true" ? "Introduction" : "Login"}
+            initialRouteName="Introduction"
           >
-            <Stack.Screen 
-              name="Login" 
-              component={LoginScreen} 
-              options={{
-                headerShown: false,
-              }} 
-            />
             <Stack.Screen
               name="Join"
               component={JoinScreen}
