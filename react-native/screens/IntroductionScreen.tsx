@@ -49,16 +49,12 @@ export default function HomeScreen({ navigation }: Navigation) {
 	}, [response]);
 
     useEffect(() => {
-		if (auth?.authData?.uroleType === 'GUEST') {
+		if (auth?.userData?.uroleType === 'GUEST') {
 			navigation.navigate('Join');
-		} else if (auth?.authData?.uroleType === 'USER') {
+		} else if (auth?.userData?.uroleType === 'USER') {
 			navigation.navigate('Home');
 		}
-	}, [auth?.authData]);
-
-	const onLoginPressed = () => {
-		navigation.navigate('Home');
-	};
+	}, [auth?.userData]);
 
     return (
         <SafeAreaView style={styles.container}>
