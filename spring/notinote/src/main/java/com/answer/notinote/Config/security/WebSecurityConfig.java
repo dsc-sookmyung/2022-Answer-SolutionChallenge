@@ -1,9 +1,6 @@
 package com.answer.notinote.Config.security;
 
 import com.answer.notinote.Auth.filter.JwtAuthenticationFilter;
-import com.answer.notinote.Auth.filter.OAuth2AccessTokenAuthenticationFilter;
-import com.answer.notinote.Auth.handler.OAuth2LoginFailureHandler;
-import com.answer.notinote.Auth.handler.OAuth2LoginSuccessHandler;
 import com.answer.notinote.Auth.token.provider.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -21,9 +18,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final OAuth2AccessTokenAuthenticationFilter oAuth2AccessTokenAuthenticationFilter;
-    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
-    private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
@@ -35,7 +29,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 // 모두 접근 가능한 URL
                     .authorizeRequests()
-                    .antMatchers("/","/oauth/success/*", "/oauth/fail","/login/*", "/join").permitAll()
+                    .antMatchers("/","/login/oauth2","/login", "/join").permitAll()
                 .and()
                 // USER만 접근 가능한 URL
                     .authorizeRequests()
@@ -51,13 +45,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .anyRequest()
                     .authenticated()
                 .and()
-                .oauth2Login()
-                .successHandler(oAuth2LoginSuccessHandler)
-                .failureHandler(oAuth2LoginFailureHandler)
-                .and()
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
-                UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(oAuth2AccessTokenAuthenticationFilter,
-                UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
     }
 }

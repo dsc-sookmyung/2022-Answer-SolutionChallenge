@@ -1,5 +1,9 @@
 package com.answer.notinote.User.controller;
 
+import com.answer.notinote.Auth.data.RoleType;
+import com.answer.notinote.Auth.repository.RefreshTokenRepository;
+import com.answer.notinote.Auth.token.RefreshToken;
+import com.answer.notinote.Auth.token.provider.JwtTokenProvider;
 import com.answer.notinote.User.dto.JoinRequestDto;
 import com.answer.notinote.User.domain.entity.User;
 import com.answer.notinote.User.dto.UserResponseDto;
@@ -18,34 +22,16 @@ import javax.servlet.http.HttpServletResponse;
 public class UserController {
 
     private final UserService userService;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final RefreshTokenRepository refreshTokenRepository;
 
-    /**
-     * OAUTH2 로그인 성공시 회원가입한 user 정보를 반환합니다.
-     * @param id
-     * @return
-     */
-    @GetMapping("/oauth/success/{id}")
-    public ResponseEntity<?> auth_success(@PathVariable("id") long id) {
-        User user = userService.findUserById(id);
+    @GetMapping("/login/oauth2")
+    public ResponseEntity<?> oauthLogin(HttpServletResponse response, @RequestHeader("Authorization") String token) {
+        User user = userService.oauthLogin(token);
 
-        UserResponseDto response = UserResponseDto.builder()
-                .uid(user.getUid())
-                .uemail(user.getUemail())
-                .username(user.getUsername())
-                .ulanguage(user.getUlanguage())
-                .uchildren(null)
-                .uroleType(user.getUroleType())
-                .build();
-        return ResponseEntity.ok(response);
-    }
+        issueJwtToken(response, user);
 
-    /**
-     * OAUTH2 로그인 실패시 실패했다는 문구를 리턴합니다.
-     * @return
-     */
-    @GetMapping("/oauth/fail")
-    public ResponseEntity<?> auth_fail() {
-        return ResponseEntity.ok("OAuth2 로그인에 실패했습니다.");
+        return ResponseEntity.ok(new UserResponseDto(user));
     }
 
     /**
@@ -55,7 +41,10 @@ public class UserController {
      */
     @PostMapping("/join")
     public ResponseEntity<?> join(HttpServletResponse response, @RequestBody JoinRequestDto requestDto) {
-        return ResponseEntity.ok(userService.join(requestDto, response));
+        User user = userService.join(requestDto);
+        issueJwtToken(response, user);
+
+        return ResponseEntity.ok(new UserResponseDto(user));
     }
 
     /**
@@ -65,7 +54,9 @@ public class UserController {
      */
     @GetMapping("/login/{id}")
     public ResponseEntity<?> login(HttpServletResponse response, @PathVariable("id") long id) {
-        return ResponseEntity.ok(userService.login(id, response));
+        User user = userService.findUserById(id);
+        issueJwtToken(response, user);
+        return ResponseEntity.ok(new UserResponseDto(user));
     }
 
     @DeleteMapping("/logout")
@@ -82,4 +73,13 @@ public class UserController {
         return userService.delete(id);
     }
 
+    private void issueJwtToken(HttpServletResponse response, User user) {
+        if(user.getUroleType() == RoleType.USER) {
+            String jwtToken = jwtTokenProvider.createToken(user.getUemail());
+            String refreshToken = jwtTokenProvider.createRefreshToken(user.getUemail());
+            jwtTokenProvider.setHeaderToken(response, jwtToken);
+            jwtTokenProvider.setHeaderRefreshToken(response, refreshToken);
+            refreshTokenRepository.save(new RefreshToken(user, refreshToken));
+        }
+    }
 }
