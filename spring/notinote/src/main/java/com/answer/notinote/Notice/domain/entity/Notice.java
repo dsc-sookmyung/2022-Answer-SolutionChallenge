@@ -1,10 +1,9 @@
 package com.answer.notinote.Notice.domain.entity;
 
-import io.swagger.annotations.ApiParam;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.type.TrueFalseType;
+
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -30,11 +29,16 @@ public class Notice {
     @Column(length=3000)
     private String trans_sum;
 
+    @Column
+    private boolean registered;
+    @Column
+    private boolean highlight;
+    
     private LocalDate ndate;
 
     //Not Using Constructor
     @Builder
-    public Notice (String nimagename, String nimageoriginal, String nimageurl, String origin_full, String trans_full, String trans_sum, LocalDate ndate){
+    public Notice (String nimagename, String nimageoriginal, String nimageurl, String origin_full, String trans_full, String trans_sum, LocalDate ndate, Boolean registered, Boolean highlight){
         this.nimagename = nimagename;
         this.nimageoriginal = nimageoriginal;
         this.nimageurl = nimageurl;
@@ -42,6 +46,8 @@ public class Notice {
         this.trans_full = trans_full;
         this.trans_sum = trans_sum;
         this.ndate = ndate;
+        this.registered = false;
+        this.highlight = false;
     }
 
 
@@ -53,7 +59,4 @@ public class Notice {
         this.trans_full = trans_full;
     }
 
-    public void update_trans_sum(String trans_sum){
-        this.trans_sum = trans_sum;
     }
-}

@@ -4,6 +4,7 @@ package com.answer.notinote.Notice.service;
 import com.answer.notinote.Notice.domain.entity.Notice;
 import com.answer.notinote.Notice.domain.repository.NoticeRepository;
 import com.answer.notinote.Notice.dto.ImageRequestDto;
+import com.google.cloud.language.v1.*;
 import com.google.cloud.translate.v3.*;
 import com.google.cloud.translate.v3.LocationName;
 import com.google.cloud.translate.v3.Translation;
@@ -16,10 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 
 @Service
@@ -130,43 +128,57 @@ public class NoticeService {
         return textlist.get(0);
     }
 
-    public String transSumText(Long nid) throws IOException {
 
+    /*public String dateDetect(Long nid) throws IOException {
         Notice notice = noticeRepository.findByNid(nid);
-        //추후 nid값 이외에도 인공지능에 넘어온 요약 스트링까지 인자값으로 받아야함
-        //List<String> summarizedKoreanlist = Arrays.asList(text.split(","));
+        String text = notice.getTrans_sum();
+        List<String> summarizedKoreanlist = Arrays.asList(text.split(","));
         //System.out.println("Text : "+summarizedKoreanlist.size());
-        List <String> summarizedKoreanlist = new ArrayList<String>();
-        summarizedKoreanlist.add("졸업식은 2월 17일 3시입니다.");
-        summarizedKoreanlist.add("학부모님 모두 참석이 가능합니다.");
+        //List <String> summarizedKoreanlist = new ArrayList<String>();
+        //summarizedKoreanlist.add("졸업식은 2월 17일 3시입니다.");
+        //summarizedKoreanlist.add("학부모님 모두 참석이 가능합니다.");
 
-        String projectId = "notinote-341918";
-        String targetLanguage = "en"; // 추후 입력받아야함
-        ArrayList <String> textlist = new ArrayList<String>();
-
-        try (TranslationServiceClient client = TranslationServiceClient.create()) {
-            LocationName parent = LocationName.of(projectId, "global");
-
-            // Supported Mime Types: https://cloud.google.com/translate/docs/supported-formats
-            for (String text : summarizedKoreanlist) {
-                TranslateTextRequest request =
-                        TranslateTextRequest.newBuilder()
-                                .setParent(parent.toString())
-                                .setMimeType("text/plain")
-                                .setTargetLanguageCode(targetLanguage)
-                                .addContents(text)
+        try (LanguageServiceClient language = LanguageServiceClient.create()) {
+            for (String texttest : summarizedKoreanlist){
+                System.out.println(texttest);
+                Document doc = Document.newBuilder().setContent(texttest).setType(Document.Type.PLAIN_TEXT).build();
+                AnalyzeEntitiesRequest request =
+                        AnalyzeEntitiesRequest.newBuilder()
+                                .setDocument(doc)
+                                .setEncodingType(EncodingType.UTF16)
                                 .build();
 
-                TranslateTextResponse response = client.translateText(request);
+                AnalyzeEntitiesResponse response = language.analyzeEntities(request);
 
-                for (Translation translation : response.getTranslationsList()) {
-                    textlist.add(String.format("%s", translation.getTranslatedText()));
+                // Print the response
+                for (Entity entity : response.getEntitiesList()) {
+                    System.out.println(entity);
+                    if (entity.getType().equals("EVENT")){
+                        System.out.printf("이벤트 %s %s\n", entity.getName(),entity.getType());
+                    }
+                    //System.out.printf("Entity: %s ", entity.getName());
+                    //System.out.printf("Type: %s ", entity.getType());
+                    //System.out.printf("Salience: %.3f\n", entity.getSalience());
+                    //System.out.println("Metadata: ");
+                    for (Map.Entry<String, String> entry : entity.getMetadataMap().entrySet()) {
+                        if (entry.getKey().equals("month") || entry.getKey().equals("day")){
+                            System.out.printf("날짜 %s : %s\n", entry.getKey(), entry.getValue());
+                            //System.out.println("Date Detect");
+                            notice.update_highlight(true);
+                            noticeRepository.save(notice);
+                        }
+                    }
+                    for (EntityMention mention : entity.getMentionsList()) {
+                        //System.out.printf("Begin offset: %d ", mention.getText().getBeginOffset());
+                        //System.out.printf("Content: %s ", mention.getText().getContent());
+                        //System.out.printf("Type: %s \n\n", mention.getType());
+                    }
                 }
+
             }
         }
-        notice.update_trans_sum(textlist.toString());
-        noticeRepository.save(notice);
-        return textlist.toString();
-    }
+        return "Date detect";
 
+    }
+    */
 }
