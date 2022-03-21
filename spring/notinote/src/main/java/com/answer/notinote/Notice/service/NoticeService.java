@@ -154,7 +154,7 @@ public class NoticeService {
         if ((notice.getUser()).getUid().equals(user.getUid())){
             notice.update_title_ndate(noticeRequestDto.getTitle(), noticeRequestDto.getNdate());
             noticeRepository.save(notice);
-            return "successs";
+            return noticeRequestDto.getTitle();
         }
         else {
             return "fail";
