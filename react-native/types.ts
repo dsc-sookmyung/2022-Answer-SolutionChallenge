@@ -72,16 +72,14 @@ interface Result {
 }
 
 interface Notice {
-	userId: number,
-	childId: number,
+	cid: number,
 	date: string,
 	notices: {
 		total_results: string[],
 		notice_body: {
 			title: string,
 			id: number,
-			summary: {id: number, content: string, highlight: boolean, registered: boolean}[],
-			fullText: string,
+			fullText: Event[],
 			korean: string,
 		}[]
 	}

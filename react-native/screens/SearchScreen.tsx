@@ -13,8 +13,7 @@ export default function SearchScreen({ navigation }: Navigation) {
 
     const [search, setSearch] = useState<string>('');
     const [filteredNotices, setFilteredNotices] = useState<Notice[]>([{
-        userId: 1, 
-        childId: 1, 
+        cid: 1, 
         date: "2022-02-19",
         notices: {
             total_results: [
@@ -24,26 +23,23 @@ export default function SearchScreen({ navigation }: Navigation) {
             notice_body: [{
                 id: 1,
                 title: "17th Graduation Ceremony",
-                summary: [
-                    {id: 1, content: "17th Graduation Ceremony is on February 14th", highlight: true, registered: false},
-                    {id: 2, content: "held  in classrooms to prevent the spread of COVID-19", highlight: false, registered: false}
+                fullText: [
+                    {id: 1, content: "1. Schedule of the closing ceremony and diploma presentation ceremony: Friday, January 4, 2019 at 9 o'clock for students to go to school.\n1) ", date: "", highlight: false, registered: false},
+                    {id: 2, content: "Closing ceremony", date: "2022-01-04", highlight: true, registered: false}
                 ],
-                fullText: "We wish you good health and happiness in your family",
                 korean: "희망찬 새해를 맞이하여 학부모님의 가정에 건강과 행복이 함께 하시기를 기원합니다."
             }, {
                 id: 2,
                 title: "School Day",
-                summary: [
-                    {id: 1, content: "School day is March 2nd", highlight: true, registered: true},
-                    {id: 2, content: "Parents participate is available", highlight: false, registered: false}
+                fullText: [
+                    {id: 1, content: "1. Schedule of the closing ceremony and diploma presentation ceremony: Friday, January 4, 2019 at 9 o'clock for students to go to school.\n1) ", date: "", highlight: false, registered: false},
+                    {id: 2, content: "Closing ceremony", date: "2022-01-04", highlight: true, registered: false}
                 ],
-                fullText: "The school starts on March 2nd, and parents who want to participate in the opening ceremony are request to com to auditorium",
                 korean: "개학일은 3월 2일이며, 개학식에 참여하고자 하는 학부모님께서는 10시까지 강당으로 오시기 바랍니다."
             }]
         }
     }, {
-        userId: 1, 
-        childId: 1, 
+        cid: 1, 
         date: "2022-02-10",
         notices: {
             total_results: [
@@ -53,27 +49,24 @@ export default function SearchScreen({ navigation }: Navigation) {
             notice_body: [{
                 id: 1,
                 title: "17th Graduation Ceremony",
-                summary: [
-                    {id: 1, content: "17th Graduation Ceremony is on February 14th", highlight: true, registered: false},
-                    {id: 2, content: "held  in classrooms to prevent the spread of COVID-19", highlight: false, registered: false}
+                fullText: [
+                    {id: 1, content: "1. Schedule of the closing ceremony and diploma presentation ceremony: Friday, January 4, 2019 at 9 o'clock for students to go to school.\n1) ", date: "", highlight: false, registered: false},
+                    {id: 2, content: "Closing ceremony", date: "2022-01-04", highlight: true, registered: false}
                 ],
-                fullText: "We wish you good health and happiness in your family",
                 korean: "희망찬 새해를 맞이하여 학부모님의 가정에 건강과 행복이 함께 하시기를 기원합니다."
             }, {
                 id: 2,
                 title: "School Day",
-                summary: [
-                    {id: 1, content: "School day is March 2nd", highlight: true, registered: true},
-                    {id: 2, content: "Parents participate is available", highlight: false, registered: false}
+                fullText: [
+                    {id: 1, content: "1. Schedule of the closing ceremony and diploma presentation ceremony: Friday, January 4, 2019 at 9 o'clock for students to go to school.\n1) ", date: "", highlight: false, registered: false},
+                    {id: 2, content: "Closing ceremony", date: "2022-01-04", highlight: true, registered: false}
                 ],
-                fullText: "The school starts on March 2nd, and parents who want to participate in the opening ceremony are request to com to auditorium",
                 korean: "개학일은 3월 2일이며, 개학식에 참여하고자 하는 학부모님께서는 10시까지 강당으로 오시기 바랍니다."
             }]
         }
     }]);
     const [notices, setNotices] = useState<Notice[]>([{
-        userId: 1, 
-        childId: 1, 
+        cid: 1, 
         date: "2022-02-19",
         notices: {
             total_results: [
@@ -83,26 +76,23 @@ export default function SearchScreen({ navigation }: Navigation) {
             notice_body: [{
                 id: 1,
                 title: "17th Graduation Ceremony",
-                summary: [
-                    {id: 1, content: "17th Graduation Ceremony is on February 14th", highlight: true, registered: false},
-                    {id: 2, content: "held  in classrooms to prevent the spread of COVID-19", highlight: false, registered: false}
+                fullText: [
+                    {id: 1, content: "1. Schedule of the closing ceremony and diploma presentation ceremony: Friday, January 4, 2019 at 9 o'clock for students to go to school.\n1) ", date: "", highlight: false, registered: false},
+                    {id: 2, content: "Closing ceremony", date: "2022-01-04", highlight: true, registered: false}
                 ],
-                fullText: "We wish you good health and happiness in your family",
                 korean: "희망찬 새해를 맞이하여 학부모님의 가정에 건강과 행복이 함께 하시기를 기원합니다."
             }, {
                 id: 2,
                 title: "School Day",
-                summary: [
-                    {id: 1, content: "School day is March 2nd", highlight: true, registered: true},
-                    {id: 2, content: "Parents participate is available", highlight: false, registered: false}
+                fullText: [
+                    {id: 1, content: "1. Schedule of the closing ceremony and diploma presentation ceremony: Friday, January 4, 2019 at 9 o'clock for students to go to school.\n1) ", date: "", highlight: false, registered: false},
+                    {id: 2, content: "Closing ceremony", date: "2022-01-04", highlight: true, registered: false}
                 ],
-                fullText: "The school starts on March 2nd, and parents who want to participate in the opening ceremony are request to com to auditorium",
                 korean: "개학일은 3월 2일이며, 개학식에 참여하고자 하는 학부모님께서는 10시까지 강당으로 오시기 바랍니다."
             }]
         }
     }, {
-        userId: 1, 
-        childId: 1, 
+        cid: 1, 
         date: "2022-02-10",
         notices: {
             total_results: [
@@ -112,20 +102,18 @@ export default function SearchScreen({ navigation }: Navigation) {
             notice_body: [{
                 id: 1,
                 title: "17th Graduation Ceremony",
-                summary: [
-                    {id: 1, content: "17th Graduation Ceremony is on February 14th", highlight: true, registered: false},
-                    {id: 2, content: "held  in classrooms to prevent the spread of COVID-19", highlight: false, registered: false}
+                fullText: [
+                    {id: 1, content: "1. Schedule of the closing ceremony and diploma presentation ceremony: Friday, January 4, 2019 at 9 o'clock for students to go to school.\n1) ", date: "", highlight: false, registered: false},
+                    {id: 2, content: "Closing ceremony", date: "2022-01-04", highlight: true, registered: false}
                 ],
-                fullText: "We wish you good health and happiness in your family",
                 korean: "희망찬 새해를 맞이하여 학부모님의 가정에 건강과 행복이 함께 하시기를 기원합니다."
             }, {
                 id: 2,
                 title: "School Day",
-                summary: [
-                    {id: 1, content: "School day is March 2nd", highlight: true, registered: false},
-                    {id: 2, content: "Parents participate is available", highlight: false, registered: false}
+                fullText: [
+                    {id: 1, content: "1. Schedule of the closing ceremony and diploma presentation ceremony: Friday, January 4, 2019 at 9 o'clock for students to go to school.\n1) ", date: "", highlight: false, registered: false},
+                    {id: 2, content: "Closing ceremony", date: "2022-01-04", highlight: true, registered: false}
                 ],
-                fullText: "The school starts on March 2nd, and parents who want to participate in the opening ceremony are request to com to auditorium",
                 korean: "개학일은 3월 2일이며, 개학식에 참여하고자 하는 학부모님께서는 10시까지 강당으로 오시기 바랍니다."
             }]
         }
