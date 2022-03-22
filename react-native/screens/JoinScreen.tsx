@@ -115,14 +115,15 @@ export default function JoinScreen({ navigation }: Navigation) {
 						endIcon: <CheckIcon size={5} />
 					}} mt={1}>
 							{/* Country code 3 digit ISO */}
-							<Select.Item label="Chinese" value="chn" />
-							<Select.Item label="English" value="eng" />
-							<Select.Item label="Filipino" value="phl" />
-							<Select.Item label="Japanese" value="jpn" />
-							<Select.Item label="Khmer" value="khm" />
-							<Select.Item label="Korean" value="kor" />
-							<Select.Item label="Thai" value="tha" />
-							<Select.Item label="Vietnamese" value="vnm" />
+							<Select.Item label="Chinese (Traditional)" value="zh-CN" />
+							<Select.Item label="Chinese (Simplified)" value="zh-TW" />
+							<Select.Item label="English" value="en" />
+							<Select.Item label="Filipino" value="tl" />
+							<Select.Item label="Japanese" value="ja" />
+							<Select.Item label="Khmer" value="km" />
+							<Select.Item label="Korean" value="ko" />
+							<Select.Item label="Thai" value="th" />
+							<Select.Item label="Vietnamese" value="vi" />
 						</Select>
 					</FormControl>
 					<FormControl isRequired style={{ flex: 1 }}>
