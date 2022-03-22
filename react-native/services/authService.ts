@@ -17,6 +17,7 @@ const signIn = (accessToken: string): Promise<AuthResponse> => {
                 },
                 body: response.data
             }
+            console.log(data);
             resolve(data);
         })
         .catch(err => {
@@ -36,6 +37,7 @@ const signUp = (data: JoinData): Promise<AuthResponse> => {
                 },
                 body: response.data
             }
+            console.log(data);
             resolve(data);
         })
         .catch(err => {
