@@ -9,14 +9,13 @@ import { useAuth } from '../contexts/Auth';
 
 const highlight = (text: string, registered: boolean) =>
 	<Text fontFamily="body" fontWeight={700} fontStyle="normal" fontSize='md' pt={24} style={!registered ? styles.highlighted : styles.grayBackground}>{text}</Text>
-let date = new Date();
 
 function BottomDrawer(props: BottomDrawerProps) {
 	const [currentEvent, setCurrentEvent] = useState<number>(0);
 	const [openSaveForm, setOpenSaveForm] = useState<boolean>(false);
 	const [resultsTitle, setResultsTitle] = useState<string>('title');
 	const [openEventForm, setOpenEventForm] = useState<boolean>(false);	
-	const [eventForm, setEventForm] = useState<EventForm>({title: '', date: '', cId: 1, description: ''});
+	const [eventForm, setEventForm] = useState<EventForm>({cId: 1, title: '', date: '', description: ''});
 	// TEST: mockup data
 	const [user, setUser] = useState<UserData>({uid: 1, uprofileImg: 1, username: 'hee', ulanguage: 'ko', uchildren: [{cid: 1, cname: 'soo', color: 1}, {cid: 2, cname: 'joo', color: 3}]})
 	// const [user, setUser] = useState<UserData>();
@@ -47,19 +46,8 @@ function BottomDrawer(props: BottomDrawerProps) {
 	const closePopup = () => {
 		setCurrentEvent(0);
 	}
-
-	const handleOpenSaveForm = (prop?: string) => {
-		if (prop==='save') {
-			// TODO: fetch api
-			// data 보내고, success 라면, 서버에 저장된 제목 받아와서 보여주기!
-			let data = {
-				id: props?.results?.id,
-				title: resultsTitle,
-				date: date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()
-			}
-			console.log(data);
-			Alert.alert(`The result was saved in Search as [${resultsTitle}]`)
-		}
+	
+	const handleOpenSaveForm = () => {
 		if (openSaveForm) {
 			setResultsTitle('title');
 		}
@@ -75,8 +63,22 @@ function BottomDrawer(props: BottomDrawerProps) {
 
 	const addEvent = () => {
 		// TODO: fetch api
-		// TEST
 		let status = "success";
+
+		if (auth?.authData?.jwt_token && eventForm) {
+			fetch("http://localhost:8080/notice/calendar", {
+				method: 'POST',
+				headers: {
+					'JWT_TOKEN': auth.authData.jwt_token
+				},
+				body: JSON.stringify(eventForm),
+				redirect: 'follow'
+			})
+			.then(response => response.json())
+			.then(data => status = data)
+			.catch(error => console.log('error', error));
+		}
+
 		switch (status) {
 			case "success": 
 				Alert.alert("The event has been successfully added to your calendar!");
@@ -129,9 +131,7 @@ function BottomDrawer(props: BottomDrawerProps) {
 									}}>
 										Cancel
 									</Button>
-									<Button onPress={() => {
-									handleOpenSaveForm('save')
-									}}>
+									<Button onPress={() => props?.saveResults && props.saveResults(resultsTitle)}>
 										Save
 									</Button>
 									</Button.Group>
