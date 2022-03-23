@@ -129,6 +129,8 @@ export default function TranslateScreen({ navigation }: Navigation) {
                     console.log(error.response.data.error) //Please Authenticate or whatever returned from server
                     if(error.response.status==401) {
                         //redirect to login
+                        Alert.alert("The session has expired. Please log in again.");
+
                         auth.signOut();
                         navigation.dispatch(StackActions.popToTop())
                     }
@@ -182,10 +184,10 @@ export default function TranslateScreen({ navigation }: Navigation) {
                 'fullText': results?.fullText,
                 'korean': results?.korean
             }
-            formdata.append('noticeRequestDTO', data);
+            formdata.append('noticeRequestDTO',  new Blob([JSON.stringify(data)], {type: 'application/json'}));
 
             if (auth?.authData?.jwt_token) {
-                fetch("http://localhost:8080/notice/ocr", {
+                fetch('http://localhost:8080/notice/ocr', {
                     method: 'POST',
                     headers: {
                         'JWT_TOKEN': auth.authData.jwt_token
@@ -195,7 +197,16 @@ export default function TranslateScreen({ navigation }: Navigation) {
                 })
                 .then(response => response.json())
                 .then(data => Alert.alert(`The result was saved in Search as [${data?.title}]`))
-                .catch(error => console.log('error', error));
+                .catch(function (error) {
+                    console.log(error.response.status) // 401
+                    console.log(error.response.data.error) //Please Authenticate or whatever returned from server
+                    if(error.response.status==401) {
+                        //redirect to login
+                        Alert.alert("The session has expired. Please log in again.");
+                        auth.signOut();
+                        navigation.dispatch(StackActions.popToTop())
+                    }
+                });
             }
         }
     }
