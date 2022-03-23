@@ -28,9 +28,9 @@ public class NoticeController {
     }
 
     @RequestMapping(value = "/notice/ocr", method = RequestMethod.POST)
-    public NoticeOCRDto executeOCR (@RequestPart MultipartFile uploadfile) throws IOException {
+    public NoticeOCRDto executeOCR (@RequestPart MultipartFile uploadfile, HttpServletRequest userrequest) throws IOException {
         String korean = noticeService.detectText(uploadfile); //원문 추출
-        String fullText = noticeService.transText(korean); //번역문 추출
+        String fullText = noticeService.transText(korean, userrequest); //번역문 추출
         return new NoticeOCRDto(korean, fullText);
     }
 

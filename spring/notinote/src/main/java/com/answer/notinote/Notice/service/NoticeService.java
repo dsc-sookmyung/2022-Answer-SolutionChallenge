@@ -70,10 +70,13 @@ public class NoticeService {
     }
 
 
-    public String transText(String korean) throws IOException {
+    public String transText(String korean, HttpServletRequest userrequest) throws IOException {
         String text = korean;
         String projectId = "notinote-341918";
-        String targetLanguage = "en"; // 추후 입력받아야함
+        String token = jwtTokenProvider.resolveToken(userrequest);
+        String useremail = jwtTokenProvider.getUserEmail(token);
+        User user = userRepository.findByUemail(useremail).orElseThrow(IllegalArgumentException::new);
+        String targetLanguage = user.getUlanguage(); // 추후 입력받아야함
         ArrayList <String> textlist = new ArrayList<String>();
 
         try (TranslationServiceClient client = TranslationServiceClient.create()) {
