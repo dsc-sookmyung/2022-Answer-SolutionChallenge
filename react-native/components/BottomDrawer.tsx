@@ -188,10 +188,10 @@ function BottomDrawer(props: BottomDrawerProps) {
 																			endIcon: <CheckIcon size={3} />
 																		}}>
 																			{/* Country code 3 digit ISO */}
-																			{user?.uchildren?.map((child => 
+																			{user?.uchildren?.map((child, index) => 
 																				child?.cname && child?.cid &&
-																					<Select.Item label={child?.cname} value={child?.cid.toString()} />
-																			))}
+																					<Select.Item key={'cs_'+index} label={child?.cname} value={child?.cid.toString()} />
+																			)}
 																		</Select>
 																</FormControl>
 																<FormControl>
