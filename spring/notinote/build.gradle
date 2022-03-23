@@ -64,6 +64,9 @@ dependencies {
 	//Translate Settigns
 	implementation 'com.google.cloud:google-cloud-translate:2.1.11'
 	implementation 'com.google.cloud:google-cloud-functions:2.3.5'
+
+	//Cloud Natural Language
+	implementation 'com.google.cloud:google-cloud-language:2.1.9'
 }
 
 tasks.named('test') {

@@ -8,8 +8,9 @@ import { AntDesign } from '@expo/vector-icons';
 import { theme } from '../core/theme';
 
 interface SearchedNoticeProps {
+    id: number
     date: string
-    summariedNotices: string[]
+    saved_titles: string[]
 }
 
 export default function SearchedNotice(props: SearchedNoticeProps) {
@@ -36,7 +37,7 @@ export default function SearchedNotice(props: SearchedNoticeProps) {
 
     return (
         <View style={[styles.container, {
-            height: componentOpened ? (80 + props.summariedNotices.length * 22): 60,
+            height: componentOpened ? (80 + props.saved_titles.length * 22): 60,
             paddingBottom: componentOpened ? 20: 0
         }]}>
             <View style={styles.headerContainer}>
@@ -49,9 +50,9 @@ export default function SearchedNotice(props: SearchedNoticeProps) {
                 </TouchableHighlight>
             </View>
              {componentOpened && (
-                <TouchableHighlight onPress={() => navigation.navigate('SearchResult', {date: props.date})}>
+                <TouchableHighlight onPress={() => navigation.navigate('SearchResult', {id: props.id})}>
                     <View>
-                        {props.summariedNotices.map((notice, index) => 
+                        {props.saved_titles.map((notice, index) => 
                             <Text style={styles.notices}>{(index + 1) + ". " + notice}</Text>
                         )}
                     </View>

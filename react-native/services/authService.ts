@@ -1,8 +1,8 @@
 import axios from 'axios';
-import type { AuthData, JoinData } from '../types';
+import type { AuthResponse, JoinData } from '../types';
 
 
-const signIn = (accessToken: string): Promise<AuthData> => {
+const signIn = (accessToken: string): Promise<AuthResponse> => {
     return new Promise((resolve, reject) => {
         axios.get('http://localhost:8080/login/oauth2', {
             headers: {
@@ -10,8 +10,15 @@ const signIn = (accessToken: string): Promise<AuthData> => {
             }
         })
         .then(response => {
-            console.log(response.data);
-            resolve(response.data)
+            let data = {
+                header: {
+                    jwt_token: response.headers.jwt_token,
+                    refresh_token: response.headers.jwt_token
+                },
+                body: response.data
+            }
+            console.log(data);
+            resolve(data);
         })
         .catch(err => {
             reject(err)
@@ -19,15 +26,21 @@ const signIn = (accessToken: string): Promise<AuthData> => {
     });
 };
 
-const signUp = (data: JoinData): Promise<AuthData> => {
+const signUp = (data: JoinData): Promise<AuthResponse> => {
     return new Promise((resolve, reject) => {
         axios.post('http://localhost:8080/join', data)
         .then(response => {
-            console.log(response.data);
-            resolve(response.data);
+            let data = {
+                header: {
+                    jwt_token: response.headers.jwt_token,
+                    refresh_token: response.headers.jwt_token
+                },
+                body: response.data
+            }
+            console.log(data);
+            resolve(data);
         })
         .catch(err => {
-            console.log(err);
             reject(err)
         })
     })

@@ -1,22 +1,44 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Dimensions, View, TouchableOpacity, TouchableHighlight, ScrollView, Alert } from 'react-native';
-import { Entypo, FontAwesome } from '@expo/vector-icons';
-import { Popover, Button, Divider, Text } from 'native-base';
+import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
+import { Popover, Button, Text, Modal, FormControl, Input, VStack, Select, CheckIcon } from 'native-base';
 import { theme } from '../core/theme';
-import type { BottomDrawerProps } from '../types';
+import type { BottomDrawerProps, EventForm, UserData } from '../types';
+import { useAuth } from '../contexts/Auth';
 
 
-const NO_WIDTH_SPACE = '​';
 const highlight = (text: string, registered: boolean) =>
-  text.split(' ').map((word, i) => (
-    <Text key={i}>
-      <Text style={!registered ? styles.highlighted : styles.grayBackground}>{word} </Text>
-      {NO_WIDTH_SPACE}
-    </Text>
-  ));
+	<Text fontFamily="body" fontWeight={700} fontStyle="normal" fontSize='md' pt={24} style={!registered ? styles.highlighted : styles.grayBackground}>{text}</Text>
+let date = new Date();
 
 function BottomDrawer(props: BottomDrawerProps) {
 	const [currentEvent, setCurrentEvent] = useState<number>(0);
+	const [openSaveForm, setOpenSaveForm] = useState<boolean>(false);
+	const [resultsTitle, setResultsTitle] = useState<string>('title');
+	const [openEventForm, setOpenEventForm] = useState<boolean>(false);	
+	const [eventForm, setEventForm] = useState<EventForm>({title: '', date: '', cId: 1, description: ''});
+	// TEST: mockup data
+	const [user, setUser] = useState<UserData>({uid: 1, uprofileImg: 1, username: 'hee', ulanguage: 'ko', uchildren: [{cid: 1, cname: 'soo', color: 1}, {cid: 2, cname: 'joo', color: 3}]})
+	// const [user, setUser] = useState<UserData>();
+    const auth = useAuth();
+
+	useEffect(()=> {
+        // setUser(auth?.userData);
+	}, [auth]);
+
+	useEffect(() => {
+		if (currentEvent && eventForm?.cId) {
+			let obj = props?.results?.fullText;
+			let event = obj.find(function(item, index) {
+				if (item.id===currentEvent) {
+					return true;
+				}
+			});
+			if (event?.content && user?.uchildren) {
+				setEventForm({title: '['+user.uchildren[eventForm.cId-1]?.cname+'] ' + event.content, date: event?.date ? event.date : '', cId: eventForm.cId, description: eventForm.description });
+			}
+		}
+	}, [currentEvent, eventForm?.cId])
 
 	const openPopup = (resultId: number) => () => {
 		setCurrentEvent(resultId);
@@ -26,8 +48,33 @@ function BottomDrawer(props: BottomDrawerProps) {
 		setCurrentEvent(0);
 	}
 
-	const addEvent = (resultId: number) => () => {
-		// TODO: api
+	const handleOpenSaveForm = (prop?: string) => {
+		if (prop==='save') {
+			// TODO: fetch api
+			// data 보내고, success 라면, 서버에 저장된 제목 받아와서 보여주기!
+			let data = {
+				id: props?.results?.id,
+				title: resultsTitle,
+				date: date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()
+			}
+			console.log(data);
+			Alert.alert(`The result was saved in Search as [${resultsTitle}]`)
+		}
+		if (openSaveForm) {
+			setResultsTitle('title');
+		}
+		setOpenSaveForm(!openSaveForm);
+	}
+
+	const handleOpenEventForm = (prop?: string) => () => {
+		if (prop==='save') {
+			addEvent();
+		}
+		setOpenEventForm(!openEventForm);
+	}
+
+	const addEvent = () => {
+		// TODO: fetch api
 		// TEST
 		let status = "success";
 		switch (status) {
@@ -49,22 +96,57 @@ function BottomDrawer(props: BottomDrawerProps) {
 			<View style={{ flex: 1 }}>
 				<View style={styles.horizontalLine} />
 				<View style={[styles.spaceBetween, { paddingBottom: 24 }]}>
-				<Text fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize={24} color="primary.500">{props.showFullText ? "Full Text" : "Results"}</Text>
+				<Text fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize='2xl' color="primary.500">{props.showKorean ? "Korean" : "Results"}</Text>
 					<View style={styles.alignRow}>
-						<TouchableOpacity style={styles.rightSpace} onPress={props.handleFullText}>
-							<Entypo name="text" size={32} color="#000"/>
+						<TouchableOpacity style={styles.rightSpace} onPress={props.handleKorean}>
+							<MaterialIcons name="translate" size={32} color="#000"/>
 						</TouchableOpacity>
 						{props.isTranslateScreen &&
-							<TouchableOpacity onPress={props.saveResults}>
+						<>
+							<TouchableOpacity onPress={() => handleOpenSaveForm()}>
 								<FontAwesome name="save" size={32} color='#000' />
 							</TouchableOpacity>
+							<Modal isOpen={openSaveForm} onClose={() => handleOpenSaveForm()}>
+								<Modal.Content maxWidth="400px">
+								<Modal.CloseButton />
+								<Modal.Header>Save Results</Modal.Header>
+								<Modal.Body>
+									<FormControl>
+									<FormControl.Label>Title</FormControl.Label>
+									<Input 
+										value={resultsTitle}
+										onChangeText={(text) => setResultsTitle(text)}
+									/>
+									<FormControl.HelperText>
+										Give your results a title.
+									</FormControl.HelperText>
+									</FormControl>
+								</Modal.Body>
+								<Modal.Footer>
+									<Button.Group space={2}>
+									<Button variant="ghost" colorScheme="blueGray" onPress={() => {
+									handleOpenSaveForm()
+									}}>
+										Cancel
+									</Button>
+									<Button onPress={() => {
+									handleOpenSaveForm('save')
+									}}>
+										Save
+									</Button>
+									</Button.Group>
+								</Modal.Footer>
+								</Modal.Content>
+							</Modal>
+						</>
 						}
 					</View>
 				</View>
 				
 				<ScrollView style={{ flex: 1 }}>
-					{!props.showFullText ? (
-						props.results?.summary?.map((item, index) => 
+					<Text fontFamily="body" fontWeight={500} fontStyle="normal" fontSize='md' lineHeight='xl'>
+					{!props.showKorean ? (
+						props.results?.fullText?.map((item, index) => 
 							item.highlight ? (
 								<Popover 
 									key={item.id} 
@@ -73,70 +155,112 @@ function BottomDrawer(props: BottomDrawerProps) {
 									onClose={closePopup}
 									trigger={triggerProps => {
 										return <Text {...triggerProps}>
-											<Text key={item.content} style={styles.content}>
-												{index+1}.&nbsp; 
-												{item.highlight ? (
-													highlight(item.content, item.registered)
-												) : (
-													item.content
-												)}
-											</Text>
-										</Text>;
+												{highlight(item.content, item.registered)}
+											</Text>;
 									}}
 								>
-								{!item.registered ? (
-									<Popover.Content accessibilityLabel="Add schedule to calendar" w={Dimensions.get('window').width*0.7}>
-										<Popover.Arrow />
-										<Popover.CloseButton />
-										<Popover.Header>Add an event</Popover.Header>
-										<Popover.Body>
-											You can add this schedule to the Google calendar.
-										</Popover.Body>
-										<Popover.Footer justifyContent="flex-end">
-											<Button.Group space={4}>
-												<Button variant="ghost" onPress={closePopup}>
-													Cancel
-												</Button>
-												<Button onPress={addEvent(item.id)}>Add to calendar</Button>
-											</Button.Group>
-										</Popover.Footer>
-									</Popover.Content>
-								) : (
-									<Popover.Content accessibilityLabel="Add schedule to calendar" w={Dimensions.get('window').width*0.7}>
-										<Popover.Arrow />
-										<Popover.CloseButton />
-										<Popover.Header>Event already registered</Popover.Header>
-										<Popover.Body>
-											This event is already registered in Google Calendar.
-										</Popover.Body>
-										<Popover.Footer justifyContent="flex-end">
-											<Button.Group space={4}>
-												<Button variant="ghost" onPress={closePopup}>
-													Cancel
-												</Button>
-												<Button onPress={closePopup}>Got it</Button>
-											</Button.Group>
-										</Popover.Footer>
-									</Popover.Content>
-								)}
+									{!item.registered ? (
+										<Popover.Content accessibilityLabel="Add schedule to calendar" w={Dimensions.get('window').width*0.7}>
+											<Popover.Arrow />
+											<Popover.CloseButton />
+											<Popover.Header>Add an event</Popover.Header>
+											<Popover.Body>
+												You can add this schedule to the Google calendar.
+											</Popover.Body>
+											<Popover.Footer justifyContent="flex-end">
+												<Button.Group space={4}>
+													<Button variant="ghost" onPress={closePopup}>
+														Cancel
+													</Button>
+													<Button onPress={handleOpenEventForm()}>Add to calendar</Button>
+													<Modal isOpen={openEventForm} onClose={handleOpenEventForm()}>
+														<Modal.Content maxWidth="400px">
+														<Modal.CloseButton />
+														<Modal.Header>New Event</Modal.Header>
+														<Modal.Body>
+															<VStack space={2}>
+																<FormControl>
+																	<FormControl.Label>Child</FormControl.Label>
+																		<Select selectedValue={eventForm?.cId.toString()} accessibilityLabel="Child" onValueChange={itemValue => {
+																			setEventForm({ ...eventForm, ['cId']: Number(itemValue) })
+																		}} _selectedItem={{
+																			bg: "skyblue.500",
+																			endIcon: <CheckIcon size={3} />
+																		}}>
+																			{/* Country code 3 digit ISO */}
+																			{user?.uchildren?.map((child => 
+																				child?.cname && child?.cid &&
+																					<Select.Item label={child?.cname} value={child?.cid.toString()} />
+																			))}
+																		</Select>
+																</FormControl>
+																<FormControl>
+																	<FormControl.Label>Title</FormControl.Label>
+																	<Input 
+																		value={eventForm?.title}
+																		onChangeText={(text) => setEventForm({...eventForm, ['title']: text})}
+																	/>
+																	</FormControl>
+																<FormControl>
+																	<FormControl.Label>Date</FormControl.Label>
+																	<Input 
+																		value={eventForm?.date}
+																		isDisabled
+																	/>
+																</FormControl>
+																<FormControl>
+																	<FormControl.Label>Description</FormControl.Label>
+																	<Input 
+																		value={eventForm?.description}
+																		onChangeText={(text) => setEventForm({...eventForm, ['description']: text})}
+																	/>
+																</FormControl>
+															</VStack>
+														</Modal.Body>
+														<Modal.Footer>
+															<Button.Group space={2}>
+															<Button variant="ghost" colorScheme="blueGray" onPress={handleOpenEventForm()}>
+																Cancel
+															</Button>
+															<Button onPress={handleOpenEventForm('save')}>
+																Save
+															</Button>
+															</Button.Group>
+														</Modal.Footer>
+														</Modal.Content>
+													</Modal>
+												</Button.Group>
+											</Popover.Footer>
+										</Popover.Content>
+									) : (
+										<Popover.Content accessibilityLabel="Add schedule to calendar" w={Dimensions.get('window').width*0.7}>
+											<Popover.Arrow />
+											<Popover.CloseButton />
+											<Popover.Header>Event already registered</Popover.Header>
+											<Popover.Body>
+												This event is already registered in Google Calendar.
+											</Popover.Body>
+											<Popover.Footer justifyContent="flex-end">
+												<Button.Group space={4}>
+													<Button variant="ghost" onPress={closePopup}>
+														Cancel
+													</Button>
+													<Button onPress={closePopup}>Got it</Button>
+												</Button.Group>
+											</Popover.Footer>
+										</Popover.Content>
+									)}
 								</Popover>
 							) : (
-								<Text key={item.content} style={styles.content}>
-									{index+1}.&nbsp; {item.content}
+								<Text key={item.content}>
+									{item.content}
 								</Text>
 							)
 						)
 					) : (
-						<View style={{flex:1, flexDirection: 'column'}}>
-							<ScrollView style={{flex:1}}>
-								<Text >{props.results?.fullText}</Text>
-							</ScrollView>
-							<Divider my="2" />
-							<ScrollView style={{flex:2}}>
-								<Text>{props.results?.korean}</Text>
-							</ScrollView>
-						</View>
+						<Text>{props.results?.korean}</Text>
 					)}
+					</Text>
 				</ScrollView>
 			</View>
 			{props.isTranslateScreen && 
@@ -174,11 +298,6 @@ const styles = StyleSheet.create({
 		maxHeight: 4,
 		justifyContent: 'center',
 		backgroundColor: theme.colors.gray
-	},
-	content: {
-		fontSize: 16,
-		paddingBottom: 8,
-		letterSpacing: 1
 	},
 	regularButton: {
 		paddingVertical: 16,

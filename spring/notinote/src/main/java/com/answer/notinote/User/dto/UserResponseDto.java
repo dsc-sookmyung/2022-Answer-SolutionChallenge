@@ -13,13 +13,11 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @Getter @Setter
-public class LoginResponseDto {
+public class UserResponseDto {
     private Long uid;
     private String username;
     private String uemail;
     private String ulanguage;
     private List<ChildDto> uchildren;
-    private String jwt_token;
-    private String refresh_token;
-    private RoleType roles;
+    private RoleType uroleType;
 }

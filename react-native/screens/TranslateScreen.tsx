@@ -11,6 +11,7 @@ import BottomDrawer from '../components/BottomDrawer';
 import { useToast, Box } from 'native-base';
 import mime from "mime";
 import * as ImagePicker from 'expo-image-picker';
+import { useAuth } from '../contexts/Auth';
 
 /* TODO:
     - 스크롤 내려가게 하기 (지금은 ScrollView의 스크롤이 안 먹음)
@@ -23,11 +24,12 @@ export default function TranslateScreen({ navigation }: Navigation) {
     const [type, setType] = useState(Camera.Constants.Type.back);
     const [camera, setCamera] = useState<any>(null);
     const [imageUri, setImageUri] = useState<string>(''); 
-    const [results, setResults] = useState<Result>({id: 0, summary: [], fullText: '', korean: ''});
-    const [showFullText, setShowFullText] = useState<boolean>(false);
+    const [results, setResults] = useState<Result>({id: 0, fullText: [], korean: ''});
+    const [showKorean, setShowKorean] = useState<boolean>(false);
     const [isFullDrawer, setFullDrawer] = useState<boolean>(false);
 
     const toast = useToast();
+    const auth = useAuth();
 
     const LoadFontsAndRestoreToken = async () => {
         await useFonts();
@@ -47,7 +49,7 @@ export default function TranslateScreen({ navigation }: Navigation) {
     }, [imageUri])
 
     useEffect(() => {
-        if (results?.summary && results.summary.filter(item => item.highlight === true).length > 0) {
+        if (results?.fullText && results.fullText.filter(item => item.highlight === true).length > 0) {
             const message = "You can add a schedule to the calendar by clicking the highlighted text."
             toast.show({    // Design according to mui toast guidelines (https://material.io/components/snackbars#anatomy)
                 render: () => {
@@ -108,31 +110,42 @@ export default function TranslateScreen({ navigation }: Navigation) {
                 name: imageUri.split("/").pop()
             });
 
-            fetch("http://localhost:8080/notice/ocr", {
-                method: 'POST',
-                body: formdata,
-                redirect: 'follow'
-            })
-            .then(response => response.text())	// TODO: response.json()
-            .then(data => console.log(data))    // TODO: setResults(data)
-            .catch(error => console.log('error', error));
-
-            // TEST
+            if (auth?.authData?.jwt_token) {
+                fetch("http://localhost:8080/notice/ocr", {
+                    method: 'POST',
+                    headers: { 'Authorization': auth.authData.jwt_token },
+                    body: formdata,
+                    redirect: 'follow'
+                })
+                .then(response => response.text())	// TODO: response.json()
+                .then(data => console.log(data))    // TODO: setResults(data)
+                .catch(error => console.log('error', error));
+            }
+           
+            // TEST: mockup data
             setResults({
                 id: 1,
-                summary: [
-                    {"id": 1, "content": "Buy Suyeon a delicious meal.", "highlight": false, registered: false},
-                    {"id": 2, "content": "The graduation ceremony will be held in the auditorium at 2 p.m. on February 14th.", "highlight": true, registered: false},
-                    {"id": 3, "content": "Parents and outsiders are not allowed to enter each class.", "highlight": true, registered: true},
+                fullText: [
+                    {id: 1, content: "1. Schedule of the closing ceremony and diploma presentation ceremony: Friday, January 4, 2019 at 9 o'clock for students to go to school.\n1) ", date: "", highlight: false, registered: false},
+                    {id: 2, content: "Closing ceremony", date: "2022-01-04", highlight: true, registered: false},
+                    {id: 3, content: ": 1st and 2nd graders, each classroom, 9:00-10:50 (no meals)\n2) ", date: "", highlight: false, registered: false},
+                    {id: 4, content: "Diploma representation ceremony", date: "2022-01-04", highlight: true, registered: true},
+                    {id: 5, content: ": 3rd grade, multi-purpose auditorium (2nd floor), 10:30-12:20\n2. School opening and entrance ceremony for new students: March 4th (Mon), 2019 at 9 o'clock for students to go to school.", date: "", highlight: false, registered: false},
                 ],
-                fullText: "We wish you good health and happiness in your family in the hopeful new year of the 17th graduation ceremony in 2020. Thank you very much for supporting our educational activities and for your constant interest and cooperation in the midst of the 2020 COVID-19 crisis. The 17th graduation ceremony of Hwaam High School will be held in classrooms to prevent the spread of COVID-19. Parents and outsiders are not allowed to enter each class. Please understand that we cannot bring you together because it is an inevitable measure to prevent the spread of infectious diseases.", 
-                korean: "2020학년도 제17회 졸업식 실시 안내 희망찬 새해를 맞이하여 학부모님의 가정에 건강과 행복이 함께 하시기를 기원합니다. 2020학년도 코로나19라는 위기 상황 속에서 본교 교육활동을 지지해주시고 변함없는 관심과 협조를 보내 주셔서 진심으로 감사드립니다. 화암고등학교 제17회 졸업식은 코로나19 확산 예방을 위해 각반 교실에서 진행합니다. 각반 교실에는 학부모 및 외부인의 출입이 불가능합니다. 감염병 확산 방지를 위한 불가피한 대책이니 함께 자리에 모시지 못함을 양해 부탁드립니다. 희망찬 내일을 향해 첫발을 내딛는 졸업생들에게 멀리서나마 축하와 격려를 보내주시기 바랍니다. -제17회 졸업식 안내- 1. 일시: 2021년 1월 5일(화) 10:00 2. 장소: 각반 교실 3: 내용: 각반 영상으로 졸업식 실시 * 졸업생 출입 가능 / 학부모 및 외부인 출입 불가 * 졸업생은 반드시 마스크 착용, 자가 진단 후 등교" 
+                korean: "가정통신문\n예당중학교\n8053-8388\n꿈은 크게. 마음은 넘게·\n행동은 바르게\n학부모님께\n희망찬 새해를 맞이하며 학부모님 가정에 건강과 행운이 함께 하시기를 기원 드립니다.\n드릴 말씀은, 2018학년도 종업식 및 졸업장 수여식과 2019학년도 개학 및 신입생 입학식을 다음과 같이 안내드리오니, 이후 3월 개학 때까지 학생들이 자기주도 학습 능력을 배양하고 다양한 체험 활동을 통하여 심신이 건강해지며 각종 유해 환경에 노출되지 않고 안전하고 줄거운 시간이 되도록 지도해 주시기 바랍니다.\n\
+1. 종업식 및 졸업장 수여식 일정 : 2019년 1월 4일(금), 학생 등교 9시\n\
+1) 종업식 : 1· 2학년, 각 교실, 9:00-10:50 (급식 없음)\n\
+2) 졸업장 수여식 : 3학년, 다목적 강당(2층), 10:30~12:20\n\
+2. 개학 및 신입생 입학식 : 2019년 3월 4일(월), 학생 등교 9시\n\
+1) 3월 4일 일정 : 월요일 정상수업 (급식 실시)\n\
+(준비물: 교과서, 노트, 필기도구. 학생용 실내화(흰색) 등)\n\
+2) 신입생 입학식 : 다목적 강당(2층) 10시 30분, 신입생 등교 9시(신반 교실로 입장)\n" 
             })
         }
     }
     
-    const handleFullText = (): void => {
-        setShowFullText(!showFullText);
+    const handleKorean = (): void => {
+        setShowKorean(!showKorean);
     }
 
     const saveResults = (): void => {
@@ -146,8 +159,8 @@ export default function TranslateScreen({ navigation }: Navigation) {
 
     const retakePicture = (): void => {
         setImageUri('');
-        setResults({id: 0, summary: [], fullText: '', korean: ''});
-        setShowFullText(false);
+        setResults({id: 0, fullText: [], korean: ''});
+        setShowKorean(false);
     }
 
     return (
@@ -155,16 +168,16 @@ export default function TranslateScreen({ navigation }: Navigation) {
             {/* After taking a picture */}
             {imageUri ? (
                 /* After taking a picture and press the check button */
-                results?.summary && results?.fullText && results?.korean ? (
+                results?.fullText && results?.fullText && results?.korean ? (
                     <ImageBackground style={styles.container} resizeMode="cover" imageStyle={{ opacity: 0.5 }} source={{ uri: imageUri }}>
                         <SwipeUpDown
                             itemMini={
                                 <BottomDrawer 
                                     results={results}
-                                    showFullText={showFullText}
+                                    showKorean={showKorean}
                                     isFullDrawer={isFullDrawer}
                                     isTranslateScreen={true}
-                                    handleFullText={handleFullText}
+                                    handleKorean={handleKorean}
                                     saveResults={saveResults}
                                     closeResults={closeResults}
                                     retakePicture={retakePicture}
@@ -173,10 +186,10 @@ export default function TranslateScreen({ navigation }: Navigation) {
                             itemFull={
                                 <BottomDrawer 
                                     results={results}
-                                    showFullText={showFullText}
+                                    showKorean={showKorean}
                                     isFullDrawer={isFullDrawer}
                                     isTranslateScreen={true}
-                                    handleFullText={handleFullText}
+                                    handleKorean={handleKorean}
                                     saveResults={saveResults}
                                     closeResults={closeResults}
                                     retakePicture={retakePicture}

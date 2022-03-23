@@ -3,6 +3,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 export type RootStackParamList = {
 	Login: undefined;
 	Join: undefined;
+	Introduction: undefined;
 	Home: undefined;
 	Translate: undefined;
 	Search: undefined;
@@ -21,7 +22,7 @@ export type TextInput = {
 interface Children {
 	cid?: number,
 	cname?: string,
-	color?: string,
+	color?: number,
 }
 
 interface JoinData {
@@ -32,59 +33,72 @@ interface JoinData {
 	uchildren?: Children[]
 }
 
-interface AuthData extends JoinData {
+interface UserData extends JoinData {
     uemail?: string | undefined,
     uproviderType?: string | undefined,
     uroleType?: string | undefined,
+}
 
+interface AuthData {
 	jwt_token?: string,
 	refresh_token?: string,
+}
+
+interface AuthResponse {
+	header: AuthData,
+	body: UserData
+}
+
+interface AuthContextData {
+    authData?: AuthData;
+    userData?: UserData;
+    loading: boolean;
+    signUp(data: JoinData): Promise<void>;
+    signIn(accessToken: string): Promise<void>;
+    signOut(): void;
 };
+interface Event {
+	id: number, 
+	content: string, 
+	date?: string, 
+	highlight: boolean, 
+	registered: boolean
+}
 
 interface Result {
 	id: number,
-	summary: {id: number, content: string, highlight: boolean, registered: boolean}[],
-	fullText: string,
+	imageUri?: string,
+	fullText: Event[],
 	korean: string
 }
 
 interface Notice {
-	userId: number,
-	childId: number,
+	id: number,
+	cid: number,
 	date: string,
-	notices: {
-		total_results: string[],
-		notice_body: {
-			title: string,
-			id: number,
-			summary: {id: number, content: string, highlight: boolean, registered: boolean}[],
-			fullText: string,
-			korean: string,
-		}[]
-	}
-}
-
-interface UserProfile {
-	userId: number;
-	username: string;
-	gmail: string;
-	profileImageType: number; // 1 or 2
-	language: string; // 'english', 'japanese', 'chinese', ...
-	children: {childName: string, childId: number}[];
+	saved_titles: string[],
+	results?: Result[]
 }
 
 interface BottomDrawerProps {
 	results: Result,
-	showFullText?: boolean,
+	showKorean?: boolean,
 	isFullDrawer?: boolean,
 	isTranslateScreen?: boolean,
-	handleFullText?: () => void,
+	handleKorean?: () => void,
 	saveResults?: () => void,
 	closeResults?: () => void,
 	retakePicture?: () => void,
 }
 
+interface EventForm {
+	title: string, 
+	date: string, 
+	cId: number, 
+	description: string
+}
+
 export type {
-	AuthData, JoinData, Children, 
-	Result, Notice, UserProfile, BottomDrawerProps
+	UserData, JoinData, AuthData, AuthResponse, AuthContextData, Children, 
+	Event, Result, Notice, BottomDrawerProps, EventForm
 }
