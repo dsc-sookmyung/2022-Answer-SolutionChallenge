@@ -11,10 +11,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ChildDto {
+    Long cid;
     String cname;
-    String color;
+    Long color;
 
     public ChildDto(Child child) {
+        this.cid = child.getCid();
         this.cname = child.getCname();
         this.color = child.getColor();
     }

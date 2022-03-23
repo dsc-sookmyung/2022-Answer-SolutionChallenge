@@ -67,6 +67,9 @@ dependencies {
 
 	//Cloud Natural Language
 	implementation 'com.google.cloud:google-cloud-language:2.1.9'
+
+	//Json Format
+	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
 }
 
 tasks.named('test') {
