@@ -1,6 +1,7 @@
 package com.answer.notinote.Child.domain;
 
 import com.answer.notinote.Child.dto.ChildDto;
+import com.answer.notinote.Event.domain.Event;
 import com.answer.notinote.User.domain.entity.Timestamped;
 import com.answer.notinote.User.domain.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -9,6 +10,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -32,9 +35,20 @@ public class Child extends Timestamped {
     @Column()
     Long color;
 
-    public Child (User user, ChildDto requestDto) {
-        this.user = user;
+    @OneToMany(mappedBy = "child", cascade = CascadeType.ALL)
+    private List<Event> events = new ArrayList<>();
+
+    public Child (ChildDto requestDto) {
         this.cname = requestDto.getCname();
         this.color = requestDto.getColor();
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+        user.setUchildren(this);
+    }
+
+    public void setEvents(Event event) {
+        this.events.add(event);
     }
 }

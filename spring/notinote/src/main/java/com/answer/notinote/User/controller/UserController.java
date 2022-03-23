@@ -25,12 +25,17 @@ public class UserController {
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
 
+    /**
+     * oauth2 로그인을 진행합니다.
+     * @param response
+     * @param token
+     * @return
+     */
     @GetMapping("/login/oauth2")
     public ResponseEntity<?> oauthLogin(HttpServletResponse response, @RequestHeader("Authorization") String token) {
         User user = userService.oauthLogin(token);
 
         issueJwtToken(response, user);
-
         return ResponseEntity.ok(new UserResponseDto(user));
     }
 
@@ -59,10 +64,16 @@ public class UserController {
         return ResponseEntity.ok(new UserResponseDto(user));
     }
 
+    /**
+     * 회원을 로그아웃합니다.
+     * @param request
+     * @return
+     */
     @DeleteMapping("/logout")
     public ResponseEntity<?> logout(HttpServletRequest request) {
         return ResponseEntity.ok(userService.logout(request));
     }
+
     /**
      * 회원을 탙퇴 처리 합니다.
      * @param id
@@ -71,6 +82,20 @@ public class UserController {
     @DeleteMapping("/user")
     public Long delete(@RequestParam Long id) {
         return userService.delete(id);
+    }
+
+    /**
+     * 회원의 아이들에 대한 정보를 조회합니다.
+     * @param request
+     * @return
+     */
+    @GetMapping("/user/children")
+    public ResponseEntity<?> getChildren(HttpServletRequest request) {
+        String token = jwtTokenProvider.resolveToken(request);
+        String email = jwtTokenProvider.getUserEmail(token);
+        User user = userService.findUserByEmail(email);
+
+        return ResponseEntity.ok(userService.findChildrenByUserId(user.getUid()));
     }
 
     private void issueJwtToken(HttpServletResponse response, User user) {

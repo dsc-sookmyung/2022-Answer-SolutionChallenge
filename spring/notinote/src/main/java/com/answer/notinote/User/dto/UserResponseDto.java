@@ -1,7 +1,6 @@
 package com.answer.notinote.User.dto;
 
 import com.answer.notinote.Auth.data.RoleType;
-import com.answer.notinote.Child.domain.Child;
 import com.answer.notinote.Child.dto.ChildDto;
 import com.answer.notinote.User.domain.entity.User;
 import lombok.AllArgsConstructor;
@@ -32,8 +31,8 @@ public class UserResponseDto {
         this.uprofileImg = user.getUprofileImg();
         this.uroleType = user.getUroleType();
 
-        user.getUchildren().forEach( child ->
-                this.uchildren.add(new ChildDto(child))
-        );
+        if (user.getUchildren() != null) {
+            user.getUchildren().forEach( child -> this.uchildren.add(new ChildDto(child)));
+        }
     }
 }
