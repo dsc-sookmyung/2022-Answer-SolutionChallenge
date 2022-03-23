@@ -67,22 +67,17 @@ interface Event {
 
 interface Result {
 	id: number,
+	imageUri?: string,
 	fullText: Event[],
 	korean: string
 }
 
 interface Notice {
+	id: number,
 	cid: number,
 	date: string,
-	notices: {
-		total_results: string[],
-		notice_body: {
-			title: string,
-			id: number,
-			fullText: Event[],
-			korean: string,
-		}[]
-	}
+	saved_titles: string[],
+	results?: Result[]
 }
 
 interface BottomDrawerProps {
