@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, ImageBackground, Dimensions } from 'react-native';
+import { StyleSheet, View, ImageBackground, Dimensions, Alert } from 'react-native';
 import Swiper from 'react-native-swiper';
-
 import SwipeUpDown from 'react-native-swipe-up-down';
 import BottomDrawer from '../components/BottomDrawer';
 import type { Navigation, Notice } from '../types';
+import { useAuth } from '../contexts/Auth';
+import { useNavigation, StackActions } from '@react-navigation/native';
+
 
 const { width } = Dimensions.get('window');
 
@@ -21,17 +23,19 @@ interface SearchResultScreenProps {
 }
 
 export default function SearchResultScreen(props: SearchResultScreenProps) {
+    const auth = useAuth();
+    const navigation = useNavigation();
+
     const [imageUri, setImageUri] = useState("../assets/images/calendar.png");
-	const [notice, setNotice] = useState<Notice>({id: 1, cid: 2, date: "", saved_titles: [], results: []});
+	const [notice, setNotice] = useState<Notice>({id: 1, date: "", saved_titles: [], results: []});
 	const [showKorean, setShowKorean] = useState<boolean>(false);
 	const [isFullDrawer, setFullDrawer] = useState<boolean>(false);
 
     useEffect(() => {
-        // TODO: Fetch API
-        // search/{props.route.params.id}    
+        // TODO: Fetch API   
+        // mockup data
         setNotice({
             id: 1,
-            cid: 1,
             date: "2022-02-10",
             saved_titles: [
                 "17th Graduation Ceremony",
@@ -55,7 +59,29 @@ export default function SearchResultScreen(props: SearchResultScreenProps) {
                 korean: "개학일은 3월 2일이며, 개학식에 참여하고자 하는 학부모님께서는 10시까지 강당으로 오시기 바랍니다."
             }]
         })
-    }, [])
+
+        if (auth?.authData?.jwt_token) {
+            fetch(`http://localhost:8080/search/${props.route.params.id}`, {
+                method: 'GET',
+                headers: {
+                    'JWT_TOKEN': auth.authData.jwt_token
+                },
+                redirect: 'follow'
+            })
+            .then(response => response.json())
+            .then(data => setNotice(data))
+            .catch(function (error) {
+                console.log(error.response.status) // 401
+                console.log(error.response.data.error) //Please Authenticate or whatever returned from server
+                if(error.response.status==401) {
+                    //redirect to login
+                    Alert.alert("The session has expired. Please log in again.");
+                    auth.signOut();
+                    navigation.dispatch(StackActions.popToTop())
+                }
+            });
+        }
+    }, [auth])
 
     const handleKorean = (): void => {
 		setShowKorean(!showKorean);

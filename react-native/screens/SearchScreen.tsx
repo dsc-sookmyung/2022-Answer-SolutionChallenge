@@ -1,22 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableHighlight } from 'react-native';
+import { StyleSheet, Text, View, TouchableHighlight, Alert } from 'react-native';
 import type { Navigation, Notice } from '../types';
 import SearchedNotice from '../components/SearchedNotice';
 import SearchBar from 'react-native-elements/dist/searchbar/SearchBar-ios';
 import DateTimePickerModal from "react-native-modal-datetime-picker"
-import { Column } from 'native-base';
 import { useAuth } from '../contexts/Auth';
+import { StackActions } from '@react-navigation/native';
 
 
 export default function SearchScreen({ navigation }: Navigation) {
-    const auth = useAuth(); // TODO: get notices by send header(`auth.AuthData`) to server
+    const auth = useAuth();
 
     const [search, setSearch] = useState<string>('');
     const [filteredNotices, setFilteredNotices] = useState<Notice[]>(
         [
             {
                 id: 1,
-                cid: 1, 
                 date: "2022-02-19",
                 saved_titles: [
                     "17th Graduation Ceremony",
@@ -25,7 +24,6 @@ export default function SearchScreen({ navigation }: Navigation) {
             },
             {
                 id: 1,
-                cid: 1, 
                 date: "2022-02-10",
                 saved_titles: [
                     "17th Graduation Ceremony",
@@ -38,7 +36,6 @@ export default function SearchScreen({ navigation }: Navigation) {
         [
             {
                 id: 1,
-                cid: 1, 
                 date: "2022-02-19",
                 saved_titles: [
                     "17th Graduation Ceremony",
@@ -47,7 +44,6 @@ export default function SearchScreen({ navigation }: Navigation) {
             },
             {
                 id: 1,
-                cid: 1, 
                 date: "2022-02-10",
                 saved_titles: [
                     "17th Graduation Ceremony",
@@ -57,6 +53,30 @@ export default function SearchScreen({ navigation }: Navigation) {
     ])
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [searchDate, setSearchDate] = useState<string>("Click calendar icon to select date.");
+
+    useEffect(() => {
+        if (auth?.authData?.jwt_token) {
+            fetch('http://localhost:8080/search', {
+                method: 'GET',
+                headers: {
+                    'JWT_TOKEN': auth.authData.jwt_token
+                },
+                redirect: 'follow'
+            })
+            .then(response => response.json())
+            .then(data => setNotices(data))
+            .catch(function (error) {
+                console.log(error.response.status) // 401
+                console.log(error.response.data.error) //Please Authenticate or whatever returned from server
+                if(error.response.status==401) {
+                    //redirect to login
+                    Alert.alert("The session has expired. Please log in again.");
+                    auth.signOut();
+                    navigation.dispatch(StackActions.popToTop())
+                }
+            });
+        }
+    }, [auth])
 
     const showDatePicker = () => {
         setDatePickerVisibility(true);
