@@ -12,11 +12,14 @@ import { useToast, Box } from 'native-base';
 import mime from "mime";
 import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../contexts/Auth';
+import { StackActions } from '@react-navigation/native';
 
 /* TODO:
     - 스크롤 내려가게 하기 (지금은 ScrollView의 스크롤이 안 먹음)
     - low highlight 주기 (지금은 텍스트 높이만큼 background에 색 줘서 highlight)
 */ 
+
+const date = new Date();
 
 export default function TranslateScreen({ navigation }: Navigation) {
     const [hasPermission, setHasPermission] = useState<boolean>(false);
@@ -113,18 +116,26 @@ export default function TranslateScreen({ navigation }: Navigation) {
             if (auth?.authData?.jwt_token) {
                 fetch("http://localhost:8080/notice/ocr", {
                     method: 'POST',
-                    headers: { 'Authorization': auth.authData.jwt_token },
+                    headers: {
+                        'JWT_TOKEN': auth.authData.jwt_token
+                    },
                     body: formdata,
                     redirect: 'follow'
                 })
-                .then(response => response.text())	// TODO: response.json()
-                .then(data => console.log(data))    // TODO: setResults(data)
-                .catch(error => console.log('error', error));
+                .then(response => response.json())
+                .then(data => setResults(data))
+                .catch(function (error) {
+                    console.log(error.response.status) // 401
+                    console.log(error.response.data.error) //Please Authenticate or whatever returned from server
+                    if(error.response.status==401) {
+                        //redirect to login
+                        auth.signOut();
+                        navigation.dispatch(StackActions.popToTop())
+                    }
+                });
             }
-           
             // TEST: mockup data
             setResults({
-                id: 1,
                 fullText: [
                     {id: 1, content: "1. Schedule of the closing ceremony and diploma presentation ceremony: Friday, January 4, 2019 at 9 o'clock for students to go to school.\n1) ", date: "", highlight: false, registered: false},
                     {id: 2, content: "Closing ceremony", date: "2022-01-04", highlight: true, registered: false},
@@ -148,9 +159,45 @@ export default function TranslateScreen({ navigation }: Navigation) {
         setShowKorean(!showKorean);
     }
 
-    const saveResults = (): void => {
+    const saveResults = (title: string): void => {
         // TODO: api
-        Alert.alert("The scanned result was saved in <Search>.");
+        // TODO: fetch api
+        // data 보내고, success 라면, 서버에 저장된 제목 받아와서 보여주기!
+        if (!title) {
+            Alert.alert("You must enter at least one character for the title.");
+            return;
+        }
+        
+        if (imageUri) {
+            let FormData = require('form-data');
+            const formdata = new FormData();
+            formdata.append('uploadfile', {
+                uri : imageUri,
+                type: mime.getType(imageUri),
+                name: imageUri.split("/").pop()
+            });
+            let data = {
+                'title': title,
+                'date': date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate(),
+                'fullText': results?.fullText,
+                'korean': results?.korean
+            }
+            formdata.append('noticeRequestDTO', data);
+
+            if (auth?.authData?.jwt_token) {
+                fetch("http://localhost:8080/notice/ocr", {
+                    method: 'POST',
+                    headers: {
+                        'JWT_TOKEN': auth.authData.jwt_token
+                    },
+                    body: formdata,
+                    redirect: 'follow'
+                })
+                .then(response => response.json())
+                .then(data => Alert.alert(`The result was saved in Search as [${data?.title}]`))
+                .catch(error => console.log('error', error));
+            }
+        }
     }
 
     const closeResults = (): void => {
