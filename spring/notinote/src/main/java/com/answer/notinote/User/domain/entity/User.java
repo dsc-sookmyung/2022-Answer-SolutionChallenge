@@ -2,7 +2,6 @@ package com.answer.notinote.User.domain.entity;
 
 import com.answer.notinote.Auth.data.ProviderType;
 import com.answer.notinote.Auth.data.RoleType;
-import com.answer.notinote.Auth.data.dto.UserAuthRequestDto;
 import com.answer.notinote.Child.domain.Child;
 import com.answer.notinote.User.dto.UserRequestDto;
 import lombok.*;
@@ -47,17 +46,6 @@ public class User extends Timestamped {
 
     public User(UserRequestDto requestDto) {
         this.username = requestDto.getUsername();
-        this.uemail = requestDto.getUemail();
-    }
-
-    public User(UserAuthRequestDto requestDto) {
-        this.uemail = requestDto.getEmail();
-        this.username = requestDto.getUsername();
-        this.uproviderType = requestDto.getProviderType();
-        this.uroleType = requestDto.getRoleType();
-    }
-
-    public void update(UserRequestDto requestDto) {
         this.uemail = requestDto.getUemail();
     }
 }

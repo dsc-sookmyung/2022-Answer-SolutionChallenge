@@ -29,8 +29,8 @@ public class Child extends Timestamped {
     @Column(length = 20)
     String cname;
 
-    @Column(length = 20)
-    String color;
+    @Column()
+    Long color;
 
     public Child (User user, ChildDto requestDto) {
         this.user = user;
