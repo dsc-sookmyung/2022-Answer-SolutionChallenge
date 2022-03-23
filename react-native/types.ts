@@ -74,7 +74,6 @@ interface Result {
 
 interface Notice {
 	id: number,
-	cid: number,
 	date: string,
 	saved_titles: string[],
 	results?: Result[]

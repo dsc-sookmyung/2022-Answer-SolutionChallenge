@@ -130,6 +130,7 @@ export default function TranslateScreen({ navigation }: Navigation) {
                     if(error.response.status==401) {
                         //redirect to login
                         Alert.alert("The session has expired. Please log in again.");
+
                         auth.signOut();
                         navigation.dispatch(StackActions.popToTop())
                     }

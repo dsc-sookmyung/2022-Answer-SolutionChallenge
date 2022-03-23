@@ -53,7 +53,7 @@ export default function SearchedNotice(props: SearchedNoticeProps) {
                 <TouchableHighlight onPress={() => navigation.navigate('SearchResult', {id: props.id})}>
                     <View>
                         {props.saved_titles.map((notice, index) => 
-                            <Text style={styles.notices}>{(index + 1) + ". " + notice}</Text>
+                            <Text key={'st_'+index} style={styles.notices}>{(index + 1) + ". " + notice}</Text>
                         )}
                     </View>
                 </TouchableHighlight>
