@@ -66,7 +66,7 @@ interface Event {
 }
 
 interface Result {
-	id: number,
+	id?: number,
 	imageUri?: string,
 	fullText: Event[],
 	korean: string
@@ -86,7 +86,7 @@ interface BottomDrawerProps {
 	isFullDrawer?: boolean,
 	isTranslateScreen?: boolean,
 	handleKorean?: () => void,
-	saveResults?: () => void,
+	saveResults?: (title: string) => void,
 	closeResults?: () => void,
 	retakePicture?: () => void,
 }
