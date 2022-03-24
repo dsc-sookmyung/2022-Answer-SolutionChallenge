@@ -13,7 +13,7 @@ const Loading = () => {
             </Heading>
         </HStack>
         <Image source={require('../assets/images/rocket.png')} style={styles.imageStyle}/>
-        <Box width="80%" bg="rgba(0,0,0,0.5)" p="4" shadow={2} style={{ borderRadius: 12 }}>
+        <Box width={320} bg="rgba(0,0,0,0.5)" p="4" shadow={2} style={{ borderRadius: 12 }}>
             <Text color="white" fontWeight="700">💡 Tip</Text>
             <Text color="white">You can save the results and check them on the search screen!</Text>
         </Box>
