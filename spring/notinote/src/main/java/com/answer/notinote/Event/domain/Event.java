@@ -58,6 +58,10 @@ public class Event extends Timestamped {
         this.date = requestDto.getDate();
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public void setNotice(Notice notice) {
         this.notice = notice;
         notice.setEvent(this);
@@ -71,6 +75,7 @@ public class Event extends Timestamped {
     public void register(EventRegisterDto requestDto) {
         this.title = requestDto.getTitle();
         this.date = requestDto.getDate();
+        this.description = requestDto.getDescription();
         this.registered = true;
     }
 }

@@ -35,6 +35,14 @@ public class EventService {
     }
 
     @Transactional
+    public Event updateTitle(Long id, String title) {
+        Event event = findEventById(id);
+        event.setTitle(title);
+        eventRepository.save(event);
+
+        return event;
+    }
+    @Transactional
     public urlResponseDto registerEvent(Long id, EventRegisterDto requestDto) throws GeneralSecurityException, IOException {
         Event event = findEventById(id);
         Child child = childService.findChildById(requestDto.getCid());

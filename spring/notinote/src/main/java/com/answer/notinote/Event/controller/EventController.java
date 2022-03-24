@@ -43,7 +43,14 @@ public class EventController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/event/register")
+    @PutMapping("/event/save")
+    public ResponseEntity<?> saveEvent(@RequestParam(value = "id") Long id, @RequestParam(value = "title") String title) {
+        Event event = eventService.updateTitle(id, title);
+
+        return ResponseEntity.ok(new EventResponseDto(event));
+    }
+
+    @PostMapping("/event/calendar")
     public ResponseEntity<?> registerEvent(@RequestParam(value = "id") Long id, @RequestBody EventRegisterDto registerDto) throws GeneralSecurityException, IOException {
         return ResponseEntity.ok(eventService.registerEvent(id, registerDto));
     }

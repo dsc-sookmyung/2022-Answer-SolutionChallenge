@@ -14,4 +14,5 @@ public class EventRegisterDto {
     Long cid;
     String title;
     LocalDate date;
+    String description;
 }
