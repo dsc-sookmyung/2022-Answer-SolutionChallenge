@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Dimensions, View, TouchableOpacity, TouchableHighlight, ScrollView, Alert } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { StyleSheet, Dimensions, View, TouchableOpacity, TouchableHighlight, ScrollView, Alert, Linking } from 'react-native';
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
-import { Popover, Button, Text, Modal, FormControl, Input, VStack, Select, CheckIcon } from 'native-base';
+import { Popover, Button, Text, Modal, FormControl, Input, VStack, Select, CheckIcon, AlertDialog } from 'native-base';
 import { theme } from '../core/theme';
 import type { BottomDrawerProps, EventForm, UserData } from '../types';
 import { useAuth } from '../contexts/Auth';
@@ -17,14 +17,15 @@ function BottomDrawer(props: BottomDrawerProps) {
 	const [resultsTitle, setResultsTitle] = useState<string>('title');
 	const [openEventForm, setOpenEventForm] = useState<boolean>(false);	
 	const [eventForm, setEventForm] = useState<EventForm>({cId: 1, title: '', date: '', description: ''});
-	// TEST: mockup data
-	const [user, setUser] = useState<UserData>({uid: 1, uprofileImg: 1, username: 'hee', ulanguage: 'ko', uchildren: [{cid: 1, cname: 'soo', color: 1}, {cid: 2, cname: 'joo', color: 3}]})
-	// const [user, setUser] = useState<UserData>();
+	const [calendarAlert, setCalendarAlert] = useState<boolean>(false);
+	const [calendarUrl, setCalendarUrl] = useState<string>('');
+	const [user, setUser] = useState<UserData>();
     const auth = useAuth();
 	const navigation = useNavigation();
+	const cancelRef = React.useRef(null);
 
 	useEffect(()=> {
-        // setUser(auth?.userData);
+        setUser(auth?.userData);
 	}, [auth]);
 
 	useEffect(() => {
@@ -63,13 +64,17 @@ function BottomDrawer(props: BottomDrawerProps) {
 		setOpenEventForm(!openEventForm);
 	}
 
+	const handleCalendarAlert = () => {
+		setCalendarAlert(!calendarAlert);
+	}
+
 	const addEvent = () => {
 		// TODO: fetch api
 		let status = "success";
 
 		if (auth?.authData?.jwt_token && eventForm) {
-			fetch("http://localhost:8080/notice/calendar", {
-				method: 'POST',
+			fetch(`http://localhost:8080/event/register?id=${currentEvent}`, {
+				method: 'PUT',
 				headers: {
 					'JWT_TOKEN': auth.authData.jwt_token
 				},
@@ -77,11 +82,13 @@ function BottomDrawer(props: BottomDrawerProps) {
 				redirect: 'follow'
 			})
 			.then(response => response.json())
-			.then(data => status = data)
+			.then(data => {
+				setCalendarUrl(data.url)	// console.log(data)
+				handleCalendarAlert();
+			})
 			.catch(function (error) {
-				console.log(error.response.status) // 401
-				console.log(error.response.data.error) //Please Authenticate or whatever returned from server
-				if(error.response.status==401) {
+				console.log(error);
+				if(error?.response?.status==401) {
 					//redirect to login
 					Alert.alert("The session has expired. Please log in again.");
 					auth.signOut();
@@ -90,17 +97,29 @@ function BottomDrawer(props: BottomDrawerProps) {
 			});
 		}
 
-		switch (status) {
-			case "success": 
-				Alert.alert("The event has been successfully added to your calendar!");
-				setCurrentEvent(0);	
-				break;
-			case "duplicate": 
-				Alert.alert("This schedule has already been registered.");
-				setCurrentEvent(0);
-				break;
-			default:
-				Alert.alert("Failed to add event to calendar. Please try again.")
+		// TEST
+		// handleCalendarAlert();
+
+		// switch (status) {
+		// 	case "success": 
+		// 		Alert.alert("The event has been successfully added to your calendar!");
+		// 		setCurrentEvent(0);	
+		// 		break;
+		// 	case "duplicate": 
+		// 		Alert.alert("This schedule has already been registered.");
+		// 		setCurrentEvent(0);
+		// 		break;
+		// 	default:
+		// 		Alert.alert("Failed to add event to calendar. Please try again.")
+		// }
+	}
+
+	const linkingCalendar = () => {
+		handleCalendarAlert();
+		// TEST
+		// Linking.openURL('https://www.google.com');
+		if (calendarUrl) {
+			Linking.openURL(calendarUrl);
 		}
 	}
 
@@ -240,6 +259,26 @@ function BottomDrawer(props: BottomDrawerProps) {
 														</Modal.Footer>
 														</Modal.Content>
 													</Modal>
+													<AlertDialog leastDestructiveRef={cancelRef} isOpen={calendarAlert} onClose={handleCalendarAlert}>
+														<AlertDialog.Content>
+														<AlertDialog.CloseButton />
+														<AlertDialog.Header>Check google calendar</AlertDialog.Header>
+														<AlertDialog.Body>
+															<Text>The event has been added to your Google Calendar.</Text>
+															<Text pt={1}>Would you like to check the calendar?</Text>
+														</AlertDialog.Body>
+														<AlertDialog.Footer>
+															<Button.Group space={2}>
+															<Button variant='unstyled' colorScheme='coolGray' onPress={handleCalendarAlert} ref={cancelRef}>
+																Close
+															</Button>
+															<Button colorScheme='primary' onPress={linkingCalendar}>
+																Yes, continue
+															</Button>
+															</Button.Group>
+														</AlertDialog.Footer>
+														</AlertDialog.Content>
+													</AlertDialog>
 												</Button.Group>
 											</Popover.Footer>
 										</Popover.Content>
