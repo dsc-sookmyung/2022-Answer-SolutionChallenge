@@ -13,6 +13,7 @@ import mime from "mime";
 import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../contexts/Auth';
 import { StackActions } from '@react-navigation/native';
+import Loading from '../components/Loading';
 
 /* TODO:
     - 스크롤 내려가게 하기 (지금은 ScrollView의 스크롤이 안 먹음)
@@ -27,9 +28,10 @@ export default function TranslateScreen({ navigation }: Navigation) {
     const [type, setType] = useState(Camera.Constants.Type.back);
     const [camera, setCamera] = useState<any>(null);
     const [imageUri, setImageUri] = useState<string>(''); 
-    const [results, setResults] = useState<Result>({id: 0, fullText: [], korean: ''});
+    const [results, setResults] = useState<Result>({fullText: [], korean: ''});
     const [showKorean, setShowKorean] = useState<boolean>(false);
     const [isFullDrawer, setFullDrawer] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const toast = useToast();
     const auth = useAuth();
@@ -103,7 +105,7 @@ export default function TranslateScreen({ navigation }: Navigation) {
         }
     };  
 
-    const extractText = (): void => {
+    const extractText = async(): Promise<any> => {
         if (imageUri) {
             let FormData = require('form-data');
             const formdata = new FormData();
@@ -113,8 +115,10 @@ export default function TranslateScreen({ navigation }: Navigation) {
                 name: imageUri.split("/").pop()
             });
 
+            setLoading(true);
+
             if (auth?.authData?.jwt_token) {
-                fetch("http://localhost:8080/notice/ocr", {
+                await fetch("http://localhost:8080/notice/ocr", {
                     method: 'POST',
                     headers: {
                         'JWT_TOKEN': auth.authData.jwt_token
@@ -123,14 +127,17 @@ export default function TranslateScreen({ navigation }: Navigation) {
                     redirect: 'follow'
                 })
                 .then(response => response.json())
-                .then(data => setResults(data))
+                .then(data => { 
+                    // setResults(data)
+                    console.log(data)
+                    setLoading(false)
+                })
                 .catch(function (error) {
-                    console.log(error.response.status) // 401
-                    console.log(error.response.data.error) //Please Authenticate or whatever returned from server
-                    if(error.response.status==401) {
+                    console.log(error?.response?.status) // 401
+                    console.log(error?.response?.data?.error) //Please Authenticate or whatever returned from server
+                    if(error?.response?.status==401) {
                         //redirect to login
                         Alert.alert("The session has expired. Please log in again.");
-
                         auth.signOut();
                         navigation.dispatch(StackActions.popToTop())
                     }
@@ -219,6 +226,7 @@ export default function TranslateScreen({ navigation }: Navigation) {
         setImageUri('');
         setResults({id: 0, fullText: [], korean: ''});
         setShowKorean(false);
+        setLoading(false);
     }
 
     return (
@@ -226,7 +234,7 @@ export default function TranslateScreen({ navigation }: Navigation) {
             {/* After taking a picture */}
             {imageUri ? (
                 /* After taking a picture and press the check button */
-                results?.fullText && results?.fullText && results?.korean ? (
+                results?.fullText && results?.korean ? (
                     <ImageBackground style={styles.container} resizeMode="cover" imageStyle={{ opacity: 0.5 }} source={{ uri: imageUri }}>
                         <SwipeUpDown
                             itemMini={
@@ -263,14 +271,18 @@ export default function TranslateScreen({ navigation }: Navigation) {
                     </ImageBackground>
                 ) : (
                     /* After taking a picture, before OCR(pressing the check button) */
-                    <>
-                    <ImageBackground style={styles.camera} resizeMode="cover" source={{ uri: imageUri }} />
-                    <View style={[styles.buttonContainer, , {justifyContent: 'center' }]}>
-                        <TouchableOpacity style={[styles.circleButton, styles.primaryBackground]} onPress={extractText}>
-                            <Ionicons name="checkmark-sharp" size={32} color='#fff' />
-                        </TouchableOpacity>
-                    </View>
-                    </>
+                    loading ? (
+                        <Loading />
+                    ) : (
+                        <>
+                        <ImageBackground style={styles.camera} resizeMode="cover" source={{ uri: imageUri }} />
+                        <View style={[styles.buttonContainer, , {justifyContent: 'center' }]}>
+                            <TouchableOpacity style={[styles.circleButton, styles.primaryBackground]} onPress={extractText}>
+                                <Ionicons name="checkmark-sharp" size={32} color='#fff' />
+                            </TouchableOpacity>
+                        </View>
+                        </>
+                    )
                 )
             ) : (
                 /* Before taking a picture, Camera ready */
