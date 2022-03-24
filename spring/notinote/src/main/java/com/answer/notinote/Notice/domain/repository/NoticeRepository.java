@@ -7,11 +7,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+
 import java.util.List;
+import java.util.Optional;
 
 
 @Repository
 public interface NoticeRepository extends JpaRepository<Notice, Long> {
+
     Notice findByNid(Long nid);
 
     @Query("SELECT distinct n.ndate as ndate FROM Notice n, User u WHERE n.user.uid = u.uid")

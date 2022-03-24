@@ -5,6 +5,7 @@ import { Popover, Button, Text, Modal, FormControl, Input, VStack, Select, Check
 import { theme } from '../core/theme';
 import type { BottomDrawerProps, EventForm, UserData } from '../types';
 import { useAuth } from '../contexts/Auth';
+import { useNavigation, StackActions } from '@react-navigation/native';
 
 
 const highlight = (text: string, registered: boolean) =>
@@ -20,6 +21,7 @@ function BottomDrawer(props: BottomDrawerProps) {
 	const [user, setUser] = useState<UserData>({uid: 1, uprofileImg: 1, username: 'hee', ulanguage: 'ko', uchildren: [{cid: 1, cname: 'soo', color: 1}, {cid: 2, cname: 'joo', color: 3}]})
 	// const [user, setUser] = useState<UserData>();
     const auth = useAuth();
+	const navigation = useNavigation();
 
 	useEffect(()=> {
         // setUser(auth?.userData);
@@ -76,7 +78,16 @@ function BottomDrawer(props: BottomDrawerProps) {
 			})
 			.then(response => response.json())
 			.then(data => status = data)
-			.catch(error => console.log('error', error));
+			.catch(function (error) {
+				console.log(error.response.status) // 401
+				console.log(error.response.data.error) //Please Authenticate or whatever returned from server
+				if(error.response.status==401) {
+					//redirect to login
+					Alert.alert("The session has expired. Please log in again.");
+					auth.signOut();
+					navigation.dispatch(StackActions.popToTop())
+				}
+			});
 		}
 
 		switch (status) {
@@ -188,10 +199,10 @@ function BottomDrawer(props: BottomDrawerProps) {
 																			endIcon: <CheckIcon size={3} />
 																		}}>
 																			{/* Country code 3 digit ISO */}
-																			{user?.uchildren?.map((child => 
+																			{user?.uchildren?.map((child, index) => 
 																				child?.cname && child?.cid &&
-																					<Select.Item label={child?.cname} value={child?.cid.toString()} />
-																			))}
+																					<Select.Item key={'cs_'+index} label={child?.cname} value={child?.cid.toString()} />
+																			)}
 																		</Select>
 																</FormControl>
 																<FormControl>
