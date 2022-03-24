@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -40,16 +41,19 @@ public class EventService {
 
         event.register(requestDto);
         event.setChild(child);
-
         eventRepository.save(event);
 
-        String calendarUrl = calendarService.createEvent(event);
-        return new urlResponseDto(calendarUrl);
+        String url = calendarService.createEvent(event);
+        return new urlResponseDto(url);
     }
 
     public Event findEventById(Long id) {
         return eventRepository.findById(id).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND)
         );
+    }
+
+    public List<Event> findAll() {
+        return eventRepository.findAll();
     }
 }
