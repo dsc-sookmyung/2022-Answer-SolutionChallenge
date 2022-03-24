@@ -71,6 +71,7 @@ public class Event extends Timestamped {
     public void register(EventRegisterDto requestDto) {
         this.title = requestDto.getTitle();
         this.date = requestDto.getDate();
+        this.description = requestDto.getDescription();
         this.registered = true;
     }
 }

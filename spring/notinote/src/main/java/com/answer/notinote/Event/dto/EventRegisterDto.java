@@ -13,5 +13,6 @@ import java.time.LocalDate;
 public class EventRegisterDto {
     Long cid;
     String title;
+    String description;
     LocalDate date;
 }
