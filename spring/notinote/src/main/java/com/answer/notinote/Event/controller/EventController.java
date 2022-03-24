@@ -3,43 +3,39 @@ package com.answer.notinote.Event.controller;
 import com.answer.notinote.Child.domain.Child;
 import com.answer.notinote.Child.service.ChildService;
 import com.answer.notinote.Event.domain.Event;
+import com.answer.notinote.Event.dto.EventRegisterDto;
 import com.answer.notinote.Event.dto.EventRequestDto;
 import com.answer.notinote.Event.dto.EventResponseDto;
 import com.answer.notinote.Event.service.EventService;
 import com.answer.notinote.Event.service.GoogleCalendarService;
-import io.swagger.models.Response;
+import com.answer.notinote.Notice.domain.entity.Notice;
+import com.answer.notinote.Notice.service.NoticeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+
 
 @RestController
 @RequiredArgsConstructor
 public class EventController {
 
     private final EventService eventService;
-    private final ChildService childService;
-    private final GoogleCalendarService calendarService;
+    private final NoticeService noticeService;
 
     @PostMapping("/event")
     public ResponseEntity<?> createEvent(@RequestParam(value = "id") Long id, @RequestBody EventRequestDto requestDto) {
-        Child child = childService.findById(id);
+        Notice notice = noticeService.findNoticeById(id);
 
-        Event event = eventService.create(requestDto, child);
+        Event event = eventService.create(requestDto, notice);
 
         return ResponseEntity.ok(new EventResponseDto(event));
     }
 
-    @PostMapping("/event/calendar")
-    public ResponseEntity<?> createEventInCalendar(@RequestParam(value = "id") Long id) throws GeneralSecurityException, IOException {
-        Event event = eventService.findEventById(id);
-        calendarService.createEvent(event);
-
-        return ResponseEntity.ok(new EventResponseDto(event));
+    @PutMapping("/event/register")
+    public ResponseEntity<?> registerEvent(@RequestParam(value = "id") Long id, @RequestBody EventRegisterDto registerDto) throws GeneralSecurityException, IOException {
+        return ResponseEntity.ok(eventService.registerEvent(id, registerDto));
     }
 }

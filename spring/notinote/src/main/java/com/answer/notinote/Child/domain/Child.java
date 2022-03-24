@@ -2,6 +2,7 @@ package com.answer.notinote.Child.domain;
 
 import com.answer.notinote.Child.dto.ChildDto;
 import com.answer.notinote.Event.domain.Event;
+import com.answer.notinote.Notice.domain.entity.Notice;
 import com.answer.notinote.User.domain.entity.Timestamped;
 import com.answer.notinote.User.domain.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -18,7 +19,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Child extends Timestamped {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
@@ -48,7 +48,7 @@ public class Child extends Timestamped {
         user.setUchildren(this);
     }
 
-    public void setEvents(Event event) {
+    public void setEvent(Event event) {
         this.events.add(event);
     }
 }

@@ -34,7 +34,7 @@ public class GoogleCalendarService {
     private static final List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR);
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 
-    public void createEvent(com.answer.notinote.Event.domain.Event eventEntity) throws GeneralSecurityException, IOException {
+    public String createEvent(com.answer.notinote.Event.domain.Event eventEntity) throws GeneralSecurityException, IOException {
         // Build a new authorized API client service.
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         Calendar service = new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
@@ -42,17 +42,17 @@ public class GoogleCalendarService {
                 .build();
 
         Event event = new Event()
-                .setSummary(eventEntity.getContent())
-                .setDescription("");
+                .setSummary(eventEntity.getTitle())
+                .setDescription(eventEntity.getDescription());
 
         //date Format: "2015-05-28T09:00:00-07:00"
-        DateTime startDateTime = new DateTime(eventEntity.getDate().toString()+"T09:00:00-07:00");
+        DateTime startDateTime = new DateTime(eventEntity.getDate().toString()+"T00:00:00+09:00");
         EventDateTime start = new EventDateTime()
                 .setDateTime(startDateTime)
                 .setTimeZone("Asia/Seoul");
         event.setStart(start);
 
-        DateTime endDateTime = new DateTime(eventEntity.getDate().toString()+"T17:00:00-07:00");
+        DateTime endDateTime = new DateTime(eventEntity.getDate().toString()+"T23:59:59+09:00");
         EventDateTime end = new EventDateTime()
                 .setDateTime(endDateTime)
                 .setTimeZone("Asia/Seoul");
@@ -72,7 +72,7 @@ public class GoogleCalendarService {
 
         String calendarId = "primary";
         event = service.events().insert(calendarId, event).execute();
-        System.out.printf("Event created: %s\n", event.getHtmlLink());
+        return event.getHtmlLink();
     }
 
     private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {

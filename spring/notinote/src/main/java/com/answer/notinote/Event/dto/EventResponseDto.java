@@ -10,12 +10,14 @@ import java.time.LocalDate;
 @Setter
 public class EventResponseDto {
     private Long eid;
-    private String content;
+    private String title;
+    private String description;
     private LocalDate date;
 
     public EventResponseDto(Event event) {
         this.eid = event.getEid();
-        this.content = event.getContent();
+        this.title = event.getTitle();
+        this.description = event.getDescription();
         this.date = event.getDate();
     }
 }
