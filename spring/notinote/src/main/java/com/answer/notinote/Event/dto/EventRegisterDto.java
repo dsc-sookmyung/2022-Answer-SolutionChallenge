@@ -7,13 +7,11 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Getter
-@Setter
+@Getter @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class EventRequestDto {
+public class EventRegisterDto {
+    Long cid;
     String title;
-    Long index_start;
-    Long index_end;
     LocalDate date;
 }

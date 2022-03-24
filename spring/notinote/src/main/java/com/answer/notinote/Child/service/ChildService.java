@@ -23,7 +23,7 @@ public class ChildService {
         return childRepository.save(child);
     }
 
-    public Child findById(Long id) {
+    public Child findChildById(Long id) {
         return childRepository.findById(id).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND)
         );

@@ -1,8 +1,10 @@
 package com.answer.notinote.Event.domain;
 
 import com.answer.notinote.Child.domain.Child;
+import com.answer.notinote.Event.dto.EventRegisterDto;
 import com.answer.notinote.Event.dto.EventRequestDto;
 import com.answer.notinote.Event.util.BooleanToYNConverter;
+import com.answer.notinote.Notice.domain.entity.Notice;
 import com.answer.notinote.User.domain.entity.Timestamped;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,37 +24,53 @@ public class Event extends Timestamped {
     @Column
     private Long eid;
 
+    @Column
+    private Long index_start;
+
+    @Column
+    private Long index_end;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cid")
     private Child child;
 
-    @Column(length = 1000)
-    private String content;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "nid")
+    private Notice notice;
+
+    @Column(length = 50)
+    private String title;
+
+    @Column(length = 100)
+    private String description;
 
     @Column
     private LocalDate date;
 
     @Convert(converter = BooleanToYNConverter.class)
     @Column(length = 1)
-    private boolean registered;
+    private boolean registered = false;
 
-    @Convert(converter = BooleanToYNConverter.class)
-    @Column(length = 1)
-    private boolean highlight;
+    public Event(EventRequestDto requestDto) {
+        this.index_start = requestDto.getIndex_start();
+        this.index_end = requestDto.getIndex_end();
+        this.title = requestDto.getTitle();
+        this.date = requestDto.getDate();
+    }
 
-    public Event(EventRequestDto eventDto) {
-        this.content = eventDto.getContent();
-        this.date = eventDto.getDate();
-        this.registered = eventDto.getRegistered();
-        this.highlight = eventDto.getHighlight();
+    public void setNotice(Notice notice) {
+        this.notice = notice;
+        notice.setEvent(this);
     }
 
     public void setChild(Child child) {
         this.child = child;
-        child.setEvents(this);
+        child.setEvent(this);
     }
 
-    public void register() {
+    public void register(EventRegisterDto requestDto) {
+        this.title = requestDto.getTitle();
+        this.date = requestDto.getDate();
         this.registered = true;
     }
 }
