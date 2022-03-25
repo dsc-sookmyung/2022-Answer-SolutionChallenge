@@ -66,23 +66,20 @@ interface Event {
 }
 
 interface Result {
-	id: number,
+	id?: number,
+	imageUri?: string,
 	fullText: Event[],
 	korean: string
 }
 
 interface Notice {
-	cid: number,
 	date: string,
-	notices: {
-		total_results: string[],
-		notice_body: {
-			title: string,
-			id: number,
-			fullText: Event[],
-			korean: string,
-		}[]
-	}
+	results: Result[]
+}
+
+interface Notices {
+	date: string,
+	saved_titles: string[]
 }
 
 interface BottomDrawerProps {
@@ -91,7 +88,7 @@ interface BottomDrawerProps {
 	isFullDrawer?: boolean,
 	isTranslateScreen?: boolean,
 	handleKorean?: () => void,
-	saveResults?: () => void,
+	saveResults?: (title: string) => void,
 	closeResults?: () => void,
 	retakePicture?: () => void,
 }
@@ -105,5 +102,5 @@ interface EventForm {
 
 export type {
 	UserData, JoinData, AuthData, AuthResponse, AuthContextData, Children, 
-	Event, Result, Notice, BottomDrawerProps, EventForm
+	Event, Result, Notice, Notices, BottomDrawerProps, EventForm
 }

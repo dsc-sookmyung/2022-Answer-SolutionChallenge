@@ -1,29 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Dimensions, View, TouchableOpacity, TouchableHighlight, ScrollView, Alert } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { StyleSheet, Dimensions, View, TouchableOpacity, TouchableHighlight, ScrollView, Alert, Linking } from 'react-native';
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
-import { Popover, Button, Text, Modal, FormControl, Input, VStack, Select, CheckIcon } from 'native-base';
+import { Popover, Button, Text, Modal, FormControl, Input, VStack, Select, CheckIcon, AlertDialog } from 'native-base';
 import { theme } from '../core/theme';
 import type { BottomDrawerProps, EventForm, UserData } from '../types';
 import { useAuth } from '../contexts/Auth';
+import { useNavigation, StackActions } from '@react-navigation/native';
 
 
 const highlight = (text: string, registered: boolean) =>
 	<Text fontFamily="body" fontWeight={700} fontStyle="normal" fontSize='md' pt={24} style={!registered ? styles.highlighted : styles.grayBackground}>{text}</Text>
-let date = new Date();
 
 function BottomDrawer(props: BottomDrawerProps) {
 	const [currentEvent, setCurrentEvent] = useState<number>(0);
 	const [openSaveForm, setOpenSaveForm] = useState<boolean>(false);
 	const [resultsTitle, setResultsTitle] = useState<string>('title');
 	const [openEventForm, setOpenEventForm] = useState<boolean>(false);	
-	const [eventForm, setEventForm] = useState<EventForm>({title: '', date: '', cId: 1, description: ''});
-	// TEST: mockup data
-	const [user, setUser] = useState<UserData>({uid: 1, uprofileImg: 1, username: 'hee', ulanguage: 'ko', uchildren: [{cid: 1, cname: 'soo', color: 1}, {cid: 2, cname: 'joo', color: 3}]})
-	// const [user, setUser] = useState<UserData>();
+	const [eventForm, setEventForm] = useState<EventForm>({cId: 1, title: '', date: '', description: ''});
+	const [calendarAlert, setCalendarAlert] = useState<boolean>(false);
+	const [calendarUrl, setCalendarUrl] = useState<string>('');
+	const [user, setUser] = useState<UserData>();
     const auth = useAuth();
+	const navigation = useNavigation();
+	const cancelRef = React.useRef(null);
 
 	useEffect(()=> {
-        // setUser(auth?.userData);
+        setUser(auth?.userData);
 	}, [auth]);
 
 	useEffect(() => {
@@ -47,19 +49,8 @@ function BottomDrawer(props: BottomDrawerProps) {
 	const closePopup = () => {
 		setCurrentEvent(0);
 	}
-
-	const handleOpenSaveForm = (prop?: string) => {
-		if (prop==='save') {
-			// TODO: fetch api
-			// data 보내고, success 라면, 서버에 저장된 제목 받아와서 보여주기!
-			let data = {
-				id: props?.results?.id,
-				title: resultsTitle,
-				date: date.getFullYear()+'-'+(date.getMonth()+1)+'-'+date.getDate()
-			}
-			console.log(data);
-			Alert.alert(`The result was saved in Search as [${resultsTitle}]`)
-		}
+	
+	const handleOpenSaveForm = () => {
 		if (openSaveForm) {
 			setResultsTitle('title');
 		}
@@ -73,21 +64,62 @@ function BottomDrawer(props: BottomDrawerProps) {
 		setOpenEventForm(!openEventForm);
 	}
 
+	const handleCalendarAlert = () => {
+		setCalendarAlert(!calendarAlert);
+	}
+
 	const addEvent = () => {
 		// TODO: fetch api
-		// TEST
 		let status = "success";
-		switch (status) {
-			case "success": 
-				Alert.alert("The event has been successfully added to your calendar!");
-				setCurrentEvent(0);	
-				break;
-			case "duplicate": 
-				Alert.alert("This schedule has already been registered.");
-				setCurrentEvent(0);
-				break;
-			default:
-				Alert.alert("Failed to add event to calendar. Please try again.")
+
+		if (auth?.authData?.jwt_token && eventForm) {
+			fetch(`http://localhost:8080/event/register?id=${currentEvent}`, {
+				method: 'PUT',
+				headers: {
+					'JWT_TOKEN': auth.authData.jwt_token
+				},
+				body: JSON.stringify(eventForm),
+				redirect: 'follow'
+			})
+			.then(response => response.json())
+			.then(data => {
+				setCalendarUrl(data.url)	// console.log(data)
+				handleCalendarAlert();
+			})
+			.catch(function (error) {
+				console.log(error);
+				if(error?.response?.status==401) {
+					//redirect to login
+					Alert.alert("The session has expired. Please log in again.");
+					auth.signOut();
+					navigation.dispatch(StackActions.popToTop())
+				}
+			});
+		}
+
+		// TEST
+		// handleCalendarAlert();
+
+		// switch (status) {
+		// 	case "success": 
+		// 		Alert.alert("The event has been successfully added to your calendar!");
+		// 		setCurrentEvent(0);	
+		// 		break;
+		// 	case "duplicate": 
+		// 		Alert.alert("This schedule has already been registered.");
+		// 		setCurrentEvent(0);
+		// 		break;
+		// 	default:
+		// 		Alert.alert("Failed to add event to calendar. Please try again.")
+		// }
+	}
+
+	const linkingCalendar = () => {
+		handleCalendarAlert();
+		// TEST
+		// Linking.openURL('https://www.google.com');
+		if (calendarUrl) {
+			Linking.openURL(calendarUrl);
 		}
 	}
 
@@ -129,9 +161,7 @@ function BottomDrawer(props: BottomDrawerProps) {
 									}}>
 										Cancel
 									</Button>
-									<Button onPress={() => {
-									handleOpenSaveForm('save')
-									}}>
+									<Button onPress={() => props?.saveResults && props.saveResults(resultsTitle)}>
 										Save
 									</Button>
 									</Button.Group>
@@ -188,10 +218,10 @@ function BottomDrawer(props: BottomDrawerProps) {
 																			endIcon: <CheckIcon size={3} />
 																		}}>
 																			{/* Country code 3 digit ISO */}
-																			{user?.uchildren?.map((child => 
+																			{user?.uchildren?.map((child, index) => 
 																				child?.cname && child?.cid &&
-																					<Select.Item label={child?.cname} value={child?.cid.toString()} />
-																			))}
+																					<Select.Item key={'cs_'+index} label={child?.cname} value={child?.cid.toString()} />
+																			)}
 																		</Select>
 																</FormControl>
 																<FormControl>
@@ -199,6 +229,7 @@ function BottomDrawer(props: BottomDrawerProps) {
 																	<Input 
 																		value={eventForm?.title}
 																		onChangeText={(text) => setEventForm({...eventForm, ['title']: text})}
+																		returnKeyType={"next"}
 																	/>
 																	</FormControl>
 																<FormControl>
@@ -229,6 +260,26 @@ function BottomDrawer(props: BottomDrawerProps) {
 														</Modal.Footer>
 														</Modal.Content>
 													</Modal>
+													<AlertDialog leastDestructiveRef={cancelRef} isOpen={calendarAlert} onClose={handleCalendarAlert}>
+														<AlertDialog.Content>
+														<AlertDialog.CloseButton />
+														<AlertDialog.Header>Check google calendar</AlertDialog.Header>
+														<AlertDialog.Body>
+															<Text>The event has been added to your Google Calendar.</Text>
+															<Text pt={1}>Would you like to check the calendar?</Text>
+														</AlertDialog.Body>
+														<AlertDialog.Footer>
+															<Button.Group space={2}>
+															<Button variant='unstyled' colorScheme='coolGray' onPress={handleCalendarAlert} ref={cancelRef}>
+																Close
+															</Button>
+															<Button colorScheme='primary' onPress={linkingCalendar}>
+																Yes, continue
+															</Button>
+															</Button.Group>
+														</AlertDialog.Footer>
+														</AlertDialog.Content>
+													</AlertDialog>
 												</Button.Group>
 											</Popover.Footer>
 										</Popover.Content>

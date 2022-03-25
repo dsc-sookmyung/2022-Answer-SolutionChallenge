@@ -82,8 +82,8 @@ export default function JoinScreen({ navigation }: Navigation) {
 	};
 
 	return (
-		<KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"}>
-			<View style={styles.topView}>
+		<KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"} enabled keyboardVerticalOffset={100}>
+			<ScrollView>
 				<VStack space={4} style={{ flex: 1 }}>
 					<FormControl isRequired style={{ flex: 1.2 }}>
 						<FormControl.Label>Profile Image</FormControl.Label>
@@ -115,14 +115,15 @@ export default function JoinScreen({ navigation }: Navigation) {
 						endIcon: <CheckIcon size={5} />
 					}} mt={1}>
 							{/* Country code 3 digit ISO */}
-							<Select.Item label="Chinese" value="chn" />
-							<Select.Item label="English" value="eng" />
-							<Select.Item label="Filipino" value="phl" />
-							<Select.Item label="Japanese" value="jpn" />
-							<Select.Item label="Khmer" value="khm" />
-							<Select.Item label="Korean" value="kor" />
-							<Select.Item label="Thai" value="tha" />
-							<Select.Item label="Vietnamese" value="vnm" />
+							<Select.Item label="Chinese (Traditional)" value="zh-CN" />
+							<Select.Item label="Chinese (Simplified)" value="zh-TW" />
+							<Select.Item label="English" value="en" />
+							<Select.Item label="Filipino" value="tl" />
+							<Select.Item label="Japanese" value="ja" />
+							<Select.Item label="Khmer" value="km" />
+							<Select.Item label="Korean" value="ko" />
+							<Select.Item label="Thai" value="th" />
+							<Select.Item label="Vietnamese" value="vi" />
 						</Select>
 					</FormControl>
 					<FormControl isRequired style={{ flex: 1 }}>
@@ -163,12 +164,10 @@ export default function JoinScreen({ navigation }: Navigation) {
 						</ScrollView>
 					</FormControl>
 				</VStack>
-			</View>
-			<View style={styles.bottomView}>
-				<Button size="lg" onPress={onJoinPressed}>
+				<Button size="lg" my={2} onPress={onJoinPressed}>
 					Sign up
 				</Button>
-			</View>
+			</ScrollView>
 		</KeyboardAvoidingView>
 	);
 }
@@ -180,12 +179,7 @@ const styles = StyleSheet.create({
 		backgroundColor: theme.colors.background,
 		flex: 1,
 		flexDirection: 'column',
-	},
-	topView: {
-		flex: 5, 
-	},
-	bottomView: {
-		flex: 1
+		justifyContent: 'center'
 	},
 	profileImage: {
 		width: 52,

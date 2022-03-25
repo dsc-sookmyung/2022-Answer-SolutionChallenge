@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, SafeAreaView, TouchableHighlight, Image, ImageBackground } from 'react-native';
-import { Text } from 'native-base'
+import { StyleSheet, View, SafeAreaView, TouchableOpacity, Image, ImageBackground, Alert } from 'react-native';
+import { Text, Box } from 'native-base'
+import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../core/theme';
 import type { Navigation, UserData } from '../types';
 import { useAuth } from '../contexts/Auth';
+import { StackActions } from '@react-navigation/native';
+
 
 export default function HomeScreen({ navigation }: Navigation) {
-    const [events, setEvents] = useState<{cid: number, cname: string, events: {time: string, content: string}[]}[]>();
+    const [events, setEvents] = useState<{event_num: number, children: { cid: number, cname: string, event: string[] }[]}>();
     const [totalEventsCount, setTotalEventsCount] = useState<number>(4);
     const [nowSelectedChildId, setNowSelectedChildId] = useState<number>(1);
     const [user, setUser] = useState<UserData>();
@@ -16,27 +19,48 @@ export default function HomeScreen({ navigation }: Navigation) {
         setUser(auth?.userData);
 
         // TODO: get events by send header(`auth.AuthData`) to server
-        setEvents([{
-            cid: 1,
-            cname: "Soo",
-            events: [{
-                time: "10:00",
-                content: "the 17th Graduate Seremony"
-            }, {
-                time: "13:00",
-                content: "Do-Dream Festival"
-            }]
-        }, {
-            cid: 2,
-            cname: "Hee",
-            events: [{
-                time: "11:00",
-                content: "the 18th Matriculation"
-            }, {
-                time: "13:00",
-                content: "Do-Dream Festival"
-            }]
-        }])
+        // mockup data
+        setEvents({
+            event_num: 4,
+            children: [
+                {
+                    cid: 1,
+                    cname: "Soo",
+                    event: [
+                        "the 17th Graduate Seremony",
+                        "Do-Dream Festival"
+                    ]
+                }, {
+                    cid: 2,
+                    cname: "Hee",
+                    event: [
+                        // "17th Graduate Seremony",
+                        // "Do-Dream Festival"
+                    ]
+                }
+            ]
+        })
+
+        if (auth?.authData?.jwt_token) {
+            fetch('http://localhost:8080/user/children', {
+                method: 'GET',
+                headers: {
+                    'JWT_TOKEN': auth.authData.jwt_token
+                },
+                redirect: 'follow'
+            })
+            .then(response => response.json())
+            .then(data => setEvents(data)) // TODO: console.log(data)
+            .catch((error) => {
+                console.log(error)
+                if(error?.response?.status==401) {
+                    //redirect to login
+                    Alert.alert("The session has expired. Please log in again.");
+                    auth.signOut();
+                    navigation.dispatch(StackActions.popToTop())
+                }
+            });
+        }
         // TODO: fetch API
         // .then => set nowSelectedChild 
     }, [auth])
@@ -54,51 +78,59 @@ export default function HomeScreen({ navigation }: Navigation) {
                         <Image style={styles.profileImage} source={require(`../assets/images/profile-images/profile-1.png`)} />
                         <View style={styles.profielTextWrapper}>
                             <Text fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="xl">{"Hi, " + user.username + "!"}</Text>
-                            <Text fontFamily="mono" fontWeight={400} fontStyle="normal" fontSize="sm">You've got {totalEventsCount} events today.</Text>
+                            <Text fontFamily="mono" fontWeight={400} fontStyle="normal" fontSize="sm">You've got {events.event_num} events today.</Text>
                         </View>
                     </ImageBackground>
                 </View>
                 <View style={styles.noticeWrapper}>
                     <Text style={styles.smallTitle} fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="xl">Today's Events</Text>
                     <View style={styles.childButtonWrapper}>
-                        {events?.map((notice, index) => 
-                            <TouchableHighlight key={'n_'+index} style={[styles.childButton, {
+                        {events.children?.map((notice, index) => 
+                            <TouchableOpacity key={'n_'+index} style={[styles.childButton, {
                                 backgroundColor: nowSelectedChildId === notice.cid ? theme.colors.primary : "#ffffff",
                             }]} onPress={() => handleNowSelectedChildId(notice.cid)}>
                                 <Text fontWeight={500} style={[{
                                     color: nowSelectedChildId !== notice.cid ? theme.colors.primary : "#ffffff",
                                 }]}>{notice.cname}</Text>
-                            </TouchableHighlight>
+                            </TouchableOpacity>
                         )}
                     </View>
                     <View style={styles.todayNoticeWrapper}>
-                        {events.filter(notice => notice.cid == nowSelectedChildId)[0].events.map((event, index) => 
-                            <View key={'e_'+index} style={{flexDirection: "row"}}>
-                                <Text fontWeight={500} fontSize="md" lineHeight={28} pr={4} style={{color: theme.colors.primary}}>{event.time}</Text>
-                                <Text fontSize="md" lineHeight={28}>{event.content}</Text>
-                            </View>
-                        )}
+                        {events.children?.filter(notice => notice.cid === nowSelectedChildId)[0].event?.length ? (
+                                events.children?.filter(notice => notice.cid === nowSelectedChildId)[0].event.map((item, index) => 
+                                    <View key={'e_'+index} style={{flexDirection: "row"}}>
+                                        {/* <Text fontWeight={500} fontSize="md" lineHeight={28} pr={4} style={{color: theme.colors.primary}}>{item.time}</Text> */}
+                                        <Text fontSize="md" lineHeight={28}>{index+1 + '. ' + item}</Text>
+                                    </View>
+                                )
+                            ) : (
+                                <Box style={styles.emptyBox}>
+                                    <Ionicons name="musical-note" size={64} />
+                                    <Text fontSize="md" pt={2}>There is no event today!</Text>
+                                </Box>
+                            )
+                        }
                     </View>
                 </View>
                 <View style={styles.functionButtonWrapper}>
                     <Text style={styles.smallTitle} fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="xl">Functions</Text>
                     
-                    <TouchableHighlight onPress={() => navigation.navigate('Translate')}>
+                    <TouchableOpacity onPress={() => navigation.navigate('Translate')}>
                         <ImageBackground source={require("../assets/images/button-background.png")} style={[styles.bigButton]} imageStyle={{ borderRadius: 12 }}>
                             <View>
                                 <Text style={[styles.buttonName, styles.deepBlue]} fontWeight={700} fontSize="xl" pb={2}>Translate</Text>
                                 <Text style={styles.deepBlue} fontSize="sm">Translation, summarization, and calendar registration are all possible just by taking a picture of the notice.</Text>
                             </View>
                         </ImageBackground>
-                    </TouchableHighlight>
-                    <TouchableHighlight onPress={() => navigation.navigate('Search')}>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate('Search')}>
                         <ImageBackground source={require("../assets/images/button-background.png")} style={[styles.bigButton]} imageStyle={{ borderRadius: 12 }}>
                             <View>
                                 <Text style={[styles.buttonName, styles.deepBlue]} fontWeight={700} fontSize="xl" pb={2}>Search</Text>
                                 <Text style={styles.deepBlue} fontSize="sm">You can find notices you have translated.</Text>
                             </View>
                         </ImageBackground>
-                    </TouchableHighlight>
+                    </TouchableOpacity>
                 </View>
             </SafeAreaView> )}
         </>
@@ -139,7 +171,7 @@ const styles = StyleSheet.create({
     noticeWrapper: {
         width: "88%",
         flex: 1,
-        marginBottom: 18
+        marginBottom: 18,
     },
     childButtonWrapper: {
         flexDirection: "row",
@@ -158,10 +190,11 @@ const styles = StyleSheet.create({
     },
     todayNoticeWrapper: {
         alignSelf: "flex-start",
-        marginTop: 18,
-        marginLeft: 12,
+        paddingTop: 18,
+        paddingHorizontal: 12,
         overflow: "scroll",
         flex: 1,
+        width: "100%"
     },
     profileImage: {
         width: 60,
@@ -198,5 +231,11 @@ const styles = StyleSheet.create({
     },
     lightPink: {
         color: theme.colors.primary,
+    },
+    emptyBox: {
+        width: '100%',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
     }
 })

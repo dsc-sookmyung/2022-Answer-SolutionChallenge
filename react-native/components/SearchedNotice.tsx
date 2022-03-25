@@ -1,18 +1,14 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableHighlight } from 'react-native';
-import { useNavigation, StackActions } from '@react-navigation/native';
-import type { Notice } from '../types';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import type { Notices } from '../types';
 import useFonts from '../hooks/useFonts'
 import AppLoading from 'expo-app-loading';
 import { AntDesign } from '@expo/vector-icons';
 import { theme } from '../core/theme';
 
-interface SearchedNoticeProps {
-    date: string
-    summariedNotices: string[]
-}
 
-export default function SearchedNotice(props: SearchedNoticeProps) {
+export default function SearchedNotice(props: Notices) {
     const navigation = useNavigation<any>();
     const [componentOpened, setComponentOpened] = useState<boolean>(false);
     const [fontsLoaded, SetFontsLoaded] = useState<boolean>(false);
@@ -36,7 +32,7 @@ export default function SearchedNotice(props: SearchedNoticeProps) {
 
     return (
         <View style={[styles.container, {
-            height: componentOpened ? (80 + props.summariedNotices.length * 22): 60,
+            height: componentOpened ? (80 + props.saved_titles.length * 22): 60,
             paddingBottom: componentOpened ? 20: 0
         }]}>
             <View style={styles.headerContainer}>
@@ -44,18 +40,18 @@ export default function SearchedNotice(props: SearchedNoticeProps) {
                     color: componentOpened ? theme.colors.primary : "#2A2A2A",
                     textDecorationLine: componentOpened ? "underline": "none"
                 }]}>{props.date}</Text>
-                <TouchableHighlight onPress={updateComponentOpened}>
+                <TouchableOpacity onPress={updateComponentOpened}>
                     <AntDesign name={componentOpened ? "caretup" : "caretdown"} color={componentOpened ? theme.colors.primary : "#000"} size={14}/>
-                </TouchableHighlight>
+                </TouchableOpacity>
             </View>
              {componentOpened && (
-                <TouchableHighlight onPress={() => navigation.navigate('SearchResult', {date: props.date})}>
+                <TouchableOpacity onPress={() => navigation.navigate('SearchResult', {date: props.date})}>
                     <View>
-                        {props.summariedNotices.map((notice, index) => 
-                            <Text style={styles.notices}>{(index + 1) + ". " + notice}</Text>
+                        {props.saved_titles.map((notice, index) => 
+                            <Text key={'st_'+index} style={styles.notices}>{(index + 1) + ". " + notice}</Text>
                         )}
                     </View>
-                </TouchableHighlight>
+                </TouchableOpacity>
             )}
         </View>
     );

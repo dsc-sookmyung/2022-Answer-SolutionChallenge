@@ -1,9 +1,16 @@
 package com.answer.notinote.Notice.service;
 
 
+import com.answer.notinote.Auth.token.provider.JwtTokenProvider;
+import com.answer.notinote.Exception.CustomException;
+import com.answer.notinote.Exception.ErrorCode;
 import com.answer.notinote.Notice.domain.entity.Notice;
 import com.answer.notinote.Notice.domain.repository.NoticeRepository;
-import com.answer.notinote.Notice.dto.ImageRequestDto;
+import com.answer.notinote.Notice.dto.NoticeRequestDto;
+import com.answer.notinote.Notice.dto.NoticeSaveDto;
+import com.answer.notinote.Notice.dto.NoticeTitleListDto;
+import com.answer.notinote.User.domain.entity.User;
+import com.answer.notinote.User.domain.repository.UserRepository;
 import com.google.cloud.language.v1.*;
 import com.google.cloud.translate.v3.*;
 import com.google.cloud.translate.v3.LocationName;
@@ -14,9 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
+import java.io.*;
 import java.util.*;
 
 
@@ -25,42 +31,16 @@ public class NoticeService {
 
     @Autowired
     NoticeRepository noticeRepository;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    JwtTokenProvider jwtTokenProvider;
 
-    public Long saveImage(MultipartFile uploadfile){
-        String nimageoriginal = uploadfile.getOriginalFilename();
-        String uuid = UUID.randomUUID().toString();
-        String nimagename = uuid + nimageoriginal;
-        Long nid = null;
-        String nimageurl = System.getProperty("user.dir")+"/src/main/resources/static";
-        try {
-            File saveFile = new File(nimageurl, nimagename);
-            uploadfile.transferTo(saveFile);
-
-            ImageRequestDto imageRequestDto = ImageRequestDto.builder()
-                    .nimagename(nimagename)
-                    .nimageoriginal(nimageoriginal)
-                    .nimageurl(nimageurl)
-                    .build();
-            nid = noticeRepository.save(imageRequestDto.toNoticeEntity()).getNid();
-
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-
-        return nid;
-    }
-
-
-
-    public String detectText(Long nid) throws IOException{
+    public String detectText(MultipartFile uploadfile) throws IOException{
         List<AnnotateImageRequest> requests = new ArrayList<>();
 
-        Notice notice = noticeRepository.findByNid(nid);
-        String nimageurl = notice.getNimageurl();
-        String nimagename = notice.getNimagename();
-        String filePath = nimageurl + '/' + nimagename;
-
-        ByteString imgBytes = ByteString.readFrom(new FileInputStream(filePath));
+        InputStream inputStream =  new BufferedInputStream(uploadfile.getInputStream());
+        ByteString imgBytes = ByteString.readFrom(inputStream);
 
         Image img = Image.newBuilder().setContent(imgBytes).build();
         Feature feat = Feature.newBuilder().setType(Feature.Type.TEXT_DETECTION).build();
@@ -74,7 +54,6 @@ public class NoticeService {
             BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
             List<AnnotateImageResponse> responses = response.getResponsesList();
 
-
             for (AnnotateImageResponse res : responses) {
                 if (res.hasError()) {
                     System.out.format("Error: %s%n", res.getError().getMessage());
@@ -84,24 +63,22 @@ public class NoticeService {
                 for (EntityAnnotation annotation : res.getTextAnnotationsList()) {
                     text.add(String.format("%s", annotation.getDescription()));
 
-
                 }
             }
             //System.out.println("Text : "+text.get(0));
         }
 
-        notice.update_origin_full(text.get(0));
-        noticeRepository.save(notice);
-        //리턴을 string이 아닌 entity로 하면 조회하는 횟수를 1회 줄일 수 있어서 추후 수정 필요
-
         return text.get(0);
     }
 
-    public String transText(Long nid) throws IOException {
-        Notice notice = noticeRepository.findByNid(nid);
-        String text = notice.getOrigin_full();
+
+    public String transText(String korean, HttpServletRequest userrequest) throws IOException {
+        String text = korean;
         String projectId = "notinote-341918";
-        String targetLanguage = "en"; // 추후 입력받아야함
+        String token = jwtTokenProvider.resolveToken(userrequest);
+        String useremail = jwtTokenProvider.getUserEmail(token);
+        User user = userRepository.findByUemail(useremail).orElseThrow(IllegalArgumentException::new);
+        String targetLanguage = user.getUlanguage(); // 추후 입력받아야함
         ArrayList <String> textlist = new ArrayList<String>();
 
         try (TranslationServiceClient client = TranslationServiceClient.create()) {
@@ -123,11 +100,49 @@ public class NoticeService {
             }
             //System.out.println("Text : "+textlist.get(0));
         }
-        notice.update_trans_full(textlist.get(0));
-        noticeRepository.save(notice);
+
         return textlist.get(0);
     }
 
+
+
+    public NoticeTitleListDto saveNotice(MultipartFile uploadfile, NoticeRequestDto noticeRequestDto, HttpServletRequest request) throws IOException{
+        //요청한 사용자 확인
+        String token = jwtTokenProvider.resolveToken(request);
+        String useremail = jwtTokenProvider.getUserEmail(token);
+        User user = userRepository.findByUemail(useremail).orElseThrow(IllegalArgumentException::new);
+
+        //이미지 파일 저장
+        String nimageoriginal = uploadfile.getOriginalFilename();
+        String uuid = UUID.randomUUID().toString();
+        String nimagename = uuid + nimageoriginal;
+        String nimageurl = System.getProperty("user.dir")+"/src/main/resources/static";
+
+        File saveFile = new File(nimageurl, nimagename);
+        uploadfile.transferTo(saveFile);
+
+        //dto 저장
+        NoticeSaveDto noticeSaveDto = NoticeSaveDto.builder()
+                .nimagename(nimagename)
+                .nimageoriginal(nimageoriginal)
+                .nimageurl(nimageurl)
+                .title(noticeRequestDto.getTitle())
+                .ndate(noticeRequestDto.getDate())
+                .origin_full(noticeRequestDto.getKorean())
+                .trans_full(noticeRequestDto.getFullText())
+                .user(user)
+                .build();
+        Notice notice = noticeRepository.save(noticeSaveDto.toNoticeEntity(user));
+
+        return new NoticeTitleListDto(notice);
+
+    }
+
+    public Notice findNoticeById(Long id) {
+        return noticeRepository.findById(id).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND)
+        );
+    }
 
     /*public String dateDetect(Long nid) throws IOException {
         Notice notice = noticeRepository.findByNid(nid);
