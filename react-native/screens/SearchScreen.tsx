@@ -60,7 +60,10 @@ export default function SearchScreen({ navigation }: Navigation) {
                 redirect: 'follow'
             })
             .then(response => response.json())
-            .then(data => setNotices(data)) // console.log(data)
+            .then(data => {
+                setNotices(data);
+                setFilteredNotices(data);
+            }) // console.log(data)
             .catch(function (error) {
                 console.log(error)
                 if(error.response.status==401) {
@@ -86,7 +89,7 @@ export default function SearchScreen({ navigation }: Navigation) {
         const splitedDate = date.toISOString().split("T")[0];
         setSearchDate(splitedDate);
         if (date) {
-            const newData = notices.filter((notice) => {
+            const newData = notices?.filter((notice) => {
                 return notice.date === splitedDate;
             })
             setFilteredNotices(newData);
@@ -98,7 +101,7 @@ export default function SearchScreen({ navigation }: Navigation) {
 
     const searchFilter = (text: string | void) => {
         if (text) {
-            const newData = notices.filter((notice) => {
+            const newData = notices?.filter((notice) => {
                 const noticeData = notice.saved_titles?.join().toUpperCase();
                 const textData = text.toUpperCase();
                 return noticeData.indexOf(textData) > -1;
