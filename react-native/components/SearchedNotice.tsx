@@ -32,22 +32,22 @@ export default function SearchedNotice(props: Notices) {
 
     return (
         <View style={[styles.container, {
-            height: componentOpened ? (80 + props.saved_titles.length * 22): 60,
+            height: componentOpened ? (80 + props?.saved_titles?.length * 22): 60,
             paddingBottom: componentOpened ? 20: 0
         }]}>
             <View style={styles.headerContainer}>
                 <Text style={[styles.date, {
                     color: componentOpened ? theme.colors.primary : "#2A2A2A",
                     textDecorationLine: componentOpened ? "underline": "none"
-                }]}>{props.date}</Text>
+                }]}>{props?.date}</Text>
                 <TouchableOpacity onPress={updateComponentOpened}>
                     <AntDesign name={componentOpened ? "caretup" : "caretdown"} color={componentOpened ? theme.colors.primary : "#000"} size={14}/>
                 </TouchableOpacity>
             </View>
              {componentOpened && (
-                <TouchableOpacity onPress={() => navigation.navigate('SearchResult', {date: props.date})}>
+                <TouchableOpacity onPress={() => navigation.navigate('SearchResult', {date: props?.date})}>
                     <View>
-                        {props.saved_titles.map((notice, index) => 
+                        {props?.saved_titles?.map((notice, index) => 
                             <Text key={'st_'+index} style={styles.notices}>{(index + 1) + ". " + notice}</Text>
                         )}
                     </View>

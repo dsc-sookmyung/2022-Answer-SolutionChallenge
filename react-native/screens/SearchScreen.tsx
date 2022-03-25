@@ -63,7 +63,6 @@ export default function SearchScreen({ navigation }: Navigation) {
             .then(data => {
                 setNotices(data);
                 setFilteredNotices(data);
-            }) // console.log(data)
             .catch(function (error) {
                 console.log(error)
                 if(error.response.status==401) {
@@ -84,7 +83,7 @@ export default function SearchScreen({ navigation }: Navigation) {
         setDatePickerVisibility(false);
     };
 
-    const handleConfirm = (date: Date) => {
+    const handleConfirm = (date: Date) => () => {
         console.log("A date has been picked: ", date);
         const splitedDate = date.toISOString().split("T")[0];
         setSearchDate(splitedDate);
@@ -92,21 +91,21 @@ export default function SearchScreen({ navigation }: Navigation) {
             const newData = notices?.filter((notice) => {
                 return notice.date === splitedDate;
             })
-            setFilteredNotices(newData);
+            setFilteredNotices(newData ? newData : [{date: '', saved_titles: []}]);
         } else {
             setFilteredNotices(notices);
         }
         hideDatePicker();
     };
 
-    const searchFilter = (text: string | void) => {
+    const searchFilter = (text: string | void) => () => {
         if (text) {
             const newData = notices?.filter((notice) => {
                 const noticeData = notice.saved_titles?.join().toUpperCase();
                 const textData = text.toUpperCase();
                 return noticeData.indexOf(textData) > -1;
             })
-            setFilteredNotices(newData);
+            setFilteredNotices(newData ? newData : [{date: '', saved_titles: []}]);
         } else {
             setFilteredNotices(notices);
         }
@@ -140,12 +139,14 @@ export default function SearchScreen({ navigation }: Navigation) {
                     value={search}
                 />
             </View>
-            <View style={styles.searchResults}>
-                <Text style={styles.smallDescription}>RESULTS</Text>
-                {filteredNotices?.map((notice, index) => 
-                    <SearchedNotice key={"nt_" + index} date={notice.date} saved_titles={notice.saved_titles} />
-                )}
-            </View>
+            {filteredNotices && filteredNotices.length > 0 &&
+                <View style={styles.searchResults}>
+                    <Text style={styles.smallDescription}>RESULTS</Text>
+                    {filteredNotices?.map((notice, index) => 
+                        <SearchedNotice key={"nt_" + index} date={notice?.date} saved_titles={notice?.saved_titles} />
+                    )}
+                </View>
+            }
         </View> 
     );
 }

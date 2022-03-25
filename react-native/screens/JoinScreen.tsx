@@ -115,10 +115,8 @@ export default function JoinScreen({ navigation }: Navigation) {
 						endIcon: <CheckIcon size={5} />
 					}} mt={1}>
 							{/* Country code 3 digit ISO */}
-							<Select.Item label="Chinese (Traditional)" value="zh-CN" />
-							<Select.Item label="Chinese (Simplified)" value="zh-TW" />
+							<Select.Item label="Chinese" value="zh" />
 							<Select.Item label="English" value="en" />
-							<Select.Item label="Filipino" value="tl" />
 							<Select.Item label="Japanese" value="ja" />
 							<Select.Item label="Khmer" value="km" />
 							<Select.Item label="Korean" value="ko" />
