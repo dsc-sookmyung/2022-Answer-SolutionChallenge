@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, SafeAreaView, TouchableHighlight, Image, ImageBackground, Alert } from 'react-native';
+import { StyleSheet, View, SafeAreaView, TouchableOpacity, Image, ImageBackground, Alert } from 'react-native';
 import { Text, Box } from 'native-base'
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../core/theme';
@@ -86,13 +86,13 @@ export default function HomeScreen({ navigation }: Navigation) {
                     <Text style={styles.smallTitle} fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="xl">Today's Events</Text>
                     <View style={styles.childButtonWrapper}>
                         {events.children?.map((notice, index) => 
-                            <TouchableHighlight key={'n_'+index} style={[styles.childButton, {
+                            <TouchableOpacity key={'n_'+index} style={[styles.childButton, {
                                 backgroundColor: nowSelectedChildId === notice.cid ? theme.colors.primary : "#ffffff",
                             }]} onPress={() => handleNowSelectedChildId(notice.cid)}>
                                 <Text fontWeight={500} style={[{
                                     color: nowSelectedChildId !== notice.cid ? theme.colors.primary : "#ffffff",
                                 }]}>{notice.cname}</Text>
-                            </TouchableHighlight>
+                            </TouchableOpacity>
                         )}
                     </View>
                     <View style={styles.todayNoticeWrapper}>
@@ -115,22 +115,22 @@ export default function HomeScreen({ navigation }: Navigation) {
                 <View style={styles.functionButtonWrapper}>
                     <Text style={styles.smallTitle} fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="xl">Functions</Text>
                     
-                    <TouchableHighlight onPress={() => navigation.navigate('Translate')}>
+                    <TouchableOpacity onPress={() => navigation.navigate('Translate')}>
                         <ImageBackground source={require("../assets/images/button-background.png")} style={[styles.bigButton]} imageStyle={{ borderRadius: 12 }}>
                             <View>
                                 <Text style={[styles.buttonName, styles.deepBlue]} fontWeight={700} fontSize="xl" pb={2}>Translate</Text>
                                 <Text style={styles.deepBlue} fontSize="sm">Translation, summarization, and calendar registration are all possible just by taking a picture of the notice.</Text>
                             </View>
                         </ImageBackground>
-                    </TouchableHighlight>
-                    <TouchableHighlight onPress={() => navigation.navigate('Search')}>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => navigation.navigate('Search')}>
                         <ImageBackground source={require("../assets/images/button-background.png")} style={[styles.bigButton]} imageStyle={{ borderRadius: 12 }}>
                             <View>
                                 <Text style={[styles.buttonName, styles.deepBlue]} fontWeight={700} fontSize="xl" pb={2}>Search</Text>
                                 <Text style={styles.deepBlue} fontSize="sm">You can find notices you have translated.</Text>
                             </View>
                         </ImageBackground>
-                    </TouchableHighlight>
+                    </TouchableOpacity>
                 </View>
             </SafeAreaView> )}
         </>

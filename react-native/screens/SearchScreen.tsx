@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableHighlight, Alert } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
 import type { Navigation, Notices } from '../types';
 import SearchedNotice from '../components/SearchedNotice';
 import SearchBar from 'react-native-elements/dist/searchbar/SearchBar-ios';
@@ -115,9 +115,9 @@ export default function SearchScreen({ navigation }: Navigation) {
             <View style={styles.searchDateWrapper}>
                 <Text style={styles.smallDescription}>SEARCH BY DATE</Text>
                 <View style={styles.searchDateContainer}>
-                    <TouchableHighlight onPress={showDatePicker}>
+                    <TouchableOpacity onPress={showDatePicker}>
                         <Text style={styles.calendarIcon}>🗓</Text>
-                    </TouchableHighlight>
+                    </TouchableOpacity>
                     <Text style={styles.selectedDate}>{searchDate}</Text>
                     <DateTimePickerModal
                         isVisible={isDatePickerVisible}
