@@ -82,8 +82,8 @@ export default function JoinScreen({ navigation }: Navigation) {
 	};
 
 	return (
-		<KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"}>
-			<View style={styles.topView}>
+		<KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"} enabled keyboardVerticalOffset={100}>
+			<ScrollView>
 				<VStack space={4} style={{ flex: 1 }}>
 					<FormControl isRequired style={{ flex: 1.2 }}>
 						<FormControl.Label>Profile Image</FormControl.Label>
@@ -164,12 +164,10 @@ export default function JoinScreen({ navigation }: Navigation) {
 						</ScrollView>
 					</FormControl>
 				</VStack>
-			</View>
-			<View style={styles.bottomView}>
-				<Button size="lg" onPress={onJoinPressed}>
+				<Button size="lg" my={2} onPress={onJoinPressed}>
 					Sign up
 				</Button>
-			</View>
+			</ScrollView>
 		</KeyboardAvoidingView>
 	);
 }
@@ -181,12 +179,7 @@ const styles = StyleSheet.create({
 		backgroundColor: theme.colors.background,
 		flex: 1,
 		flexDirection: 'column',
-	},
-	topView: {
-		flex: 5, 
-	},
-	bottomView: {
-		flex: 1
+		justifyContent: 'center'
 	},
 	profileImage: {
 		width: 52,
