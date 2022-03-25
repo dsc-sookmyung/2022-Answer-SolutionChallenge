@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableHighlight } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import type { Notices } from '../types';
 import useFonts from '../hooks/useFonts'
@@ -40,18 +40,18 @@ export default function SearchedNotice(props: Notices) {
                     color: componentOpened ? theme.colors.primary : "#2A2A2A",
                     textDecorationLine: componentOpened ? "underline": "none"
                 }]}>{props.date}</Text>
-                <TouchableHighlight onPress={updateComponentOpened}>
+                <TouchableOpacity onPress={updateComponentOpened}>
                     <AntDesign name={componentOpened ? "caretup" : "caretdown"} color={componentOpened ? theme.colors.primary : "#000"} size={14}/>
-                </TouchableHighlight>
+                </TouchableOpacity>
             </View>
              {componentOpened && (
-                <TouchableHighlight onPress={() => navigation.navigate('SearchResult', {date: props.date})}>
+                <TouchableOpacity onPress={() => navigation.navigate('SearchResult', {date: props.date})}>
                     <View>
                         {props.saved_titles.map((notice, index) => 
                             <Text key={'st_'+index} style={styles.notices}>{(index + 1) + ". " + notice}</Text>
                         )}
                     </View>
-                </TouchableHighlight>
+                </TouchableOpacity>
             )}
         </View>
     );

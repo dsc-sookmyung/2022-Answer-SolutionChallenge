@@ -229,6 +229,7 @@ function BottomDrawer(props: BottomDrawerProps) {
 																	<Input 
 																		value={eventForm?.title}
 																		onChangeText={(text) => setEventForm({...eventForm, ['title']: text})}
+																		returnKeyType={"next"}
 																	/>
 																	</FormControl>
 																<FormControl>
