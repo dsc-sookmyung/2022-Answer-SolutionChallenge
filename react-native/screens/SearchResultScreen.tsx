@@ -16,7 +16,7 @@ interface SearchResultScreenProps {
         key: string,
         name: string,
         params: {
-            id: number
+            date: string
         },
         path: string | undefined,
     }
@@ -27,7 +27,7 @@ export default function SearchResultScreen(props: SearchResultScreenProps) {
     const navigation = useNavigation();
 
     const [imageUri, setImageUri] = useState("../assets/images/calendar.png");
-	const [notice, setNotice] = useState<Notice>({id: 1, date: "", saved_titles: [], results: []});
+	const [notice, setNotice] = useState<Notice>({date: "", results: []});
 	const [showKorean, setShowKorean] = useState<boolean>(false);
 	const [isFullDrawer, setFullDrawer] = useState<boolean>(false);
 
@@ -35,12 +35,7 @@ export default function SearchResultScreen(props: SearchResultScreenProps) {
         // TODO: Fetch API   
         // mockup data
         setNotice({
-            id: 1,
             date: "2022-02-10",
-            saved_titles: [
-                "17th Graduation Ceremony",
-                "School Day"
-            ],
             results: [{
                 id: 1,
                 imageUri: '',
@@ -61,7 +56,7 @@ export default function SearchResultScreen(props: SearchResultScreenProps) {
         })
 
         if (auth?.authData?.jwt_token) {
-            fetch(`http://localhost:8080/search/${props.route.params.id}`, {
+            fetch(`http://localhost:8080/search/detail?date=${props.route.params.date}`, {
                 method: 'GET',
                 headers: {
                     'JWT_TOKEN': auth.authData.jwt_token
@@ -71,8 +66,7 @@ export default function SearchResultScreen(props: SearchResultScreenProps) {
             .then(response => response.json())
             .then(data => setNotice(data))
             .catch(function (error) {
-                console.log(error.response.status) // 401
-                console.log(error.response.data.error) //Please Authenticate or whatever returned from server
+                console.log(error)
                 if(error.response.status==401) {
                     //redirect to login
                     Alert.alert("The session has expired. Please log in again.");

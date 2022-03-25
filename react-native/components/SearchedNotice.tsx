@@ -1,19 +1,14 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, TouchableHighlight } from 'react-native';
-import { useNavigation, StackActions } from '@react-navigation/native';
-import type { Notice } from '../types';
+import { useNavigation } from '@react-navigation/native';
+import type { Notices } from '../types';
 import useFonts from '../hooks/useFonts'
 import AppLoading from 'expo-app-loading';
 import { AntDesign } from '@expo/vector-icons';
 import { theme } from '../core/theme';
 
-interface SearchedNoticeProps {
-    id: number
-    date: string
-    saved_titles: string[]
-}
 
-export default function SearchedNotice(props: SearchedNoticeProps) {
+export default function SearchedNotice(props: Notices) {
     const navigation = useNavigation<any>();
     const [componentOpened, setComponentOpened] = useState<boolean>(false);
     const [fontsLoaded, SetFontsLoaded] = useState<boolean>(false);
@@ -50,7 +45,7 @@ export default function SearchedNotice(props: SearchedNoticeProps) {
                 </TouchableHighlight>
             </View>
              {componentOpened && (
-                <TouchableHighlight onPress={() => navigation.navigate('SearchResult', {id: props.id})}>
+                <TouchableHighlight onPress={() => navigation.navigate('SearchResult', {date: props.date})}>
                     <View>
                         {props.saved_titles.map((notice, index) => 
                             <Text key={'st_'+index} style={styles.notices}>{(index + 1) + ". " + notice}</Text>

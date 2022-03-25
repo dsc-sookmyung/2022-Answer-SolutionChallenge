@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, TouchableHighlight, Alert } from 'react-native';
-import type { Navigation, Notice } from '../types';
+import type { Navigation, Notices } from '../types';
 import SearchedNotice from '../components/SearchedNotice';
 import SearchBar from 'react-native-elements/dist/searchbar/SearchBar-ios';
 import DateTimePickerModal from "react-native-modal-datetime-picker"
@@ -12,10 +12,9 @@ export default function SearchScreen({ navigation }: Navigation) {
     const auth = useAuth();
 
     const [search, setSearch] = useState<string>('');
-    const [filteredNotices, setFilteredNotices] = useState<Notice[]>(
+    const [filteredNotices, setFilteredNotices] = useState<Notices[]>(
         [
             {
-                id: 1,
                 date: "2022-02-19",
                 saved_titles: [
                     "17th Graduation Ceremony",
@@ -23,7 +22,6 @@ export default function SearchScreen({ navigation }: Navigation) {
                 ]
             },
             {
-                id: 1,
                 date: "2022-02-10",
                 saved_titles: [
                     "17th Graduation Ceremony",
@@ -32,10 +30,9 @@ export default function SearchScreen({ navigation }: Navigation) {
             }
         ]
     );
-    const [notices, setNotices] = useState<Notice[]>(
+    const [notices, setNotices] = useState<Notices[]>(
         [
             {
-                id: 1,
                 date: "2022-02-19",
                 saved_titles: [
                     "17th Graduation Ceremony",
@@ -43,7 +40,6 @@ export default function SearchScreen({ navigation }: Navigation) {
                 ]
             },
             {
-                id: 1,
                 date: "2022-02-10",
                 saved_titles: [
                     "17th Graduation Ceremony",
@@ -64,10 +60,9 @@ export default function SearchScreen({ navigation }: Navigation) {
                 redirect: 'follow'
             })
             .then(response => response.json())
-            .then(data => setNotices(data))
+            .then(data => setNotices(data)) // console.log(data)
             .catch(function (error) {
-                console.log(error.response.status) // 401
-                console.log(error.response.data.error) //Please Authenticate or whatever returned from server
+                console.log(error)
                 if(error.response.status==401) {
                     //redirect to login
                     Alert.alert("The session has expired. Please log in again.");
@@ -104,7 +99,7 @@ export default function SearchScreen({ navigation }: Navigation) {
     const searchFilter = (text: string | void) => {
         if (text) {
             const newData = notices.filter((notice) => {
-                const noticeData = notice.saved_titles.join().toUpperCase();
+                const noticeData = notice.saved_titles?.join().toUpperCase();
                 const textData = text.toUpperCase();
                 return noticeData.indexOf(textData) > -1;
             })
@@ -145,7 +140,7 @@ export default function SearchScreen({ navigation }: Navigation) {
             <View style={styles.searchResults}>
                 <Text style={styles.smallDescription}>RESULTS</Text>
                 {filteredNotices?.map((notice, index) => 
-                    <SearchedNotice  key={"nt_" + index} id={notice.id} date={notice.date} saved_titles={notice.saved_titles} />
+                    <SearchedNotice key={"nt_" + index} date={notice.date} saved_titles={notice.saved_titles} />
                 )}
             </View>
         </View> 
