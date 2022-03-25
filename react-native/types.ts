@@ -73,11 +73,13 @@ interface Result {
 }
 
 interface Notice {
-	id: number,
-	cid: number,
 	date: string,
-	saved_titles: string[],
-	results?: Result[]
+	results: Result[]
+}
+
+interface Notices {
+	date: string,
+	saved_titles: string[]
 }
 
 interface BottomDrawerProps {
@@ -100,5 +102,5 @@ interface EventForm {
 
 export type {
 	UserData, JoinData, AuthData, AuthResponse, AuthContextData, Children, 
-	Event, Result, Notice, BottomDrawerProps, EventForm
+	Event, Result, Notice, Notices, BottomDrawerProps, EventForm
 }

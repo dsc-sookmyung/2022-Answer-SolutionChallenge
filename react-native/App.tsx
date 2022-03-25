@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { Image, StatusBar, Platform } from 'react-native';
+import { LogBox, Image, StatusBar, Platform } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NativeBaseProvider } from 'native-base';
 import { nativeBaseTheme } from './core/theme';
@@ -17,32 +17,17 @@ import SearchScreen from './screens/SearchScreen';
 import LogoutButton from './components/LogoutButton';
 import SearchResultScreen from './screens/SearchResultScreen';
 import IntrodcutionScreen from './screens/IntroductionScreen'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 
+LogBox.ignoreAllLogs();
+console.warn = () => {};
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   const [fontsLoaded, SetFontsLoaded] = useState<boolean>(false);
-  const [isFirstRun, setIsFirstRun] = useState<string>("true");
   const LoadFontsAndRestoreToken = async () => {
     await useFonts();
   };
-
-
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const value = await AsyncStorage.getItem("isFirstRun");
-        if (value !== null) {
-          setIsFirstRun(value);
-        }
-      } catch (error) {
-        console.log("error");
-      }
-    }
-    getData();
-  })
 
   if (!fontsLoaded) {
     return (

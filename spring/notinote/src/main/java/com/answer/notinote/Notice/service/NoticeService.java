@@ -2,6 +2,8 @@ package com.answer.notinote.Notice.service;
 
 
 import com.answer.notinote.Auth.token.provider.JwtTokenProvider;
+import com.answer.notinote.Exception.CustomException;
+import com.answer.notinote.Exception.ErrorCode;
 import com.answer.notinote.Notice.domain.entity.Notice;
 import com.answer.notinote.Notice.domain.repository.NoticeRepository;
 import com.answer.notinote.Notice.dto.NoticeRequestDto;
@@ -134,6 +136,12 @@ public class NoticeService {
 
         return new NoticeTitleListDto(notice);
 
+    }
+
+    public Notice findNoticeById(Long id) {
+        return noticeRepository.findById(id).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND)
+        );
     }
 
     /*public String dateDetect(Long nid) throws IOException {

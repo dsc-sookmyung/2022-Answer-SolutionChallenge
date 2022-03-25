@@ -48,4 +48,8 @@ public class User extends Timestamped {
         this.username = requestDto.getUsername();
         this.uemail = requestDto.getUemail();
     }
+
+    public void setUchildren(Child child) {
+        this.uchildren.add(child);
+    }
 }

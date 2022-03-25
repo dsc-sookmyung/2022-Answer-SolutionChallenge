@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import type { Navigation } from '../types';
 import { StyleSheet, View, Image, SafeAreaView, TouchableHighlight, Alert } from 'react-native';
 import { Text } from 'native-base'
 import { theme } from '../core/theme';
 import Swiper from 'react-native-swiper';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Localization from 'expo-localization'
 import i18n from 'i18n-js'
 import * as WebBrowser from 'expo-web-browser';
@@ -91,17 +90,6 @@ export default function HomeScreen({ navigation }: Navigation) {
 		webClientId: GOOGLE_CLIENT_ID_WEB,
 	})
 	const auth = useAuth();
-
-    useEffect(() => {
-        const storeData = async () => {
-            try {
-                await AsyncStorage.setItem('isFirstRun', "false");
-            } catch (error) {
-                console.log("error occured while using AsyncStorage");
-            }
-        }
-        storeData();
-    });
 
     useEffect(() => {
 		if (response?.type === 'success') {

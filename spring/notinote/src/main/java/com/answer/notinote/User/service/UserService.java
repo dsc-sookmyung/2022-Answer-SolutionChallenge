@@ -1,11 +1,14 @@
 package com.answer.notinote.User.service;
 
-import com.answer.notinote.Auth.repository.RefreshTokenRepository;
+import com.answer.notinote.Auth.data.ProviderType;
 import com.answer.notinote.Auth.service.RefreshTokenService;
 import com.answer.notinote.Auth.service.OAuthService;
 import com.answer.notinote.Auth.token.provider.JwtTokenProvider;
 import com.answer.notinote.Auth.userdetails.GoogleUser;
 import com.answer.notinote.Child.domain.Child;
+import com.answer.notinote.Child.dto.ChildDto;
+import com.answer.notinote.Child.dto.ChildrenResponseDto;
+import com.answer.notinote.Child.service.ChildService;
 import com.answer.notinote.Exception.CustomException;
 import com.answer.notinote.Exception.ErrorCode;
 import com.answer.notinote.User.dto.JoinRequestDto;
@@ -18,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -27,20 +29,22 @@ public class UserService {
 
     private final OAuthService oAuthService;
     private final RefreshTokenService refreshTokenService;
+    private final ChildService childService;
+
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
     public User oauthLogin(String token) {
         ResponseEntity<String> userInfoResponse = oAuthService.createGetRequest(token);
         GoogleUser googleUser = oAuthService.getUserInfo(userInfoResponse);
-        System.out.println("username: " + googleUser.getName());
 
         User user = userRepository.findByUemail(googleUser.getEmail()).orElse(null);
         if (user == null) {
             user = User.builder()
                     .uemail(googleUser.getEmail())
-                    .username(googleUser.getFamilyName())
+                    .username(googleUser.getName())
                     .uroleType(RoleType.GUEST)
+                    .uproviderType(ProviderType.GOOGLE)
                     .build();
             userRepository.save(user);
         }
@@ -52,16 +56,14 @@ public class UserService {
     public User join(JoinRequestDto requestDto) {
         User user = findUserById(requestDto.getUid());
 
-        List<Child> children = new ArrayList<>();
-        requestDto.getUchildren().forEach( childDto ->
-            children.add(new Child(user, childDto))
-        );
+        requestDto.getUchildren().forEach( childDto -> {
+                childService.create(childDto, user);
+        });
 
         if (user.getUroleType() == RoleType.GUEST) {
             user.setUsername(requestDto.getUsername());
             user.setUlanguage(requestDto.getUlanguage());
             user.setUroleType(RoleType.USER);
-            user.setUchildren(children);
             user.setUprofileImg(requestDto.getUprofileImg());
             userRepository.save(user);
 
@@ -103,6 +105,16 @@ public class UserService {
         return userRepository.findByUemail(email).orElseThrow(
                 () -> new CustomException(ErrorCode.USER_NOT_FOUND)
         );
+    }
+
+    public ChildrenResponseDto findChildrenByUserId(Long id) {
+        User user = findUserById(id);
+
+        ChildrenResponseDto response = new ChildrenResponseDto();
+        for (Child child : user.getUchildren()) {
+            response.addChild(new ChildDto(child));
+        }
+        return response;
     }
 
     public List<User> findAllUsers() {
