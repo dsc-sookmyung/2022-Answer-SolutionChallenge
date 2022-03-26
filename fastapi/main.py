@@ -105,10 +105,15 @@ async def root(request: Request):
                 tmp_date = datetime.datetime.strptime(date.group(), "%Y.%m.%d").date()
 
             matched_events[matched_event] = tmp_date.strftime('%Y-%m-%d')
-            translated_event = re.search(event_dict[matched_event].lower(), request.translated_text.lower())
-            # print(translated_event)
+
             res_body = dict()
-            res_body['content'] = event_dict[matched_event]
+            if request.language == 'ko':
+                translated_event = re.search(matched_event, request.kr_text)
+                res_body['content'] = matched_event
+            else:
+                translated_event = re.search(event_dict[matched_event].lower(), request.translated_text.lower())
+                res_body['content'] = event_dict[matched_event]
+
             res_body['date'] = matched_events[matched_event]
             res_body['sIndex'] = translated_event.span()[0]
             res_body['eIndex'] = translated_event.span()[1]
