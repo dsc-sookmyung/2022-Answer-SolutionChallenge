@@ -51,7 +51,8 @@ export default function SearchResultScreen(props: SearchResultScreenProps) {
                     {id: 1, content: "1. Schedule of the closing ceremony and diploma presentation ceremony: Friday, January 4, 2019 at 9 o'clock for students to go to school.\n1) ", date: "", highlight: false, registered: false},
                     {id: 2, content: "Closing ceremony", date: "2022-01-04", highlight: true, registered: false}
                 ],
-                korean: "개학일은 3월 2일이며, 개학식에 참여하고자 하는 학부모님께서는 10시까지 강당으로 오시기 바랍니다."
+                korean: "개학일은 3월 2일이며, 개학식에 참여하고자 하는 학부모님께서는 10시까지 강당으로 오시기 바랍니다.",
+                trans_full: ""
             }]
         })
 

@@ -69,7 +69,8 @@ interface Result {
 	id?: number,
 	imageUri?: string,
 	fullText: Event[],
-	korean: string
+	korean: string,
+	trans_full?: string
 }
 
 interface Notice {
