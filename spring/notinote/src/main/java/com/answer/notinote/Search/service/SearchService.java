@@ -3,6 +3,7 @@ package com.answer.notinote.Search.service;
 import com.answer.notinote.Auth.token.provider.JwtTokenProvider;
 import com.answer.notinote.Notice.domain.entity.Notice;
 import com.answer.notinote.Notice.domain.repository.NoticeRepository;
+import com.answer.notinote.Search.dto.SearchDetailDto;
 import com.answer.notinote.Search.dto.SearchListDto;
 import com.answer.notinote.User.domain.entity.User;
 import com.answer.notinote.User.domain.repository.UserRepository;
@@ -55,11 +56,29 @@ public class SearchService {
             titleLists.add(titleList);
             SearchListDto searchListDto = SearchListDto.builder()
                     .date(dateList.get(i))
-                    .save_titles(titleLists.get(i))
+                    .saved_titles(titleLists.get(i))
                     .build();
             searchListDtos.add(searchListDto);
         }
         return searchListDtos;
     }
 
+    public SearchDetailDto searchDetailList(LocalDate date, HttpServletRequest request) {
+
+        String token = jwtTokenProvider.resolveToken(request);
+        String useremail = jwtTokenProvider.getUserEmail(token);
+        User user = userRepository.findByUemail(useremail).orElseThrow(IllegalArgumentException::new);
+
+        List<Notice> notices = noticeRepository.findByNdate(date);
+
+        List<List<Object>> resultLists = new ArrayList<>();
+        List<Object> test = new ArrayList<>();
+        SearchDetailDto searchDetailDto = SearchDetailDto.builder()
+                .date(date)
+                .results(test)
+                .build();
+
+        return searchDetailDto;
+
+    }
 }
