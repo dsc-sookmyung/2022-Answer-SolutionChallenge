@@ -29,7 +29,7 @@ public class SearchController {
     }
 
     @RequestMapping(value="/search/detail", method = RequestMethod.GET)
-    public SearchDetailDto searchDetail(@RequestParam("date") LocalDate date, HttpServletRequest request){
+    public SearchDetailDto searchDetail(@RequestParam("date") String date, HttpServletRequest request){
         return searchService.searchDetailList(date, request);
     }
 
