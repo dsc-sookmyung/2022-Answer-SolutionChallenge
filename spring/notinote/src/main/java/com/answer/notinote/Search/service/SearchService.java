@@ -1,8 +1,12 @@
 package com.answer.notinote.Search.service;
 
 import com.answer.notinote.Auth.token.provider.JwtTokenProvider;
+import com.answer.notinote.Event.domain.Event;
+import com.answer.notinote.Event.service.EventService;
 import com.answer.notinote.Notice.domain.entity.Notice;
 import com.answer.notinote.Notice.domain.repository.NoticeRepository;
+import com.answer.notinote.Notice.dto.NoticeSentenceDto;
+import com.answer.notinote.Notice.service.NoticeService;
 import com.answer.notinote.Search.dto.SearchDetailDto;
 import com.answer.notinote.Search.dto.SearchListDto;
 import com.answer.notinote.Search.dto.SearchResultDetailDto;
@@ -21,9 +25,12 @@ import java.util.List;
 
 @Service
 public class SearchService {
-
     @Autowired
     NoticeRepository noticeRepository;
+    @Autowired
+    EventService eventService;
+    @Autowired
+    NoticeService noticeService;
     @Autowired
     UserRepository userRepository;
     @Autowired
@@ -78,29 +85,26 @@ public class SearchService {
         List<Object> test = new ArrayList<>();
 
         for (int i = 0; i<notices.size(); i++){
-            String imageUri = notices.get(i).getNimageurl()+"/"+notices.get(i).getNimagename();
-            Long id = notices.get(i).getNid();
-            String korean = notices.get(i).getOrigin_full();
-            List<Object> fullText = new ArrayList<>();
+            Notice notice = notices.get(i);
+
+            List<Event> events = eventService.findAllByNotice(notice);
+            List<NoticeSentenceDto> fullText = noticeService.extractSentenceFromEvent(notice.getTrans_full(), events);
 
             SearchResultDetailDto searchResultDetailDto = SearchResultDetailDto.builder()
-                    .imageUri(imageUri)
-                    .id(id)
-                    .korean(korean)
+                    .imageUri(notice.getNimageurl()+"/"+notice.getNimagename())
+                    .id(notice.getNid())
+                    .korean(notice.getOrigin_full())
                     .fullText(fullText)
                     .build();
 
             test.add(searchResultDetailDto);
         }
-
         System.out.println(test);
 
-        SearchDetailDto searchDetailDto = SearchDetailDto.builder()
+        return SearchDetailDto.builder()
                 .date(trans_date)
                 .results(test)
                 .build();
-
-        return searchDetailDto;
 
     }
 }
