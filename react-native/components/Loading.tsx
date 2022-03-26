@@ -11,7 +11,7 @@ const Loading = () => {
         <HStack space={2} alignItems="center">
             <ActivityIndicator />
             <Heading fontSize="md">
-                {i18n.t('translateLoadingDesc')}
+                {i18n.t('translateLoadingText')}
             </Heading>
         </HStack>
         <Image source={require('../assets/images/rocket.png')} style={styles.imageStyle}/>
