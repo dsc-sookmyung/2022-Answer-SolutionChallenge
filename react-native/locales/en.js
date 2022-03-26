@@ -66,4 +66,10 @@ export default {
     translateLoadingText: 'Reading the notice',
     tip: 'Tip',
     tip_1: 'You can save the results and check them on the search screen!',
+    registerFailed: 'Failed to add event. Please try again.',
+    authFailed: "Authentication failed. Please try again.",
+    tryAgain: 'Try Again',
+    join: 'Join',
+    SearchResult: "Search Result",
+    noEvent: "There is no event today!"
 }

@@ -58,5 +58,11 @@ export default {
     addEventDesc: '您可以将此日程添加到 Google 日历中。',
     eventAlreadyRegistered: '事件已注册',
     eventAlreadyRegisteredDesc: '此活动已在 Google 日历中注册。',
-    gotIt: '得到它'
+    gotIt: '得到它',
+    registerFailed: '添加事件失败。 请再试一次。',
+    authFailed: "验证失败，请重试。",
+    tryAgain: '再试一次',
+    join: '加入',
+    searchResult: "搜索结果",
+    noEvent: "今天没有活动！"
 }

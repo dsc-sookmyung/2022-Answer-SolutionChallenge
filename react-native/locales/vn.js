@@ -59,4 +59,10 @@ export default {
     eventAlreadyRegistered: 'Sự kiện đã được đăng ký',
     eventAlreadyRegisteredDesc: 'Sự kiện này đã được đăng ký trong Lịch Google.',
     gotIt: 'Đã hiểu',
+    registerFailed: 'Không thêm được sự kiện. Vui lòng thử lại.',
+    authFailed: "Xác thực không thành công. Vui lòng thử lại.",
+    tryAgain: 'Thử lại',
+    join: 'Tham gia',
+    SearchResult: "Kết quả tìm kiếm",
+    noEvent: "Không có sự kiện hôm nay!"
 }

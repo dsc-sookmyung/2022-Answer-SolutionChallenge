@@ -59,5 +59,11 @@ export default {
     addEventDesc: 'คุณสามารถเพิ่มกำหนดการนี้ในปฏิทิน Google',
     eventAlreadyRegistered: 'กิจกรรมที่ลงทะเบียนแล้ว',
     eventAlreadyRegisteredDesc: 'กิจกรรมนี้ลงทะเบียนแล้วใน Google ปฏิทิน',
-    gotIt: 'เข้าใจแล้ว'
+    gotIt: 'เข้าใจแล้ว',
+    registerFailed: 'ไม่สามารถเพิ่มเหตุการณ์ได้ กรุณาลองอีกครั้ง.',
+    authFailed: "การตรวจสอบสิทธิ์ล้มเหลว โปรดลองอีกครั้ง",
+    tryAgain: 'ลองอีกครั้ง',
+    join: 'เข้าร่วม',
+    searchResult: "ผลการค้นหา",
+    noEvent: "วันนี้ไม่มีกิจกรรม!"
 }

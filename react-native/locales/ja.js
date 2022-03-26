@@ -59,5 +59,11 @@ export default {
     addEventDesc: 'このスケジュールをGoogleカレンダーに追加できます。',
     eventAlreadyRegistered: 'イベントはすでに登録されています',
     eventAlreadyRegisteredDesc: 'このイベントはすでにGoogleカレンダーに登録されています。',
-    gotIt: '了解しました'
+    gotIt: '了解しました',
+    registerFailed: 'イベントの追加に失敗しました。 もう一度やり直してください。',
+    authFailed: "認証に失敗しました。もう一度やり直してください。",
+    tryAgain: '再試行',
+    join: '参加',
+    SearchResult: "検索結果",
+    noEvent: "今日はイベントはありません！"
 }

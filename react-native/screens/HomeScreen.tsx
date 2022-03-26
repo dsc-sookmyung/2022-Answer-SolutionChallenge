@@ -108,7 +108,7 @@ export default function HomeScreen({ navigation }: Navigation) {
                             ) : (
                                 <Box style={styles.emptyBox}>
                                     <Ionicons name="musical-note" size={64} />
-                                    <Text fontSize="md" pt={2}>There is no event today!</Text>
+                                    <Text fontSize="md" pt={2}>{i18n.t('noEvent')}</Text>
                                 </Box>
                             )
                         }

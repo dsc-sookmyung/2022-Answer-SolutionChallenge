@@ -59,4 +59,10 @@ export default {
     eventAlreadyRegistered: '이벤트가 이미 등록되었습니다',
     eventAlreadyRegisteredDesc: '이 이벤트는 이미 Google 캘린더에 등록되어 있습니다.',
     gotIt: '확인', 
+    registerFailed: '이벤트를 추가하지 못했습니다. 다시 시도해 주세요.',
+    authFailed: "인증에 실패했습니다. 다시 시도하십시오.",
+    tryAgain: '다시 시도',
+    join: '가입',
+    SearchResult: "검색 결과",
+    noEvent: "오늘은 이벤트가 없어요!"
 }

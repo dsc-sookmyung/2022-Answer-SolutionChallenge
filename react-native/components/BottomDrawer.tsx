@@ -95,7 +95,7 @@ function BottomDrawer(props: BottomDrawerProps) {
                     handleCalendarAlert();
                 }
                 else {
-                    Alert.alert("Failed to add event. Please try again.");
+                    Alert.alert(i18n.t('registerFailed'));
                 }
             })
             .catch(function (error) {
@@ -124,7 +124,7 @@ function BottomDrawer(props: BottomDrawerProps) {
             <View style={{ flex: 1 }}>
                 <View style={styles.horizontalLine} />
                 <View style={[styles.spaceBetween, { paddingBottom: 24 }]}>
-                <Text fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize='2xl' color="primary.500">{props.showKorean ? "Korean" : "Results"}</Text>
+                <Text fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize='2xl' color="primary.500">{props.showKorean ? i18n.t('korean') : i18n.t('results')}</Text>
                     <View style={styles.alignRow}>
                         <TouchableOpacity style={styles.rightSpace} onPress={props.handleKorean}>
                             <MaterialIcons name="translate" size={32} color="#000"/>
@@ -186,7 +186,7 @@ function BottomDrawer(props: BottomDrawerProps) {
                                     }}
                                 >
                                     {!item.registered ? (
-                                        <Popover.Content accessibilityLabel="Add schedule to calendar" w={Dimensions.get('window').width*0.7}>
+                                        <Popover.Content accessibilityLabel={i18n.t('accessibilityLabel')} w={Dimensions.get('window').width*0.7}>
                                             <Popover.Arrow />
                                             <Popover.CloseButton />
                                             <Popover.Header>{i18n.t('addEvent')}</Popover.Header>
@@ -313,11 +313,11 @@ function BottomDrawer(props: BottomDrawerProps) {
             {props.isTranslateScreen && 
                 <View style={[styles.spaceBetween, props.isFullDrawer && styles.full ]}>
                     <TouchableHighlight style={[styles.regularButton, styles.grayBackground]} onPress={props.closeResults}>
-                        <Text color="white">Close</Text>
+                        <Text color="white">{i18n.t('close')}</Text>
                     </TouchableHighlight>
                     <View style={styles.gap} />
                     <TouchableHighlight style={[styles.regularButton, styles.primaryBackground]} onPress={props.retakePicture}>
-                        <Text color="white">Try again</Text>
+                        <Text color="white">{i18n.t('tryAgain')}</Text>
                     </TouchableHighlight>
                 </View>
             }

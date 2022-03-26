@@ -60,4 +60,10 @@ export default {
     eventAlreadyRegistered: 'ព្រឹត្តិការណ៍បានចុះឈ្មោះរួចហើយ',
     eventAlreadyRegisteredDesc: 'ព្រឹត្តិការណ៍នេះត្រូវបានចុះឈ្មោះរួចហើយនៅក្នុង Google Calendar។',
     gotIt: 'យល់ហើយ',
+    registerFailed: 'បានបរាជ័យក្នុងការបន្ថែមព្រឹត្តិការណ៍។ សូម​ព្យាយាម​ម្តង​ទៀត។',
+    authFailed: "ការផ្ទៀងផ្ទាត់បានបរាជ័យ។ សូមព្យាយាមម្តងទៀត",
+    tryAgain: 'ព្យាយាមម្តងទៀត',
+    join: 'ចូលរួម',
+    searchResult: "លទ្ធផលស្វែងរក",
+    noEvent: "មិនមានព្រឹត្តិការណ៍ថ្ងៃនេះទេ!"
 }

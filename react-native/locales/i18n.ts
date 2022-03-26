@@ -6,7 +6,7 @@ import th from './th';
 import km from './km';
 import ja from './ja';
 import vn from './vn';
-import cn from './cn';
+import zh from './zh';
 import ko from './ko';
 
 // Set the key-value pairs for the different languages
@@ -14,7 +14,7 @@ i18n.translations = {
     en,
     ko,
     ja,
-    cn,
+    zh,
     km,
     vn,
     th,
