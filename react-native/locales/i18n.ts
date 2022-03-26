@@ -9,27 +9,6 @@ import vn from './vn';
 import zh from './zh';
 import ko from './ko';
 
-import { useAuth } from '../contexts/Auth';
-
-let locale = 'ko';
-
-function handleLocale() {
-    const auth = useAuth();
-
-    if (auth?.userData?.ulanguage) {
-        locale = auth.userData.ulanguage;
-        if (locale=='zh') {
-            locale = 'cn';
-        }
-        else if (locale=='vi') {
-            locale = 'vn';
-        }
-    }
-    else {
-        locale = Localization.locale.split("-")[0];
-    }
-}
-
 // Set the key-value pairs for the different languages
 i18n.translations = {
     en,
@@ -41,5 +20,5 @@ i18n.translations = {
     th,
 };
 // Set the locale once at the beginning of your app.
-i18n.locale = locale;
+i18n.locale = Localization.locale.split("-")[0];
 i18n.fallbacks = true;
