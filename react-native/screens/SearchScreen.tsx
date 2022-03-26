@@ -63,6 +63,7 @@ export default function SearchScreen({ navigation }: Navigation) {
             .then(data => {
                 setNotices(data);
                 setFilteredNotices(data);
+            })
             .catch(function (error) {
                 console.log(error)
                 if(error.response.status==401) {
