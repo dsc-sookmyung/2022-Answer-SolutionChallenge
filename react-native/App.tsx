@@ -19,7 +19,7 @@ import SearchResultScreen from './screens/SearchResultScreen';
 import IntrodcutionScreen from './screens/IntroductionScreen'
 
 import i18n from 'i18n-js';
-import '../locales/i18n';
+import './locales/i18n';
 
 
 LogBox.ignoreAllLogs();
