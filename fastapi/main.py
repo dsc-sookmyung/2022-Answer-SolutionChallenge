@@ -25,13 +25,13 @@ async def root(request: Request):
                      "Starting School", "Exhibition", "Practical Competition", "Art Competition",
                      "Mathematics Olympiad", "Science Olympiad", "Physical Examination", "Vaccination", "Retreat",
                      "Sports Day", "Field Trip", "Exploration", "Civil defense", "Fire drill", "Anniversary of school",
-                     "Festival", "diploma awarding ceremony"]
+                     "Festival", "Diploma Award Ceremony"]
     event_list_th = ["พิธีสำเร็จการศึกษา", "พิธีปิด", "ทัศนศึกษา", "พิธีรับเข้าเรียน", "ทัศนศึกษา", "การศึกษาประสบการณ์ภาคสนาม",
                      "พิธีเช้า", "วันหยุดฤดูหนาว", "วันหยุดฤดูร้อน", "วันหยุดฤดูใบไม้ผลิ", "โรงเรียนเริ่มต้น", "นิทรรศการ",
                      "การแข่งขันภาคปฏิบัติ", "การประกวดศิลปะ", "คณิตศาสตร์โอลิมปิก", "วิทยาศาสตร์โอลิมปิก", "การตรวจร่างกาย",
                      "การฉีดวัคซีน", "หนี", "วันกีฬาสี", "ทัศนศึกษา", "สำรวจ", "ป้องกันภัยพลเรือน", "ซ้อมดับเพลิง", "ครบรอบโรงเรียน",
                      "เทศกาล", "พิธีรับปริญญา"]
-    event_list_km = ["ពិធីបញ្ចប់ការសិក្សា", "ពិធីបិទ", "ដំណើរកំសាន្ត", "ពិធីចូលរៀន", "ការធ្វើដំណើរសាលា", "ការសិក្សាបទពិសោធន៍",
+    event_list_km = ["ពិធីចែកសញ្ញាបត្រ", "ពិធីបិទ", "ដំណើរកំសាន្ត", "ពិធីចូលរៀន", "ការធ្វើដំណើរសាលា", "ការសិក្សាបទពិសោធន៍",
                      "ពិធីអាហារពេលព្រឹក", "វិស្សមកាលរដូវរងារ", "វិស្សមកាលរដូវក្តៅ", "សម្រាកនិទាឃរដូវ", "សាលាចាប់ផ្តើម", "ការតាំងពិព័រណ៍",
                      "ការប្រកួតប្រជែងជាក់ស្តែង", "ការប្រកួតសិល្បៈ", "គណិតវិទ្យាអូឡាំពិក", "វិទ្យាសាស្ត្រអូឡាំព្យាដ", "ការប្រឡងរាងកាយ",
                      "ការចាក់វ៉ាក់សាំង", "សម្រាក", "ទិវាកីឡា", "ការធ្វើដំណើរវាល។ ", "ការរុករក", "ការការពារស៊ីវិល", "សមយុទ្ធអគ្គីភ័យ",
@@ -87,9 +87,9 @@ async def root(request: Request):
     # print(event_index_list)
 
     date_reg_list = [r'\d{4}년 ([1-9]|1[012])월 ([1-9]|[12][0-9]|3[01])일',
-                     r'\d{4}.([1-9]|1[012]).([1-9]|[12][0-9]|3[01])',
+                     r'\d{4}\.([1-9]|1[012])\.([1-9]|[12][0-9]|3[01])',
                      r'([1-9]|1[012])월 ([1-9]|[12][0-9]|3[01])일',
-                     r'([1-9]|1[012]).([1-9]|[12][0-9]|3[01])']
+                     r'([1-9]|1[012])\.([1-9]|[12][0-9]|3[01])']
     matched_dates = []
 
     for reg in date_reg_list:
@@ -103,9 +103,11 @@ async def root(request: Request):
 
         if not matched_events.get(matched_event):
             if len(date.group()) < 8: # MM월 DD일 or MM.DD
+                print(date.group())
                 if "월" in date.group():
                     tmp_date = datetime.datetime.strptime(date.group(), "%m월 %d일").date()
                 else:
+
                     tmp_date = datetime.datetime.strptime(date.group(), "%m.%d").date()
                 new_date = tmp_date.replace(year=datetime.datetime.now().year)
                 matched_events[matched_event] = new_date.strftime('%Y-%m-%d')
@@ -127,8 +129,8 @@ async def root(request: Request):
                 res_body['content'] = event_dict[matched_event]
 
             res_body['date'] = matched_events[matched_event]
-            res_body['sIndex'] = translated_event.span()[0]
-            res_body['eIndex'] = translated_event.span()[1]
+            res_body['s_index'] = translated_event.span()[0]
+            res_body['e_index'] = translated_event.span()[1]
 
             response['body'].append(res_body)
     print(response)
