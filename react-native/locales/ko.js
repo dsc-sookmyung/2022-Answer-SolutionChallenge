@@ -63,6 +63,6 @@ export default {
     authFailed: "인증에 실패했습니다. 다시 시도하십시오.",
     tryAgain: '다시 시도',
     join: '가입',
-    SearchResult: "검색 결과",
+    searchResult: "검색 결과",
     noEvent: "오늘은 이벤트가 없어요!"
 }
