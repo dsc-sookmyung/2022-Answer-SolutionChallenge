@@ -2,9 +2,7 @@ package com.answer.notinote.Notice.controller;
 
 
 import com.answer.notinote.Auth.token.provider.JwtTokenProvider;
-import com.answer.notinote.Event.domain.Event;
 import com.answer.notinote.Event.dto.EventRequestDto;
-import com.answer.notinote.Notice.domain.entity.Notice;
 import com.answer.notinote.Notice.dto.NoticeOCRDto;
 import com.answer.notinote.Notice.dto.NoticeRequestDto;
 import com.answer.notinote.Notice.dto.NoticeSentenceDto;
@@ -12,7 +10,6 @@ import com.answer.notinote.Notice.dto.NoticeTitleListDto;
 import com.answer.notinote.Notice.service.NoticeService;
 import com.answer.notinote.User.domain.entity.User;
 import com.answer.notinote.User.service.UserService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -57,10 +55,21 @@ public class NoticeController {
     @RequestMapping(value = "/notice/save", method = RequestMethod.POST)
     public NoticeTitleListDto saveNotice(
             @RequestPart(value = "uploadfile") MultipartFile uploadfile,
-            @RequestPart(value = "noticeRequestDto") NoticeRequestDto noticeRequestDto,
+            @RequestPart(value = "title") String title,
+            @RequestPart(value = "date") String stringdate,
+            @RequestPart(value = "korean") String korean,
+            @RequestPart(value = "trans_full") String fullText,
             HttpServletRequest request) throws IOException {
 
-        return noticeService.saveNotice(uploadfile, noticeRequestDto, request);
+        LocalDate date = LocalDate.parse(stringdate);
+        NoticeRequestDto noticeRequestDto = NoticeRequestDto.builder()
+                .title(title)
+                .date(date)
+                .korean(korean)
+                .fullText(fullText)
+                .build();
+        NoticeTitleListDto notice_title = noticeService.saveNotice(uploadfile, noticeRequestDto, request); //notice 저장
+        return notice_title;
     }
 /*
     @PostMapping("/notice/test")
