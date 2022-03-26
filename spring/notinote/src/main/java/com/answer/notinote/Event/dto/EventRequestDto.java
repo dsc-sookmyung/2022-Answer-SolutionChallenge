@@ -5,15 +5,24 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class EventRequestDto {
+public class EventRequestDto implements Comparable<EventRequestDto>{
     String content;
-    int index_start;
-    int index_end;
-    LocalDate date;
+    String date;
+    int s_index;
+    int e_index;
+
+    @Override
+    public int compareTo(EventRequestDto e) {
+        if (this.s_index < e.e_index) {
+            return -1;
+        } else if (this.s_index > e.e_index) {
+            return 1;
+        }
+        return 0;
+    }
+
 }

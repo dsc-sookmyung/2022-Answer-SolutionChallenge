@@ -56,4 +56,8 @@ public class EventService {
     public List<Event> findAll() {
         return eventRepository.findAll();
     }
+
+    public List<Event> findAllByNotice(Notice notice) {
+        return eventRepository.findAllByNotice(notice);
+    }
 }

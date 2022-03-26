@@ -12,12 +12,12 @@ import java.util.List;
 @NoArgsConstructor
 public class SearchListDto {
     private LocalDate date;
-    private List<String> save_titles;
+    private List<String> saved_titles;
 
     @Builder
-    public SearchListDto(LocalDate date, List<String> save_titles){
+    public SearchListDto(LocalDate date, List<String> saved_titles){
         this.date = date;
-        this.save_titles = save_titles;
+        this.saved_titles = saved_titles;
     }
 
 
