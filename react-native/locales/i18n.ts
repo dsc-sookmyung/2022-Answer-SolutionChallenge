@@ -11,7 +11,24 @@ import ko from './ko';
 
 import { useAuth } from '../contexts/Auth';
 
-const auth = useAuth();
+let locale = 'ko';
+
+function handleLocale() {
+    const auth = useAuth();
+
+    if (auth?.userData?.ulanguage) {
+        locale = auth.userData.ulanguage;
+        if (locale=='zh') {
+            locale = 'cn';
+        }
+        else if (locale=='vi') {
+            locale = 'vn';
+        }
+    }
+    else {
+        locale = Localization.locale.split("-")[0];
+    }
+}
 
 // Set the key-value pairs for the different languages
 i18n.translations = {
@@ -24,17 +41,5 @@ i18n.translations = {
     th,
 };
 // Set the locale once at the beginning of your app.
-if (auth?.userData?.ulanguage) {
-    let locale = auth.userData.ulanguage;
-    if (locale=='zh') {
-        locale = 'cn';
-    }
-    else if (locale=='vi') {
-        locale = 'vn';
-    }
-    i18n.locale = locale;
-}
-else {
-    i18n.locale = Localization.locale.split("-")[0];
-}
+i18n.locale = locale;
 i18n.fallbacks = true;
