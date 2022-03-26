@@ -6,6 +6,8 @@ import { theme } from '../core/theme';
 import type { Navigation, UserData } from '../types';
 import { useAuth } from '../contexts/Auth';
 import { StackActions } from '@react-navigation/native';
+import i18n from 'i18n-js'
+import '../locales/i18n';
 
 
 export default function HomeScreen({ navigation }: Navigation) {
@@ -55,7 +57,7 @@ export default function HomeScreen({ navigation }: Navigation) {
                 console.log(error)
                 if(error?.response?.status==401) {
                     //redirect to login
-                    Alert.alert("The session has expired. Please log in again.");
+                    Alert.alert(i18n.t('sessionExpired'));
                     auth.signOut();
                     navigation.dispatch(StackActions.popToTop())
                 }
@@ -77,13 +79,13 @@ export default function HomeScreen({ navigation }: Navigation) {
                     <ImageBackground style={styles.backgroundImage} source={require("../assets/images/pink-background-cropped.png")} resizeMode="cover" imageStyle={{ borderRadius: 12 }}>
                         <Image style={styles.profileImage} source={require(`../assets/images/profile-images/profile-1.png`)} />
                         <View style={styles.profielTextWrapper}>
-                            <Text fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="xl">{"Hi, " + user.username + "!"}</Text>
-                            <Text fontFamily="mono" fontWeight={400} fontStyle="normal" fontSize="sm">You've got {events.event_num} events today.</Text>
+                            <Text fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="xl">{i18n.t('hello_1') + user.username + i18n.t('hello_2')}</Text>
+                            <Text fontFamily="mono" fontWeight={400} fontStyle="normal" fontSize="sm">{i18n.t('eventCount_1') + events.event_num + i18n.t('eventCount_2')}</Text>
                         </View>
                     </ImageBackground>
                 </View>
                 <View style={styles.noticeWrapper}>
-                    <Text style={styles.smallTitle} fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="xl">Today's Events</Text>
+                    <Text style={styles.smallTitle} fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="xl">{i18n.t('todayEvent')}</Text>
                     <View style={styles.childButtonWrapper}>
                         {events.children?.map((notice, index) => 
                             <TouchableOpacity key={'n_'+index} style={[styles.childButton, {
@@ -113,21 +115,20 @@ export default function HomeScreen({ navigation }: Navigation) {
                     </View>
                 </View>
                 <View style={styles.functionButtonWrapper}>
-                    <Text style={styles.smallTitle} fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="xl">Functions</Text>
-                    
+                    <Text style={styles.smallTitle} fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="xl">{i18n.t('functions')}</Text>
                     <TouchableOpacity onPress={() => navigation.navigate('Translate')}>
                         <ImageBackground source={require("../assets/images/button-background.png")} style={[styles.bigButton]} imageStyle={{ borderRadius: 12 }}>
                             <View>
-                                <Text style={[styles.buttonName, styles.deepBlue]} fontWeight={700} fontSize="xl" pb={2}>Translate</Text>
-                                <Text style={styles.deepBlue} fontSize="sm">Translation, summarization, and calendar registration are all possible just by taking a picture of the notice.</Text>
+                                <Text style={[styles.buttonName, styles.deepBlue]} fontWeight={700} fontSize="xl" pb={2}>{i18n.t('translate')}</Text>
+                                <Text style={styles.deepBlue} fontSize="sm">{i18n.t('translateDesc')}</Text>
                             </View>
                         </ImageBackground>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => navigation.navigate('Search')}>
                         <ImageBackground source={require("../assets/images/button-background.png")} style={[styles.bigButton]} imageStyle={{ borderRadius: 12 }}>
                             <View>
-                                <Text style={[styles.buttonName, styles.deepBlue]} fontWeight={700} fontSize="xl" pb={2}>Search</Text>
-                                <Text style={styles.deepBlue} fontSize="sm">You can find notices you have translated.</Text>
+                                <Text style={[styles.buttonName, styles.deepBlue]} fontWeight={700} fontSize="xl" pb={2}>{i18n.t('search')}</Text>
+                                <Text style={styles.deepBlue} fontSize="sm">{i18n.t('searchDesc')}</Text>
                             </View>
                         </ImageBackground>
                     </TouchableOpacity>
