@@ -3,6 +3,7 @@ package com.answer.notinote.Notice.controller;
 
 import com.answer.notinote.Auth.token.provider.JwtTokenProvider;
 import com.answer.notinote.Event.domain.Event;
+import com.answer.notinote.Event.dto.EventRequestDto;
 import com.answer.notinote.Notice.domain.entity.Notice;
 import com.answer.notinote.Notice.dto.NoticeOCRDto;
 import com.answer.notinote.Notice.dto.NoticeRequestDto;
@@ -43,12 +44,14 @@ public class NoticeController {
         String token = jwtTokenProvider.resolveToken(userrequest);
         String email = jwtTokenProvider.getUserEmail(token);
         User user = userService.findUserByEmail(email);
-        String targetLanguage = user.getUlanguage(); // 추후 입력받아야함
+        String targetLanguage = user.getUlanguage();
 
         String korean = noticeService.detectText(uploadfile); //원문 추출
-        String fullText = noticeService.transText(korean, targetLanguage); //번역문 추출
+        String trans_full = noticeService.transText(korean, targetLanguage); //번역문 추출
+        List<EventRequestDto> events = noticeService.detectEventOCR(korean, trans_full, targetLanguage); //이벤트 추출
+        List<NoticeSentenceDto> fullText = noticeService.extractSentenceFromEventOCR(trans_full, events);
+        return new NoticeOCRDto(korean, trans_full, fullText);
 
-        return new NoticeOCRDto(korean, fullText);
     }
 
     @RequestMapping(value = "/notice/save", method = RequestMethod.POST)
@@ -59,7 +62,7 @@ public class NoticeController {
 
         return noticeService.saveNotice(uploadfile, noticeRequestDto, request);
     }
-
+/*
     @PostMapping("/notice/test")
     public List<NoticeSentenceDto> test(@RequestBody NoticeOCRDto dto, @RequestParam String lan) throws JsonProcessingException {
         Notice notice = Notice.builder()
@@ -69,4 +72,6 @@ public class NoticeController {
         List<Event> events = noticeService.detectEvent(notice, lan);
         return noticeService.extractSentenceFromEvent(dto.getFullText(), events);
     }
+
+ */
 }
