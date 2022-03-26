@@ -34,7 +34,7 @@ public class Event extends Timestamped {
     @JoinColumn(name = "cid")
     private Child child;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "nid")
     private Notice notice;
 
@@ -52,10 +52,10 @@ public class Event extends Timestamped {
     private boolean registered = false;
 
     public Event(EventRequestDto requestDto) {
-        this.index_start = requestDto.getIndex_start();
-        this.index_end = requestDto.getIndex_end();
+        this.index_start = requestDto.getS_index();
+        this.index_end = requestDto.getE_index();
         this.title = requestDto.getContent();
-        this.date = requestDto.getDate();
+        this.date = LocalDate.parse(requestDto.getDate());
     }
 
     public void setNotice(Notice notice) {
