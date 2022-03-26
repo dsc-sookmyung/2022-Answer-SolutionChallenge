@@ -5,15 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDate;
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class EventRequestDto {
     String content;
-    int index_start;
-    int index_end;
-    LocalDate date;
+    String date;
+    int s_index;
+    int e_index;
 }
