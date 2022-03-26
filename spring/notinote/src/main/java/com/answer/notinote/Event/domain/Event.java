@@ -25,10 +25,10 @@ public class Event extends Timestamped {
     private Long eid;
 
     @Column
-    private Long index_start;
+    private int index_start;
 
     @Column
-    private Long index_end;
+    private int index_end;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cid")
@@ -54,7 +54,7 @@ public class Event extends Timestamped {
     public Event(EventRequestDto requestDto) {
         this.index_start = requestDto.getIndex_start();
         this.index_end = requestDto.getIndex_end();
-        this.title = requestDto.getTitle();
+        this.title = requestDto.getContent();
         this.date = requestDto.getDate();
     }
 

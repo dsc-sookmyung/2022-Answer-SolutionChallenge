@@ -12,8 +12,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EventRequestDto {
-    String title;
-    Long index_start;
-    Long index_end;
+    String content;
+    int index_start;
+    int index_end;
     LocalDate date;
 }

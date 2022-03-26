@@ -1,24 +1,33 @@
 package com.answer.notinote.Notice.service;
 
-
 import com.answer.notinote.Auth.token.provider.JwtTokenProvider;
+import com.answer.notinote.Event.domain.Event;
+import com.answer.notinote.Event.dto.EventRequestDto;
+import com.answer.notinote.Event.service.EventService;
 import com.answer.notinote.Exception.CustomException;
 import com.answer.notinote.Exception.ErrorCode;
 import com.answer.notinote.Notice.domain.entity.Notice;
 import com.answer.notinote.Notice.domain.repository.NoticeRepository;
 import com.answer.notinote.Notice.dto.NoticeRequestDto;
-import com.answer.notinote.Notice.dto.NoticeSaveDto;
+import com.answer.notinote.Notice.dto.NoticeSentenceDto;
 import com.answer.notinote.Notice.dto.NoticeTitleListDto;
 import com.answer.notinote.User.domain.entity.User;
 import com.answer.notinote.User.domain.repository.UserRepository;
-import com.google.cloud.language.v1.*;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.cloud.translate.v3.*;
 import com.google.cloud.translate.v3.LocationName;
 import com.google.cloud.translate.v3.Translation;
 import com.google.cloud.vision.v1.*;
 import com.google.protobuf.ByteString;
+import com.nimbusds.jose.shaded.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +44,8 @@ public class NoticeService {
     UserRepository userRepository;
     @Autowired
     JwtTokenProvider jwtTokenProvider;
+    @Autowired
+    EventService eventService;
 
     public String detectText(MultipartFile uploadfile) throws IOException{
         List<AnnotateImageRequest> requests = new ArrayList<>();
@@ -72,13 +83,9 @@ public class NoticeService {
     }
 
 
-    public String transText(String korean, HttpServletRequest userrequest) throws IOException {
+    public String transText(String korean, String targetLanguage) throws IOException {
         String text = korean;
         String projectId = "notinote-341918";
-        String token = jwtTokenProvider.resolveToken(userrequest);
-        String useremail = jwtTokenProvider.getUserEmail(token);
-        User user = userRepository.findByUemail(useremail).orElseThrow(IllegalArgumentException::new);
-        String targetLanguage = user.getUlanguage(); // 추후 입력받아야함
         ArrayList <String> textlist = new ArrayList<String>();
 
         try (TranslationServiceClient client = TranslationServiceClient.create()) {
@@ -104,7 +111,34 @@ public class NoticeService {
         return textlist.get(0);
     }
 
+    public List<Event> detectEvent(Notice notice, String language) throws JsonProcessingException {
+        String url = "https://notinote.herokuapp.com/event-dict";
 
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        JSONObject body = new JSONObject();
+        body.put("language", language);
+        body.put("kr_text", notice.getOrigin_full());
+        body.put("translated_text", notice.getTrans_full());
+
+        HttpEntity<String> request = new HttpEntity<>(body.toString(), headers);
+        String response = new RestTemplate().postForObject(url, request, String.class);
+
+        JsonNode root = new ObjectMapper().readTree(response);
+        if (root.path("message") != null) {
+            if (root.path("message").asText().equals("no events")) {
+                return null;
+            }
+        }
+
+        EventRequestDto[] eventDtos = new ObjectMapper().treeToValue(root.path("body"), EventRequestDto[].class);
+        List<Event>  events = new ArrayList<>();
+        for (EventRequestDto dto : eventDtos) {
+            events.add(eventService.create(dto, notice));
+        }
+        return events;
+    }
 
     public NoticeTitleListDto saveNotice(MultipartFile uploadfile, NoticeRequestDto noticeRequestDto, HttpServletRequest request) throws IOException{
         //요청한 사용자 확인
@@ -121,8 +155,7 @@ public class NoticeService {
         File saveFile = new File(nimageurl, nimagename);
         uploadfile.transferTo(saveFile);
 
-        //dto 저장
-        NoticeSaveDto noticeSaveDto = NoticeSaveDto.builder()
+        Notice notice = Notice.builder()
                 .nimagename(nimagename)
                 .nimageoriginal(nimageoriginal)
                 .nimageurl(nimageurl)
@@ -132,10 +165,71 @@ public class NoticeService {
                 .trans_full(noticeRequestDto.getFullText())
                 .user(user)
                 .build();
-        Notice notice = noticeRepository.save(noticeSaveDto.toNoticeEntity(user));
+        noticeRepository.save(notice);
 
-        return new NoticeTitleListDto(notice);
+        List<Event> events = detectEvent(notice, user.getUlanguage());
 
+        List<NoticeSentenceDto> sentences = extractSentenceFromEvent(notice.getTrans_full(), events);
+
+        return new NoticeTitleListDto(notice, sentences);
+    }
+
+    public List<NoticeSentenceDto> extractSentenceFromEvent(String text, List<Event> events) {
+        List<NoticeSentenceDto> sentences = new ArrayList<>();
+        int lastIndex = 0, id = 1;
+
+        if (events == null) {
+            NoticeSentenceDto dto = NoticeSentenceDto.builder()
+                    .id(id)
+                    .date(null)
+                    .content(text)
+                    .highlight(false)
+                    .registered(false)
+                    .build();
+            sentences.add(dto);
+            return sentences;
+        }
+
+        for (Event event : events) {
+            if (lastIndex != event.getIndex_start()) {
+                // event가 아닌 경우
+                String sentence = text.substring(lastIndex, event.getIndex_start());
+                NoticeSentenceDto dto = NoticeSentenceDto.builder()
+                        .id(id++)
+                        .content(sentence)
+                        .date(null)
+                        .highlight(false)
+                        .registered(false)
+                        .build();
+                sentences.add(dto);
+            }
+
+            // event인 경우
+            String sentence = text.substring(event.getIndex_start(), event.getIndex_end());
+            NoticeSentenceDto dto = NoticeSentenceDto.builder()
+                    .id(id++)
+                    .content(sentence)
+                    .date(event.getDate())
+                    .highlight(true)
+                    .registered(event.isRegistered())
+                    .build();
+            sentences.add(dto);
+
+            lastIndex = event.getIndex_end() + 1;
+        }
+        if (lastIndex != text.length() - 1) {
+            String sentence = text.substring(lastIndex, text.length() - 1);
+            NoticeSentenceDto dto = NoticeSentenceDto.builder()
+                    .id(id)
+                    .content(sentence)
+                    .date(null)
+                    .highlight(false)
+                    .registered(false)
+                    .build();
+            sentences.add(dto);
+        }
+
+        return sentences;
     }
 
     public Notice findNoticeById(Long id) {
