@@ -6,6 +6,8 @@ import SearchBar from 'react-native-elements/dist/searchbar/SearchBar-ios';
 import DateTimePickerModal from "react-native-modal-datetime-picker"
 import { useAuth } from '../contexts/Auth';
 import { StackActions } from '@react-navigation/native';
+import i18n from 'i18n-js'
+import '../locales/i18n';
 
 
 export default function SearchScreen({ navigation }: Navigation) {
@@ -48,7 +50,7 @@ export default function SearchScreen({ navigation }: Navigation) {
             }
     ])
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-    const [searchDate, setSearchDate] = useState<string>("Click calendar icon to select date.");
+    const [searchDate, setSearchDate] = useState<string>(i18n.t('searchByDateDefault'));
 
     useEffect(() => {
         if (auth?.authData?.jwt_token) {
@@ -63,11 +65,11 @@ export default function SearchScreen({ navigation }: Navigation) {
             .then(data => {
                 setNotices(data);
                 setFilteredNotices(data);
-            .catch(function (error) {
+            }).catch(function (error) {
                 console.log(error)
                 if(error.response.status==401) {
                     //redirect to login
-                    Alert.alert("The session has expired. Please log in again.");
+                    Alert.alert(i18n.t('SessionExpired'));
                     auth.signOut();
                     navigation.dispatch(StackActions.popToTop())
                 }
@@ -115,7 +117,7 @@ export default function SearchScreen({ navigation }: Navigation) {
     return (
         <View style={styles.container}>
             <View style={styles.searchDateWrapper}>
-                <Text style={styles.smallDescription}>SEARCH BY DATE</Text>
+                <Text style={styles.smallDescription}>{i18n.t('searchByDate')}</Text>
                 <View style={styles.searchDateContainer}>
                     <TouchableOpacity onPress={showDatePicker}>
                         <Text style={styles.calendarIcon}>🗓</Text>
@@ -130,7 +132,7 @@ export default function SearchScreen({ navigation }: Navigation) {
                 </View>
             </View>
             <View >
-                <Text style={styles.smallDescription}>SEARCH BY TEXT</Text>
+                <Text style={styles.smallDescription}>{i18n.t('searchByText')}</Text>
                 <SearchBar
                     platform='ios'
                     onChangeText={(text: string | void) => searchFilter(text)}

@@ -8,6 +8,8 @@ import { theme } from '../core/theme';
 import type { BottomDrawerProps, EventForm, UserData } from '../types';
 import { useAuth } from '../contexts/Auth';
 import { useNavigation, StackActions } from '@react-navigation/native';
+import i18n from 'i18n-js';
+import '../locales/i18n';
 
 
 const highlight = (text: string, registered: boolean) =>
@@ -135,7 +137,7 @@ function BottomDrawer(props: BottomDrawerProps) {
                             <Modal isOpen={openSaveForm} onClose={() => handleOpenSaveForm()}>
                                 <Modal.Content maxWidth="400px">
                                 <Modal.CloseButton />
-                                <Modal.Header>Save Results</Modal.Header>
+                                <Modal.Header>{i18n.t('saveResults')}</Modal.Header>
                                 <Modal.Body>
                                     <FormControl>
                                     <FormControl.Label>Title</FormControl.Label>
@@ -144,7 +146,7 @@ function BottomDrawer(props: BottomDrawerProps) {
                                         onChangeText={(text) => setResultsTitle(text)}
                                     />
                                     <FormControl.HelperText>
-                                        Give your results a title.
+                                        {i18n.t('helpertext')}
                                     </FormControl.HelperText>
                                     </FormControl>
                                 </Modal.Body>
@@ -153,10 +155,10 @@ function BottomDrawer(props: BottomDrawerProps) {
                                     <Button variant="ghost" colorScheme="blueGray" onPress={() => {
                                     handleOpenSaveForm()
                                     }}>
-                                        Cancel
+                                        {i18n.t('cancel')}
                                     </Button>
                                     <Button onPress={() => props?.saveResults && props.saveResults(resultsTitle)}>
-                                        Save
+                                        {i18n.t('save')}
                                     </Button>
                                     </Button.Group>
                                 </Modal.Footer>
@@ -187,24 +189,24 @@ function BottomDrawer(props: BottomDrawerProps) {
                                         <Popover.Content accessibilityLabel="Add schedule to calendar" w={Dimensions.get('window').width*0.7}>
                                             <Popover.Arrow />
                                             <Popover.CloseButton />
-                                            <Popover.Header>Add an event</Popover.Header>
+                                            <Popover.Header>{i18n.t('addEvent')}</Popover.Header>
                                             <Popover.Body>
-                                                You can add this schedule to the Google calendar.
+                                                {i18n.t('addEventDesc')}
                                             </Popover.Body>
                                             <Popover.Footer justifyContent="flex-end">
                                                 <Button.Group space={4}>
                                                     <Button variant="ghost" onPress={closePopup}>
-                                                        Cancel
+                                                        {i18n.t('cancel')}
                                                     </Button>
-                                                    <Button onPress={handleOpenEventForm()}>Add to calendar</Button>
+                                                    <Button onPress={handleOpenEventForm()}>{i18n.t('addCalendar')}</Button>
                                                     <Modal isOpen={openEventForm} onClose={handleOpenEventForm()}>
                                                         <Modal.Content maxWidth="400px">
                                                         <Modal.CloseButton />
-                                                        <Modal.Header>New Event</Modal.Header>
+                                                        <Modal.Header>{i18n.t('newEvent')}</Modal.Header>
                                                         <Modal.Body>
                                                             <VStack space={2}>
                                                                 <FormControl>
-                                                                    <FormControl.Label>Child</FormControl.Label>
+                                                                    <FormControl.Label>{i18n.t('child')}</FormControl.Label>
                                                                         <Select selectedValue={eventForm?.cId.toString()} accessibilityLabel="Child" onValueChange={itemValue => {
                                                                             setEventForm({ ...eventForm, ['cId']: Number(itemValue) })
                                                                         }} _selectedItem={{
@@ -219,7 +221,7 @@ function BottomDrawer(props: BottomDrawerProps) {
                                                                         </Select>
                                                                 </FormControl>
                                                                 <FormControl>
-                                                                    <FormControl.Label>Title</FormControl.Label>
+                                                                    <FormControl.Label>{i18n.t('title')}</FormControl.Label>
                                                                     <Input 
                                                                         value={eventForm?.title}
                                                                         onChangeText={(text) => setEventForm({...eventForm, ['title']: text})}
@@ -227,14 +229,14 @@ function BottomDrawer(props: BottomDrawerProps) {
                                                                     />
                                                                     </FormControl>
                                                                 <FormControl>
-                                                                    <FormControl.Label>Date</FormControl.Label>
+                                                                    <FormControl.Label>{i18n.t('date')}</FormControl.Label>
                                                                     <Input 
                                                                         value={eventForm?.date}
                                                                         isDisabled
                                                                     />
                                                                 </FormControl>
                                                                 <FormControl>
-                                                                    <FormControl.Label>Description</FormControl.Label>
+                                                                    <FormControl.Label>{i18n.t('addEventDesc')}</FormControl.Label>
                                                                     <Input 
                                                                         value={eventForm?.description}
                                                                         onChangeText={(text) => setEventForm({...eventForm, ['description']: text})}
@@ -245,10 +247,10 @@ function BottomDrawer(props: BottomDrawerProps) {
                                                         <Modal.Footer>
                                                             <Button.Group space={2}>
                                                             <Button variant="ghost" colorScheme="blueGray" onPress={handleOpenEventForm()}>
-                                                                Cancel
+                                                                {i18n.t('cancel')}
                                                             </Button>
                                                             <Button onPress={handleOpenEventForm('save')}>
-                                                                Save
+                                                                {i18n.t('save')}
                                                             </Button>
                                                             </Button.Group>
                                                         </Modal.Footer>
@@ -257,18 +259,18 @@ function BottomDrawer(props: BottomDrawerProps) {
                                                     <AlertDialog leastDestructiveRef={cancelRef} isOpen={calendarAlert} onClose={handleCalendarAlert}>
                                                         <AlertDialog.Content>
                                                         <AlertDialog.CloseButton />
-                                                        <AlertDialog.Header>Check google calendar</AlertDialog.Header>
+                                                        <AlertDialog.Header>{i18n.t('checkCalendar')}</AlertDialog.Header>
                                                         <AlertDialog.Body>
-                                                            <Text>The event has been added to your Google Calendar.</Text>
-                                                            <Text pt={1}>Would you like to check the calendar?</Text>
+                                                            <Text>{i18n.t('formalart_1')}</Text>
+                                                            <Text pt={1}>{i18n.t('formalart_2')}</Text>
                                                         </AlertDialog.Body>
                                                         <AlertDialog.Footer>
                                                             <Button.Group space={2}>
                                                             <Button variant='unstyled' colorScheme='coolGray' onPress={handleCalendarAlert} ref={cancelRef}>
-                                                                Close
+                                                                {i18n.t('close')}
                                                             </Button>
                                                             <Button colorScheme='primary' onPress={linkingCalendar}>
-                                                                Yes, continue
+                                                                {i18n.t('continue')}
                                                             </Button>
                                                             </Button.Group>
                                                         </AlertDialog.Footer>
@@ -278,19 +280,19 @@ function BottomDrawer(props: BottomDrawerProps) {
                                             </Popover.Footer>
                                         </Popover.Content>
                                     ) : (
-                                        <Popover.Content accessibilityLabel="Add schedule to calendar" w={Dimensions.get('window').width*0.7}>
+                                        <Popover.Content accessibilityLabel={i18n.t('accessibilityLabel')} w={Dimensions.get('window').width*0.7}>
                                             <Popover.Arrow />
                                             <Popover.CloseButton />
-                                            <Popover.Header>Event already registered</Popover.Header>
+                                            <Popover.Header>{i18n.t('eventAlreadyRegistered')}</Popover.Header>
                                             <Popover.Body>
-                                                This event is already registered in Google Calendar.
+                                                {i18n.t('eventAlreadyRegisteredDesc')}
                                             </Popover.Body>
                                             <Popover.Footer justifyContent="flex-end">
                                                 <Button.Group space={4}>
                                                     <Button variant="ghost" onPress={closePopup}>
-                                                        Cancel
+                                                        {i18n.t('cancel')}
                                                     </Button>
-                                                    <Button onPress={closePopup}>Got it</Button>
+                                                    <Button onPress={closePopup}>{i18n.t('gotIt')}</Button>
                                                 </Button.Group>
                                             </Popover.Footer>
                                         </Popover.Content>

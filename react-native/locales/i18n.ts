@@ -1,13 +1,13 @@
 import * as Localization from 'expo-localization'
 import i18n from 'i18n-js'
 
-import ko from './ko';
 import en from './en';
 import th from './th';
 import km from './km';
 import ja from './ja';
 import vn from './vn';
 import cn from './cn';
+import ko from './ko';
 
 // Set the key-value pairs for the different languages
 i18n.translations = {

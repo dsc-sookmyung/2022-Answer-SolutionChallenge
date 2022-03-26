@@ -14,6 +14,9 @@ import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../contexts/Auth';
 import { StackActions } from '@react-navigation/native';
 import Loading from '../components/Loading';
+import i18n from 'i18n-js';
+import '../locales/i18n';
+
 
 /* TODO:
     - 스크롤 내려가게 하기 (지금은 ScrollView의 스크롤이 안 먹음)
@@ -55,7 +58,7 @@ export default function TranslateScreen({ navigation }: Navigation) {
 
     useEffect(() => {
         if (results?.fullText && results.fullText.filter(item => item.highlight === true).length > 0) {
-            const message = "You can add a schedule to the calendar by clicking the highlighted text."
+            const message = i18n.t('translateMessage_1')
             toast.show({    // Design according to mui toast guidelines (https://material.io/components/snackbars#anatomy)
                 render: () => {
                     return <Box bg="rgba(0,0,0,0.8)" px="3" py="2" rounded="xl" mx={2} mb={12} shadow={2}>
@@ -137,7 +140,7 @@ export default function TranslateScreen({ navigation }: Navigation) {
                     console.log(error?.response?.data?.error) //Please Authenticate or whatever returned from server
                     if(error?.response?.status==401) {
                         //redirect to login
-                        Alert.alert("The session has expired. Please log in again.");
+                        Alert.alert(i18n.t('sessionExpired'));
                         auth.signOut();
                         navigation.dispatch(StackActions.popToTop())
                     }
@@ -173,7 +176,7 @@ export default function TranslateScreen({ navigation }: Navigation) {
         // TODO: fetch api
         // data 보내고, success 라면, 서버에 저장된 제목 받아와서 보여주기!
         if (!title) {
-            Alert.alert("You must enter at least one character for the title.");
+            Alert.alert(i18n.t('translateMessage_2'));
             return;
         }
         
@@ -203,12 +206,12 @@ export default function TranslateScreen({ navigation }: Navigation) {
                     redirect: 'follow'
                 })
                 .then(response => response.json())
-                .then(data => Alert.alert(`The result was saved in Search as [${data?.title}]`))
+                .then(data => Alert.alert(`${i18n.t('saveAlarm')}: [${data?.title}]`))
                 .catch(function (error) {
                     console.log(error)
                     if(error.response.status==401) {
                         //redirect to login
-                        Alert.alert("The session has expired. Please log in again.");
+                        Alert.alert(i18n.t('sessionExpired'));
                         auth.signOut();
                         navigation.dispatch(StackActions.popToTop())
                     }

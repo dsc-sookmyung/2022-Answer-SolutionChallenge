@@ -5,6 +5,9 @@ import { nameValidator } from '../core/utils';
 import type { Navigation, UserData, JoinData } from '../types';
 import { theme } from '../core/theme';
 import { useAuth } from '../contexts/Auth';
+import i18n from 'i18n-js'
+import '../locales/i18n';
+
 
 export default function JoinScreen({ navigation }: Navigation) {
 	const [childrenNumber, setChildrenNumber] = useState<string>('1');
@@ -26,8 +29,8 @@ export default function JoinScreen({ navigation }: Navigation) {
 	useEffect(() => {
 		if (auth?.userData?.uroleType==='USER') {
 			Alert.alert(
-				"Success",
-				"Congratulations, your account has been successfully created."
+				i18n.t('loginSuccess'),
+				i18n.t('loginSuccessText')
 			)
 			navigation.navigate('Home');
 		}
@@ -44,7 +47,7 @@ export default function JoinScreen({ navigation }: Navigation) {
 
 	const errorAlert = (error: string) =>
 		Alert.alert(                    
-			"Join Failed",                 
+			i18n.t('joinFailed'),                 
 			error,                      
 			[
 				{ text: "OK", onPress: () => console.log("OK Pressed") }
@@ -73,7 +76,7 @@ export default function JoinScreen({ navigation }: Navigation) {
 			const childrenNameError = joinForm.uchildren?.some(child => child.cname === '');
 	
 			if (usernameError || childrenNameError || !joinForm.ulanguage) {
-				errorAlert("Please fill in all the blanks!");
+				errorAlert(i18n.t('fillAlarm'));
 				return;
 			}
 	
@@ -86,7 +89,7 @@ export default function JoinScreen({ navigation }: Navigation) {
 			<ScrollView>
 				<VStack space={4} style={{ flex: 1 }}>
 					<FormControl isRequired style={{ flex: 1.2 }}>
-						<FormControl.Label>Profile Image</FormControl.Label>
+						<FormControl.Label>{i18n.t('profileImage')}</FormControl.Label>
 						<ScrollView horizontal={true}>
 							{Array(7).fill(1).map((num, index) =>
 								<Button key={'b_'+index} variant="unstyled" onPress={handleProfileImg(index+1)}>
@@ -96,7 +99,7 @@ export default function JoinScreen({ navigation }: Navigation) {
 						</ScrollView>
 					</FormControl>
 					<FormControl isRequired style={{ flex: 1 }}>
-						<FormControl.Label>Username</FormControl.Label>
+						<FormControl.Label>{i18n.t('username')}</FormControl.Label>
 						<Input 
 							size="md"
 							value={joinForm.username}
@@ -107,7 +110,7 @@ export default function JoinScreen({ navigation }: Navigation) {
 						/>
 					</FormControl>
 					<FormControl isRequired style={{ flex: 1 }}>
-						<FormControl.Label>Select Your Language</FormControl.Label>
+						<FormControl.Label>{i18n.t('selectLang')}</FormControl.Label>
 						<Select selectedValue={joinForm?.ulanguage} size="md" minWidth={200} accessibilityLabel="Select your language" placeholder="Select your language" onValueChange={itemValue => {
 						setJoinForm({ ...joinForm, ['ulanguage']: itemValue })
 					}} _selectedItem={{
@@ -125,7 +128,7 @@ export default function JoinScreen({ navigation }: Navigation) {
 						</Select>
 					</FormControl>
 					<FormControl isRequired style={{ flex: 1 }}>
-						<FormControl.Label>Number of Children</FormControl.Label>
+						<FormControl.Label>{i18n.t('childrenNum')}</FormControl.Label>
 						<Select selectedValue={childrenNumber} size="md" minWidth={200} accessibilityLabel="Select number of children" placeholder="Select number of children" onValueChange={itemValue => {
 						setChildrenNumber(itemValue);
 					}} _selectedItem={{
@@ -141,7 +144,7 @@ export default function JoinScreen({ navigation }: Navigation) {
 						</Select>
 					</FormControl>
 					<FormControl isRequired style={{ flex: 2 }}>
-						<FormControl.Label>Children name</FormControl.Label>
+						<FormControl.Label>{i18n.t('childrenName')}</FormControl.Label>
 						<ScrollView style={{height: '100%'}}>
 							{Array(Number(childrenNumber)).fill(1).map((child, index) => 
 								<Input 
@@ -163,7 +166,7 @@ export default function JoinScreen({ navigation }: Navigation) {
 					</FormControl>
 				</VStack>
 				<Button size="lg" my={2} onPress={onJoinPressed}>
-					Sign up
+					{i18n.t('signUp')}
 				</Button>
 			</ScrollView>
 		</KeyboardAvoidingView>

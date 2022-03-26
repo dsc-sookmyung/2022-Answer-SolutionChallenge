@@ -14,10 +14,6 @@ import '../locales/i18n';
 
 WebBrowser.maybeCompleteAuthSession();
 
-// Set the key-value pairs for the different languages
-// Set the locale once at the beginning of your app.
-i18n.locale = Localization.locale.split("-")[0];
-
 export default function HomeScreen({ navigation }: Navigation) {
     const [request, response, promptAsync] = Google.useAuthRequest({
 		expoClientId: GOOGLE_CLIENT_ID_WEB,
