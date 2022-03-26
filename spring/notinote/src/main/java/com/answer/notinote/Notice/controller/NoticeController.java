@@ -2,12 +2,16 @@ package com.answer.notinote.Notice.controller;
 
 
 import com.answer.notinote.Auth.token.provider.JwtTokenProvider;
+import com.answer.notinote.Event.domain.Event;
+import com.answer.notinote.Notice.domain.entity.Notice;
 import com.answer.notinote.Notice.dto.NoticeOCRDto;
 import com.answer.notinote.Notice.dto.NoticeRequestDto;
+import com.answer.notinote.Notice.dto.NoticeSentenceDto;
 import com.answer.notinote.Notice.dto.NoticeTitleListDto;
 import com.answer.notinote.Notice.service.NoticeService;
 import com.answer.notinote.User.domain.entity.User;
 import com.answer.notinote.User.service.UserService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,5 +58,15 @@ public class NoticeController {
             HttpServletRequest request) throws IOException {
 
         return noticeService.saveNotice(uploadfile, noticeRequestDto, request);
+    }
+
+    @PostMapping("/notice/test")
+    public List<NoticeSentenceDto> test(@RequestBody NoticeOCRDto dto, @RequestParam String lan) throws JsonProcessingException {
+        Notice notice = Notice.builder()
+                .trans_full(dto.getFullText())
+                .origin_full(dto.getKorean())
+                .build();
+        List<Event> events = noticeService.detectEvent(notice, lan);
+        return noticeService.extractSentenceFromEvent(dto.getFullText(), events);
     }
 }

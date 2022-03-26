@@ -2,6 +2,7 @@ package com.answer.notinote.Notice.service;
 
 import com.answer.notinote.Auth.token.provider.JwtTokenProvider;
 import com.answer.notinote.Event.domain.Event;
+import com.answer.notinote.Notice.dto.NoticeResponseBody;
 import com.answer.notinote.Event.dto.EventRequestDto;
 import com.answer.notinote.Event.service.EventService;
 import com.answer.notinote.Exception.CustomException;
@@ -132,9 +133,9 @@ public class NoticeService {
             }
         }
 
-        EventRequestDto[] eventDtos = new ObjectMapper().treeToValue(root.path("body"), EventRequestDto[].class);
+        NoticeResponseBody responseBody = new ObjectMapper().treeToValue(root, NoticeResponseBody.class);
         List<Event>  events = new ArrayList<>();
-        for (EventRequestDto dto : eventDtos) {
+        for (EventRequestDto dto : responseBody.getBody()) {
             events.add(eventService.create(dto, notice));
         }
         return events;
