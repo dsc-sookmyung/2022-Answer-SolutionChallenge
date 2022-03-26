@@ -36,7 +36,7 @@ async def root(request: Request):
                      "ការប្រកួតប្រជែងជាក់ស្តែង", "ការប្រកួតសិល្បៈ", "គណិតវិទ្យាអូឡាំពិក", "វិទ្យាសាស្ត្រអូឡាំព្យាដ", "ការប្រឡងរាងកាយ",
                      "ការចាក់វ៉ាក់សាំង", "សម្រាក", "ទិវាកីឡា", "ការធ្វើដំណើរវាល។ ", "ការរុករក", "ការការពារស៊ីវិល", "សមយុទ្ធអគ្គីភ័យ",
                      "ខួបនៃសាលារៀន", "ពិធីបុណ្យ", "ពិធីបញ្ចប់ការសិក្សា"]
-    event_list_vn = ["Lễ tốt nghiệp", "Lễ tổng kết", "Chuyến tham quan", "Lễ nhập học", "Chuyến đi học",
+    event_list_vi = ["Lễ tốt nghiệp", "Lễ tổng kết", "Chuyến tham quan", "Lễ nhập học", "Chuyến đi học",
                      "Nghiên cứu trải nghiệm thực tế", "Lễ ăn sáng", "Kỳ nghỉ đông", "Kỳ nghỉ hè", "Kỳ nghỉ xuân",
                      "Khai giảng", "Triển lãm", "Cuộc thi thực hành", "Cuộc thi nghệ thuật", "Olympic Toán học",
                      "Olympic Khoa học", "Kiểm tra thể chất", "Tiêm phòng", "Khóa tu", "Ngày hội thể thao",
@@ -45,7 +45,7 @@ async def root(request: Request):
     event_list_ja = ["卒業式", "従業式", "ピクニック", "入学式", "修学旅行", "現場体験学習", "方程式", "冬休み", "夏休み", "春休み",
                      "開校", "展示会", "実技大会", "美術大会", "数学オリンピアード", "科学オリンピアド", "身体検査", "予防接種",
                      "修練会", "運動会", "見学", "回答", "民防衛", "消防訓練", "開校記念日", "祭り", "卒業場授与式"]
-    event_list_cn = ["毕业典礼", "结业典礼", "远足", "入学典礼", "学校旅行", "实地体验学习", "早餐仪式", "寒假", "暑假", "春假",
+    event_list_zh = ["毕业典礼", "结业典礼", "远足", "入学典礼", "学校旅行", "实地体验学习", "早餐仪式", "寒假", "暑假", "春假",
                      "开学", "展览", "实践比赛", "艺术竞赛", "数学奥林匹克", "科学奥林匹克", "体格检查", "疫苗接种", "撤退",
                      "运动项目", "实地考察", "探索", "民防", "消防演习", "奠基日", "节日", "毕业典礼"]
 
@@ -55,12 +55,12 @@ async def root(request: Request):
         event_dict = dict(zip(event_list, event_list_th))
     elif request.language == 'km':
         event_dict = dict(zip(event_list, event_list_km))
-    elif request.language == 'vn':
-        event_dict = dict(zip(event_list, event_list_vn))
+    elif request.language == 'vi':
+        event_dict = dict(zip(event_list, event_list_vi))
     elif request.language == 'ja':
         event_dict = dict(zip(event_list, event_list_ja))
-    elif request.language == 'cn':
-        event_dict = dict(zip(event_list, event_list_cn))
+    elif request.language == 'zh':
+        event_dict = dict(zip(event_list, event_list_zh))
 
     index_event_dict = {}
     matched_events = {}
@@ -80,10 +80,16 @@ async def root(request: Request):
 
     sorted_dict = dict(sorted(index_event_dict.items()))
     event_index_list = list(sorted_dict.keys())
+
+    if len(event_index_list) < 1:
+        return {"status": 200, "message": "no events"}
+
     # print(event_index_list)
 
     date_reg_list = [r'\d{4}년 ([1-9]|1[012])월 ([1-9]|[12][0-9]|3[01])일',
-                     r'\d{4}.([1-9]|1[012]).([1-9]|[12][0-9]|3[01])']
+                     r'\d{4}.([1-9]|1[012]).([1-9]|[12][0-9]|3[01])',
+                     r'([1-9]|1[012])월 ([1-9]|[12][0-9]|3[01])일',
+                     r'([1-9]|1[012]).([1-9]|[12][0-9]|3[01])']
     matched_dates = []
 
     for reg in date_reg_list:
@@ -92,25 +98,31 @@ async def root(request: Request):
     for date in matched_dates:
         # print(date.start())
         matched_event_index = bisect_left(event_index_list, date.start())
-
-        if matched_event_index < 1:
-            return {"status": 200, "message": "no events"}
         matched_event = index_event_dict[event_index_list[matched_event_index - 1]]
         tmp_date = ''
 
         if not matched_events.get(matched_event):
-            if "년" in date.group():
-                tmp_date = datetime.datetime.strptime(date.group(), "%Y년 %m월 %d일").date()
+            if len(date.group()) < 8: # MM월 DD일 or MM.DD
+                if "월" in date.group():
+                    tmp_date = datetime.datetime.strptime(date.group(), "%m월 %d일").date()
+                else:
+                    tmp_date = datetime.datetime.strptime(date.group(), "%m.%d").date()
+                new_date = tmp_date.replace(year=datetime.datetime.now().year)
+                matched_events[matched_event] = new_date.strftime('%Y-%m-%d')
             else:
-                tmp_date = datetime.datetime.strptime(date.group(), "%Y.%m.%d").date()
+                if "년" in date.group(): # YYYY년 MM월 DD일 or YYYY.MM.DD
+                    tmp_date = datetime.datetime.strptime(date.group(), "%Y년 %m월 %d일").date()
+                else:
+                    tmp_date = datetime.datetime.strptime(date.group(), "%Y.%m.%d").date()
 
-            matched_events[matched_event] = tmp_date.strftime('%Y-%m-%d')
+                matched_events[matched_event] = tmp_date.strftime('%Y-%m-%d')
 
             res_body = dict()
             if request.language == 'ko':
                 translated_event = re.search(matched_event, request.kr_text)
                 res_body['content'] = matched_event
             else:
+
                 translated_event = re.search(event_dict[matched_event].lower(), request.translated_text.lower())
                 res_body['content'] = event_dict[matched_event]
 
@@ -119,5 +131,5 @@ async def root(request: Request):
             res_body['eIndex'] = translated_event.span()[1]
 
             response['body'].append(res_body)
-
+    print(response)
     return response
