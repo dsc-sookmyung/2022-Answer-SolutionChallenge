@@ -25,7 +25,7 @@ async def root(request: Request):
                      "Starting School", "Exhibition", "Practical Competition", "Art Competition",
                      "Mathematics Olympiad", "Science Olympiad", "Physical Examination", "Vaccination", "Retreat",
                      "Sports Day", "Field Trip", "Exploration", "Civil defense", "Fire drill", "Anniversary of school",
-                     "Festival", "Diploma Award Ceremony"]
+                     "Festival", "Diploma Awarding Ceremony"]
     event_list_th = ["พิธีสำเร็จการศึกษา", "พิธีปิด", "ทัศนศึกษา", "พิธีรับเข้าเรียน", "ทัศนศึกษา", "การศึกษาประสบการณ์ภาคสนาม",
                      "พิธีเช้า", "วันหยุดฤดูหนาว", "วันหยุดฤดูร้อน", "วันหยุดฤดูใบไม้ผลิ", "โรงเรียนเริ่มต้น", "นิทรรศการ",
                      "การแข่งขันภาคปฏิบัติ", "การประกวดศิลปะ", "คณิตศาสตร์โอลิมปิก", "วิทยาศาสตร์โอลิมปิก", "การตรวจร่างกาย",
