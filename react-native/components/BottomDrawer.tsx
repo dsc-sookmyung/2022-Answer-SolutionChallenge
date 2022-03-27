@@ -18,7 +18,7 @@ const highlight = (text: string, registered: boolean) =>
 function BottomDrawer(props: BottomDrawerProps) {
     const [currentEvent, setCurrentEvent] = useState<number>(0);
     const [openEventForm, setOpenEventForm] = useState<boolean>(false); 
-    const [eventForm, setEventForm] = useState<EventForm>({cId: 1, title: '', date: '', description: ''});
+    const [eventForm, setEventForm] = useState<EventForm>({cid: 1, title: '', date: '', description: ''});
     const [calendarAlert, setCalendarAlert] = useState<boolean>(false);
     const [calendarUrl, setCalendarUrl] = useState<string>('');
     const [resultsTitle, setResultsTitle] = useState<string>('title');
@@ -32,7 +32,7 @@ function BottomDrawer(props: BottomDrawerProps) {
     }, [auth]);
 
     useEffect(() => {
-        if (currentEvent && eventForm?.cId) {
+        if (currentEvent && eventForm?.cid) {
             let obj = props?.results?.fullText;
             let event = obj.find(function(item, index) {
                 if (item.id===currentEvent) {
@@ -40,10 +40,10 @@ function BottomDrawer(props: BottomDrawerProps) {
                 }
             });
             if (event?.content && user?.uchildren) {
-                setEventForm({title: '['+user.uchildren[eventForm.cId-1]?.cname+'] ' + event.content, date: event?.date ? event.date : '', cId: eventForm.cId, description: eventForm.description });
+                setEventForm({title: '['+user.uchildren[eventForm.cid-1]?.cname+'] ' + event.content, date: event?.date ? event.date : '', cid: eventForm.cid, description: eventForm.description });
             }
         }
-    }, [currentEvent, eventForm?.cId])
+    }, [currentEvent, eventForm?.cid])
 
 	useEffect(() => {
         if (props.openSaveForm) {
@@ -203,8 +203,8 @@ function BottomDrawer(props: BottomDrawerProps) {
                                                             <VStack space={2}>
                                                                 <FormControl>
                                                                     <FormControl.Label>{i18n.t('child')}</FormControl.Label>
-                                                                        <Select selectedValue={eventForm?.cId.toString()} accessibilityLabel="Child" onValueChange={itemValue => {
-                                                                            setEventForm({ ...eventForm, ['cId']: Number(itemValue) })
+                                                                        <Select selectedValue={eventForm?.cid.toString()} accessibilityLabel="Child" onValueChange={itemValue => {
+                                                                            setEventForm({ ...eventForm, ['cid']: Number(itemValue) })
                                                                         }} _selectedItem={{
                                                                             bg: "skyblue.500",
                                                                             endIcon: <CheckIcon size={3} />

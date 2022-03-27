@@ -99,7 +99,7 @@ interface BottomDrawerProps {
 interface EventForm {
 	title: string, 
 	date: string, 
-	cId: number, 
+	cid: number, 
 	description: string
 }
 
