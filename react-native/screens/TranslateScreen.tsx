@@ -35,6 +35,7 @@ export default function TranslateScreen({ navigation }: Navigation) {
     const [showKorean, setShowKorean] = useState<boolean>(false);
     const [isFullDrawer, setFullDrawer] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
+    const [openSaveForm, setOpenSaveForm] = useState<boolean>(false);
 
     const toast = useToast();
     const auth = useAuth();
@@ -172,6 +173,10 @@ export default function TranslateScreen({ navigation }: Navigation) {
         setShowKorean(!showKorean);
     }
 
+    const handleOpenSaveForm = () => {
+        setOpenSaveForm(!openSaveForm);
+    }
+
     const saveResults = (title: string): void => {
         // TODO: api
         // TODO: fetch api
@@ -208,7 +213,10 @@ export default function TranslateScreen({ navigation }: Navigation) {
                     redirect: 'follow'
                 })
                 .then(response => response.json())
-                .then(data => Alert.alert(`The result was saved in Search as [${data?.title}]`))
+                .then(data => {
+                    Alert.alert(`The result was saved in Search as [${data?.title}]`);
+                    handleOpenSaveForm();   
+                })
                 .catch(function (error) {
                     console.log(error)
                     if(error.response.status==401) {
@@ -247,10 +255,12 @@ export default function TranslateScreen({ navigation }: Navigation) {
                                     showKorean={showKorean}
                                     isFullDrawer={isFullDrawer}
                                     isTranslateScreen={true}
+                                    openSaveForm={openSaveForm}
                                     handleKorean={handleKorean}
                                     saveResults={saveResults}
                                     closeResults={closeResults}
                                     retakePicture={retakePicture}
+                                    handleOpenSaveForm={handleOpenSaveForm}
                                 />
                             }
                             itemFull={
@@ -259,10 +269,12 @@ export default function TranslateScreen({ navigation }: Navigation) {
                                     showKorean={showKorean}
                                     isFullDrawer={isFullDrawer}
                                     isTranslateScreen={true}
+                                    openSaveForm={openSaveForm}
                                     handleKorean={handleKorean}
                                     saveResults={saveResults}
                                     closeResults={closeResults}
                                     retakePicture={retakePicture}
+                                    handleOpenSaveForm={handleOpenSaveForm}
                                 />
                             }
                             onShowMini={() => setFullDrawer(false)}

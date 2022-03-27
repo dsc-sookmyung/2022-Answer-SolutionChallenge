@@ -88,10 +88,12 @@ interface BottomDrawerProps {
 	showKorean?: boolean,
 	isFullDrawer?: boolean,
 	isTranslateScreen?: boolean,
+	openSaveForm?: boolean,
 	handleKorean?: () => void,
 	saveResults?: (title: string) => void,
 	closeResults?: () => void,
 	retakePicture?: () => void,
+	handleOpenSaveForm?: () => void
 }
 
 interface EventForm {
