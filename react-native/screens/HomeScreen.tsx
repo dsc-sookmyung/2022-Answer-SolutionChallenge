@@ -11,8 +11,7 @@ import '../locales/i18n';
 
 
 export default function HomeScreen({ navigation }: Navigation) {
-    const [events, setEvents] = useState<{event_num: number, children: { cid: number, cname: string, event: string[] }[]}>();
-    const [totalEventsCount, setTotalEventsCount] = useState<number>(4);
+    const [events, setEvents] = useState<{event_num: number, children: { cid: number, cname: string, color: number, events: {date: '', description: '', eid: '', title: ''}[] }[]}>();
     const [nowSelectedChildId, setNowSelectedChildId] = useState<number>(1);
     const [user, setUser] = useState<UserData>();
     const auth = useAuth();
@@ -20,26 +19,28 @@ export default function HomeScreen({ navigation }: Navigation) {
     useEffect(()=> {
         setUser(auth?.userData);
         // mockup data
-        setEvents({
-            event_num: 4,
-            children: [
-                {
-                    cid: 1,
-                    cname: "Soo",
-                    event: [
-                        "the 17th Graduate Seremony",
-                        "Do-Dream Festival"
-                    ]
-                }, {
-                    cid: 2,
-                    cname: "Hee",
-                    event: [
-                        // "17th Graduate Seremony",
-                        // "Do-Dream Festival"
-                    ]
-                }
-            ]
-        })
+        // setEvents({
+        //     event_num: 4,
+        //     children: [
+        //         {
+        //             cid: 1,
+        //             cname: "Soo",
+        //             color: 1, 
+        //             events: [
+        //                 "the 17th Graduate Seremony",
+        //                 "Do-Dream Festival"
+        //             ]
+        //         }, {
+        //             cid: 2,
+        //             cname: "Hee",
+        //             color: 1, 
+        //             events: [
+        //                 // "17th Graduate Seremony",
+        //                 // "Do-Dream Festival"
+        //             ]
+        //         }
+        //     ]
+        // })
 
         if (auth?.authData?.jwt_token) {
             fetch('http://localhost:8080/user/children', {
@@ -62,6 +63,10 @@ export default function HomeScreen({ navigation }: Navigation) {
             });
         }
     }, [auth]);
+
+    useEffect(() => {
+        console.log(events);
+    }, [events])
 
     const handleNowSelectedChildId = (cid: number) => {
         setNowSelectedChildId(cid);
@@ -94,11 +99,11 @@ export default function HomeScreen({ navigation }: Navigation) {
                         )}
                     </View>
                     <View style={styles.todayNoticeWrapper}>
-                        {events.children?.filter(notice => notice.cid === nowSelectedChildId)[0].event?.length ? (
-                                events.children?.filter(notice => notice.cid === nowSelectedChildId)[0].event.map((item, index) => 
+                        {events.children?.filter(notice => notice.cid === nowSelectedChildId)[0].events?.length > 0 ? (
+                                events.children?.filter(notice => notice.cid === nowSelectedChildId)[0].events.map((item, index) => 
                                     <View key={'e_'+index} style={{flexDirection: "row"}}>
                                         {/* <Text fontWeight={500} fontSize="md" lineHeight={28} pr={4} style={{color: theme.colors.primary}}>{item.time}</Text> */}
-                                        <Text fontSize="md" lineHeight={28}>{index+1 + '. ' + item}</Text>
+                                        <Text fontSize="md" lineHeight={28}>{index+1 + '. ' + item?.title}</Text>
                                     </View>
                                 )
                             ) : (

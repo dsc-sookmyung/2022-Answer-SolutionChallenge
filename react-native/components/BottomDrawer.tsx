@@ -88,7 +88,7 @@ function BottomDrawer(props: BottomDrawerProps) {
                 if (data.url) {
                     setCalendarUrl(data.url)    // console.log(data)
                     handleCalendarAlert();
-					auth?.handleUpdate();
+					// auth?.handleUpdate();
                 }
                 else {
                     Alert.alert(i18n.t('registerFailed'));

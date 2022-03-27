@@ -178,8 +178,6 @@ export default function TranslateScreen({ navigation }: Navigation) {
     }
 
     const saveResults = (title: string): void => {
-        auth?.handleUpdate();
-        
         // data 보내고, success 라면, 서버에 저장된 제목 받아와서 보여주기!
         if (!title) {
             Alert.alert("You must enter at least one character for the title.");
@@ -216,7 +214,7 @@ export default function TranslateScreen({ navigation }: Navigation) {
                 .then(data => {
                     Alert.alert(`The result was saved in Search as [${data?.title}]`);
                     handleOpenSaveForm();   
-					auth?.handleUpdate();
+					// auth?.handleUpdate();
                 })
                 .catch(function (error) {
                     console.log(error)
