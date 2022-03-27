@@ -17,7 +17,7 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Event extends Timestamped {
+public class Event extends Timestamped implements Comparable<Event> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -73,5 +73,15 @@ public class Event extends Timestamped {
         this.date = requestDto.getDate();
         this.description = requestDto.getDescription();
         this.registered = true;
+    }
+
+    @Override
+    public int compareTo(Event e) {
+        if (this.index_start < e.index_start) {
+            return -1;
+        } else if (this.index_start > e.index_start) {
+            return 1;
+        }
+        return 0;
     }
 }

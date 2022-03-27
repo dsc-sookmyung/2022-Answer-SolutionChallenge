@@ -191,6 +191,8 @@ public class NoticeService {
             return sentences;
         }
 
+        Collections.sort(events);
+
         for (Event event : events) {
             if (lastIndex != event.getIndex_start()) {
                 // event가 아닌 경우
@@ -216,7 +218,7 @@ public class NoticeService {
                     .build();
             sentences.add(dto);
 
-            lastIndex = event.getIndex_end() + 1;
+            lastIndex = event.getIndex_end();
         }
         if (lastIndex != text.length() - 1) {
             String sentence = text.substring(lastIndex, text.length() - 1);
