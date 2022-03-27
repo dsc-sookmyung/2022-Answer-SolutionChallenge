@@ -19,8 +19,6 @@ export default function HomeScreen({ navigation }: Navigation) {
 
     useEffect(()=> {
         setUser(auth?.userData);
-
-        // TODO: get events by send header(`auth.AuthData`) to server
         // mockup data
         setEvents({
             event_num: 4,
@@ -63,9 +61,7 @@ export default function HomeScreen({ navigation }: Navigation) {
                 }
             });
         }
-        // TODO: fetch API
-        // .then => set nowSelectedChild 
-    }, [auth])
+    }, [auth]);
 
     const handleNowSelectedChildId = (cid: number) => {
         setNowSelectedChildId(cid);

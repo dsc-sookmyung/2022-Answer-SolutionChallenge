@@ -16,6 +16,7 @@ const AuthProvider: React.FC = ({ children }) => {
     // the AuthContext start with loading equals true
     // and stay like this, until the data be load from Async Storage
     const [loading, setLoading] = useState(true);
+    const [update, setUpdate] = useState(false);
 
     useEffect(() => {
         // Every time the App is opened, this provider is rendered
@@ -79,10 +80,15 @@ const AuthProvider: React.FC = ({ children }) => {
         await AsyncStorage.removeItem('@UserData');
     };
 
+    const handleUpdate = () => {
+        console.log('update')
+        setUpdate(!update);
+    }
+
     return (
         // This component will be used to encapsulate the whole App,
         // so all components will have access to the Context
-        <AuthContext.Provider value={{authData, userData, loading, signUp, signIn, signOut}}>
+        <AuthContext.Provider value={{authData, userData, loading, update, signUp, signIn, signOut, handleUpdate}}>
             {children}
         </AuthContext.Provider>
     );

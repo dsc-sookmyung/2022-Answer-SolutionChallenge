@@ -53,9 +53,11 @@ interface AuthContextData {
     authData?: AuthData;
     userData?: UserData;
     loading: boolean;
+	update: boolean;
     signUp(data: JoinData): Promise<void>;
     signIn(accessToken: string): Promise<void>;
     signOut(): void;
+	handleUpdate(): void;
 };
 interface Event {
 	id: number, 

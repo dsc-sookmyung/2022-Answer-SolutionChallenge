@@ -71,9 +71,6 @@ function BottomDrawer(props: BottomDrawerProps) {
     }
 
     const addEvent = () => {
-        // TODO: fetch api
-        let status = "success";
-
         if (auth?.authData?.jwt_token && eventForm) {
             console.log(eventForm, currentEvent);
             fetch(`http://localhost:8080/event/register?id=${currentEvent}`, {
@@ -91,6 +88,7 @@ function BottomDrawer(props: BottomDrawerProps) {
                 if (data.url) {
                     setCalendarUrl(data.url)    // console.log(data)
                     handleCalendarAlert();
+					auth?.handleUpdate();
                 }
                 else {
                     Alert.alert(i18n.t('registerFailed'));
