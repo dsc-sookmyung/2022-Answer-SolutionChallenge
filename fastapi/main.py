@@ -22,10 +22,10 @@ async def root(request: Request):
                   "졸업장 수여식"]
     event_list_en = ["Graduation Ceremony", "Closing Ceremony", "Excursion", "Entrance Ceremony", "School Trip",
                      "Field Experience Study", "Vacation", "Winter Vacation", "Summer Vacation", "Spring Break",
-                     "Starting School", "Exhibition", "Practical Competition", "Art Competition",
+                     "Opening Ceremony", "Exhibition", "Practical Competition", "Art Competition",
                      "Mathematics Olympiad", "Science Olympiad", "Physical Examination", "Vaccination", "Retreat",
                      "Sports Day", "Field Trip", "Exploration", "Civil defense", "Fire drill", "Anniversary of school",
-                     "Festival", "Diploma Awarding Ceremony"]
+                     "Festival", "Diploma Award Ceremony"]
     event_list_th = ["พิธีสำเร็จการศึกษา", "พิธีปิด", "ทัศนศึกษา", "พิธีรับเข้าเรียน", "ทัศนศึกษา", "การศึกษาประสบการณ์ภาคสนาม",
                      "พิธีเช้า", "วันหยุดฤดูหนาว", "วันหยุดฤดูร้อน", "วันหยุดฤดูใบไม้ผลิ", "โรงเรียนเริ่มต้น", "นิทรรศการ",
                      "การแข่งขันภาคปฏิบัติ", "การประกวดศิลปะ", "คณิตศาสตร์โอลิมปิก", "วิทยาศาสตร์โอลิมปิก", "การตรวจร่างกาย",
@@ -102,8 +102,8 @@ async def root(request: Request):
         tmp_date = ''
 
         if not matched_events.get(matched_event):
+            print(date.group())
             if len(date.group()) < 8: # MM월 DD일 or MM.DD
-                print(date.group())
                 if "월" in date.group():
                     tmp_date = datetime.datetime.strptime(date.group(), "%m월 %d일").date()
                 else:
@@ -116,7 +116,7 @@ async def root(request: Request):
                     tmp_date = datetime.datetime.strptime(date.group(), "%Y년 %m월 %d일").date()
                 else:
                     tmp_date = datetime.datetime.strptime(date.group(), "%Y.%m.%d").date()
-
+                print(tmp_date)
                 matched_events[matched_event] = tmp_date.strftime('%Y-%m-%d')
 
             res_body = dict()
