@@ -2,7 +2,7 @@
 
 > GDSC Sookmyung - Team Answer
 >
-> Team Member: Nam Suyeon(@mori8, @indigojade), Suh Hee(@0hee0), Yoo Jiyeon(@hellouz818), Jang Hyeonae(@rrae7742)
+> Team Member: Nam Suyeon(@mori8, @indigojade), Suh Hee(@0hee0), Yoo Jiyeon(@hellouz818), Jang Hyeonae(@raae7742)
 
 
 
