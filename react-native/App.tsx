@@ -18,6 +18,10 @@ import LogoutButton from './components/LogoutButton';
 import SearchResultScreen from './screens/SearchResultScreen';
 import IntrodcutionScreen from './screens/IntroductionScreen'
 
+import i18n from 'i18n-js';
+import './locales/i18n';
+
+
 LogBox.ignoreAllLogs();
 console.warn = () => {};
 
@@ -55,6 +59,7 @@ export default function App() {
               name="Join"
               component={JoinScreen}
               options={{
+                title: i18n.t('join'),
                 headerStyle: { backgroundColor: theme.colors.primary },
                 headerTintColor: '#fff',
               }}
@@ -88,6 +93,7 @@ export default function App() {
               name="Translate"
               component={TranslateScreen}
               options={{
+                title: i18n.t('translate'),
                 headerStyle: { backgroundColor: theme.colors.primary },
                 headerTintColor: '#fff',
               }}
@@ -96,6 +102,7 @@ export default function App() {
               name="Search"
               component={SearchScreen}
               options={{
+                title: i18n.t('search'),
                 headerStyle: { backgroundColor: theme.colors.primary },
                 headerTintColor: '#fff',
               }}
@@ -104,6 +111,7 @@ export default function App() {
               name="SearchResult"
               component={SearchResultScreen}
               options={{
+                title: i18n.t('searchResult'),
                 headerStyle: { backgroundColor: theme.colors.primary },
                 headerTintColor: '#fff',
               }}

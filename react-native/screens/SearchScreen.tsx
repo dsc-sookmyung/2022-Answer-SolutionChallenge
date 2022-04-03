@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableHighlight, Alert } from 'react-native';
-import type { Navigation, Notice } from '../types';
+import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
+import type { Navigation, Notices } from '../types';
 import SearchedNotice from '../components/SearchedNotice';
 import SearchBar from 'react-native-elements/dist/searchbar/SearchBar-ios';
 import DateTimePickerModal from "react-native-modal-datetime-picker"
 import { useAuth } from '../contexts/Auth';
 import { StackActions } from '@react-navigation/native';
+import i18n from 'i18n-js'
+import '../locales/i18n';
 
 
 export default function SearchScreen({ navigation }: Navigation) {
     const auth = useAuth();
 
     const [search, setSearch] = useState<string>('');
-    const [filteredNotices, setFilteredNotices] = useState<Notice[]>(
+    const [filteredNotices, setFilteredNotices] = useState<Notices[]>(
         [
             {
-                id: 1,
                 date: "2022-02-19",
                 saved_titles: [
                     "17th Graduation Ceremony",
@@ -23,7 +24,6 @@ export default function SearchScreen({ navigation }: Navigation) {
                 ]
             },
             {
-                id: 1,
                 date: "2022-02-10",
                 saved_titles: [
                     "17th Graduation Ceremony",
@@ -32,10 +32,9 @@ export default function SearchScreen({ navigation }: Navigation) {
             }
         ]
     );
-    const [notices, setNotices] = useState<Notice[]>(
+    const [notices, setNotices] = useState<Notices[]>(
         [
             {
-                id: 1,
                 date: "2022-02-19",
                 saved_titles: [
                     "17th Graduation Ceremony",
@@ -43,7 +42,6 @@ export default function SearchScreen({ navigation }: Navigation) {
                 ]
             },
             {
-                id: 1,
                 date: "2022-02-10",
                 saved_titles: [
                     "17th Graduation Ceremony",
@@ -52,7 +50,7 @@ export default function SearchScreen({ navigation }: Navigation) {
             }
     ])
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-    const [searchDate, setSearchDate] = useState<string>("Click calendar icon to select date.");
+    const [searchDate, setSearchDate] = useState<string>(i18n.t('searchByDateDefault'));
 
     useEffect(() => {
         if (auth?.authData?.jwt_token) {
@@ -64,13 +62,15 @@ export default function SearchScreen({ navigation }: Navigation) {
                 redirect: 'follow'
             })
             .then(response => response.json())
-            .then(data => setNotices(data))
+            .then(data => {
+                setNotices(data);
+                setFilteredNotices(data);
+            })
             .catch(function (error) {
-                console.log(error.response.status) // 401
-                console.log(error.response.data.error) //Please Authenticate or whatever returned from server
+                console.log(error)
                 if(error.response.status==401) {
                     //redirect to login
-                    Alert.alert("The session has expired. Please log in again.");
+                    Alert.alert(i18n.t('SessionExpired'));
                     auth.signOut();
                     navigation.dispatch(StackActions.popToTop())
                 }
@@ -86,29 +86,29 @@ export default function SearchScreen({ navigation }: Navigation) {
         setDatePickerVisibility(false);
     };
 
-    const handleConfirm = (date: Date) => {
+    const handleConfirm = (date: Date) => () => {
         console.log("A date has been picked: ", date);
         const splitedDate = date.toISOString().split("T")[0];
         setSearchDate(splitedDate);
         if (date) {
-            const newData = notices.filter((notice) => {
+            const newData = notices?.filter((notice) => {
                 return notice.date === splitedDate;
             })
-            setFilteredNotices(newData);
+            setFilteredNotices(newData ? newData : [{date: '', saved_titles: []}]);
         } else {
             setFilteredNotices(notices);
         }
         hideDatePicker();
     };
 
-    const searchFilter = (text: string | void) => {
+    const searchFilter = (text: string | void) => () => {
         if (text) {
-            const newData = notices.filter((notice) => {
-                const noticeData = notice.saved_titles.join().toUpperCase();
+            const newData = notices?.filter((notice) => {
+                const noticeData = notice.saved_titles?.join().toUpperCase();
                 const textData = text.toUpperCase();
                 return noticeData.indexOf(textData) > -1;
             })
-            setFilteredNotices(newData);
+            setFilteredNotices(newData ? newData : [{date: '', saved_titles: []}]);
         } else {
             setFilteredNotices(notices);
         }
@@ -118,11 +118,11 @@ export default function SearchScreen({ navigation }: Navigation) {
     return (
         <View style={styles.container}>
             <View style={styles.searchDateWrapper}>
-                <Text style={styles.smallDescription}>SEARCH BY DATE</Text>
+                <Text style={styles.smallDescription}>{i18n.t('searchByDate')}</Text>
                 <View style={styles.searchDateContainer}>
-                    <TouchableHighlight onPress={showDatePicker}>
+                    <TouchableOpacity onPress={showDatePicker}>
                         <Text style={styles.calendarIcon}>🗓</Text>
-                    </TouchableHighlight>
+                    </TouchableOpacity>
                     <Text style={styles.selectedDate}>{searchDate}</Text>
                     <DateTimePickerModal
                         isVisible={isDatePickerVisible}
@@ -133,7 +133,7 @@ export default function SearchScreen({ navigation }: Navigation) {
                 </View>
             </View>
             <View >
-                <Text style={styles.smallDescription}>SEARCH BY TEXT</Text>
+                <Text style={styles.smallDescription}>{i18n.t('searchByText')}</Text>
                 <SearchBar
                     platform='ios'
                     onChangeText={(text: string | void) => searchFilter(text)}
@@ -142,12 +142,14 @@ export default function SearchScreen({ navigation }: Navigation) {
                     value={search}
                 />
             </View>
-            <View style={styles.searchResults}>
-                <Text style={styles.smallDescription}>RESULTS</Text>
-                {filteredNotices?.map((notice, index) => 
-                    <SearchedNotice  key={"nt_" + index} id={notice.id} date={notice.date} saved_titles={notice.saved_titles} />
-                )}
-            </View>
+            {filteredNotices && filteredNotices.length > 0 &&
+                <View style={styles.searchResults}>
+                    <Text style={styles.smallDescription}>RESULTS</Text>
+                    {filteredNotices?.map((notice, index) => 
+                        <SearchedNotice key={"nt_" + index} date={notice?.date} saved_titles={notice?.saved_titles} />
+                    )}
+                </View>
+            }
         </View> 
     );
 }

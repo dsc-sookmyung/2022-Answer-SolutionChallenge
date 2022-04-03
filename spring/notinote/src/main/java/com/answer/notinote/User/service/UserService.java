@@ -37,13 +37,12 @@ public class UserService {
     public User oauthLogin(String token) {
         ResponseEntity<String> userInfoResponse = oAuthService.createGetRequest(token);
         GoogleUser googleUser = oAuthService.getUserInfo(userInfoResponse);
-        System.out.println("username: " + googleUser.getName());
 
         User user = userRepository.findByUemail(googleUser.getEmail()).orElse(null);
         if (user == null) {
             user = User.builder()
                     .uemail(googleUser.getEmail())
-                    .username(googleUser.getFamilyName())
+                    .username(googleUser.getName())
                     .uroleType(RoleType.GUEST)
                     .uproviderType(ProviderType.GOOGLE)
                     .build();

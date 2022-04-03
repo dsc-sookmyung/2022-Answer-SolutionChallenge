@@ -17,7 +17,7 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Event extends Timestamped {
+public class Event extends Timestamped implements Comparable<Event>{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,16 +25,16 @@ public class Event extends Timestamped {
     private Long eid;
 
     @Column
-    private Long index_start;
+    private int index_start;
 
     @Column
-    private Long index_end;
+    private int index_end;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cid")
     private Child child;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "nid")
     private Notice notice;
 
@@ -52,10 +52,10 @@ public class Event extends Timestamped {
     private boolean registered = false;
 
     public Event(EventRequestDto requestDto) {
-        this.index_start = requestDto.getIndex_start();
-        this.index_end = requestDto.getIndex_end();
-        this.title = requestDto.getTitle();
-        this.date = requestDto.getDate();
+        this.index_start = requestDto.getS_index();
+        this.index_end = requestDto.getE_index();
+        this.title = requestDto.getContent();
+        this.date = LocalDate.parse(requestDto.getDate());
     }
 
     public void setNotice(Notice notice) {
@@ -73,5 +73,15 @@ public class Event extends Timestamped {
         this.date = requestDto.getDate();
         this.description = requestDto.getDescription();
         this.registered = true;
+    }
+
+    @Override
+    public int compareTo(Event e) {
+        if (this.index_start < e.index_start) {
+            return -1;
+        } else if (this.index_start > e.index_start) {
+            return 1;
+        }
+        return 0;
     }
 }

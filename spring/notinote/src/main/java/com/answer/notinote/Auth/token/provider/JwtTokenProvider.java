@@ -36,7 +36,7 @@ public class JwtTokenProvider {
     @Value("${jwt.refresh}")
     private String refreshKey;
 
-    private long tokenValidTime = 30 * 60 * 1000L;
+    private long tokenValidTime = 60 * 60 * 1000L;
     private long refreshValidTime = 300 * 60 * 1000L;
 
     private String tokenHeader = "JWT_TOKEN";

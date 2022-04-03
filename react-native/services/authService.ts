@@ -13,7 +13,7 @@ const signIn = (accessToken: string): Promise<AuthResponse> => {
             let data = {
                 header: {
                     jwt_token: response.headers.jwt_token,
-                    refresh_token: response.headers.jwt_token
+                    refresh_token: response.headers.refresh_token
                 },
                 body: response.data
             }
@@ -33,7 +33,7 @@ const signUp = (data: JoinData): Promise<AuthResponse> => {
             let data = {
                 header: {
                     jwt_token: response.headers.jwt_token,
-                    refresh_token: response.headers.jwt_token
+                    refresh_token: response.headers.refresh_token
                 },
                 body: response.data
             }

@@ -53,9 +53,11 @@ interface AuthContextData {
     authData?: AuthData;
     userData?: UserData;
     loading: boolean;
+	update: boolean;
     signUp(data: JoinData): Promise<void>;
     signIn(accessToken: string): Promise<void>;
     signOut(): void;
+	handleUpdate(): void;
 };
 interface Event {
 	id: number, 
@@ -69,14 +71,18 @@ interface Result {
 	id?: number,
 	imageUri?: string,
 	fullText: Event[],
-	korean: string
+	korean: string,
+	trans_full?: string
 }
 
 interface Notice {
-	id: number,
 	date: string,
-	saved_titles: string[],
-	results?: Result[]
+	results: Result[]
+}
+
+interface Notices {
+	date: string,
+	saved_titles: string[]
 }
 
 interface BottomDrawerProps {
@@ -84,20 +90,22 @@ interface BottomDrawerProps {
 	showKorean?: boolean,
 	isFullDrawer?: boolean,
 	isTranslateScreen?: boolean,
+	openSaveForm?: boolean,
 	handleKorean?: () => void,
 	saveResults?: (title: string) => void,
 	closeResults?: () => void,
 	retakePicture?: () => void,
+	handleOpenSaveForm?: () => void
 }
 
 interface EventForm {
 	title: string, 
 	date: string, 
-	cId: number, 
+	cid: number, 
 	description: string
 }
 
 export type {
 	UserData, JoinData, AuthData, AuthResponse, AuthContextData, Children, 
-	Event, Result, Notice, BottomDrawerProps, EventForm
+	Event, Result, Notice, Notices, BottomDrawerProps, EventForm
 }
