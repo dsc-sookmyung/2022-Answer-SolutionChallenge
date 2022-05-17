@@ -56,7 +56,7 @@ export default function HomeScreen({ navigation }: Navigation) {
                         <Text>
                             {i18n.t('first_1')}
                         </Text>
-                        <Text style={styles.highlight}> Notenote</Text>
+                        <Text style={styles.highlight}> Notinote</Text>
                         <Text>
                             {i18n.t('first_2')}
                         </Text>
