@@ -3,7 +3,7 @@ import { StyleSheet, View, TouchableOpacity, ImageBackground, Dimensions, Alert 
 import { Camera } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../core/theme';
-import type { Navigation, Result } from '../types';
+import type { Navigation, Result, ResultsForm } from '../types';
 import AppLoading from 'expo-app-loading';
 import useFonts from '../hooks/useFonts'
 import SwipeUpDown from 'react-native-swipe-up-down';
@@ -177,9 +177,9 @@ export default function TranslateScreen({ navigation }: Navigation) {
         setOpenSaveForm(!openSaveForm);
     }
 
-    const saveResults = (title: string): void => {
+    const saveResults = (form: ResultsForm): void => {
         // data 보내고, success 라면, 서버에 저장된 제목 받아와서 보여주기!
-        if (!title) {
+        if (!form?.title) {
             Alert.alert("You must enter at least one character for the title.");
             return;
         }
@@ -194,7 +194,8 @@ export default function TranslateScreen({ navigation }: Navigation) {
                  name: imageUri.split("/").pop()
             });
             // formdata.append('noticeRequestDTO',  new Blob([JSON.stringify(data)], {type: 'application/json'}));
-            formdata.append('title', title);
+            formdata.append('cid', form?.cid);
+            formdata.append('title', form?.title);
             formdata.append('date', new Date().toISOString().slice(0, 10));
             formdata.append('korean', results?.korean);
             formdata.append('trans_full', results?.trans_full);

@@ -92,7 +92,7 @@ interface BottomDrawerProps {
 	isTranslateScreen?: boolean,
 	openSaveForm?: boolean,
 	handleKorean?: () => void,
-	saveResults?: (title: string) => void,
+	saveResults?: (form: ResultsForm) => void,
 	closeResults?: () => void,
 	retakePicture?: () => void,
 	handleOpenSaveForm?: () => void
@@ -105,7 +105,12 @@ interface EventForm {
 	description: string
 }
 
+interface ResultsForm {
+	cid: number,
+	title: string
+}
+
 export type {
 	UserData, JoinData, AuthData, AuthResponse, AuthContextData, Children, 
-	Event, Result, Notice, Notices, BottomDrawerProps, EventForm
+	Event, Result, Notice, Notices, BottomDrawerProps, EventForm, ResultsForm
 }
