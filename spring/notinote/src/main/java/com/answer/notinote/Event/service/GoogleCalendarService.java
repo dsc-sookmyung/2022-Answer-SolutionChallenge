@@ -1,5 +1,8 @@
 package com.answer.notinote.Event.service;
 
+import com.answer.notinote.Child.domain.Child;
+import com.answer.notinote.Child.service.ChildService;
+import com.answer.notinote.Event.dto.EventRegisterDto;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
@@ -14,6 +17,7 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.model.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
@@ -26,15 +30,17 @@ import java.util.Collections;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class GoogleCalendarService {
 
+    private final ChildService childService;
     private static final String APPLICATION_NAME = "Notinote";
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
     private static final String CREDENTIALS_FILE_PATH = "/client_secret.json";
     private static final List<String> SCOPES = Collections.singletonList(CalendarScopes.CALENDAR);
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
 
-    public String createEvent(com.answer.notinote.Event.domain.Event eventEntity) throws GeneralSecurityException, IOException {
+    public String createEvent(EventRegisterDto registerDto) throws GeneralSecurityException, IOException {
         // Build a new authorized API client service.
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         Calendar service = new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
@@ -42,23 +48,24 @@ public class GoogleCalendarService {
                 .build();
 
         Event event = new Event()
-                .setSummary(eventEntity.getTitle())
-                .setDescription(eventEntity.getDescription());
+                .setSummary(registerDto.getTitle())
+                .setDescription(registerDto.getDescription());
 
         //date Format: "2015-05-28T09:00:00-07:00"
-        DateTime startDateTime = new DateTime(eventEntity.getDate().toString()+"T00:00:00+09:00");
+        DateTime startDateTime = new DateTime(registerDto.getDate().toString()+"T00:00:00+09:00");
         EventDateTime start = new EventDateTime()
                 .setDateTime(startDateTime)
                 .setTimeZone("Asia/Seoul");
         event.setStart(start);
 
-        DateTime endDateTime = new DateTime(eventEntity.getDate().toString()+"T23:59:59+09:00");
+        DateTime endDateTime = new DateTime(registerDto.getDate().toString()+"T23:59:59+09:00");
         EventDateTime end = new EventDateTime()
                 .setDateTime(endDateTime)
                 .setTimeZone("Asia/Seoul");
         event.setEnd(end);
 
-        event.setColorId(eventEntity.getChild().getColor().toString());
+        Child child = childService.findChildById(registerDto.getCid());
+        event.setColorId(child.getColor().toString());
 
         // 리마인더를 메일 or 팝업으로 보낼 수 있음
         EventReminder[] reminderOverrides = new EventReminder[] {

@@ -35,15 +35,20 @@ public class EventService {
     }
 
     @Transactional
-    public urlResponseDto registerEvent(Long id, EventRegisterDto requestDto) throws GeneralSecurityException, IOException {
+    public urlResponseDto registerEvent(Long id, EventRegisterDto registerDto) throws GeneralSecurityException, IOException {
         Event event = findEventById(id);
-        Child child = childService.findChildById(requestDto.getCid());
+        Child child = childService.findChildById(registerDto.getCid());
 
-        event.register(requestDto);
+        event.register(registerDto);
         event.setChild(child);
         eventRepository.save(event);
 
-        String url = calendarService.createEvent(event);
+        String url = calendarService.createEvent(registerDto);
+        return new urlResponseDto(url);
+    }
+
+    public urlResponseDto registerEvent(EventRegisterDto registerDto) throws GeneralSecurityException, IOException {
+        String url = calendarService.createEvent(registerDto);
         return new urlResponseDto(url);
     }
 
