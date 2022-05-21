@@ -63,6 +63,6 @@ export default {
     authFailed: "Xác thực không thành công. Vui lòng thử lại.",
     tryAgain: 'Thử lại',
     join: 'Tham gia',
-    SearchResult: "Kết quả tìm kiếm",
+    searchResult: "Kết quả tìm kiếm",
     noEvent: "Không có sự kiện hôm nay!"
 }

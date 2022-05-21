@@ -70,6 +70,6 @@ export default {
     authFailed: "Authentication failed. Please try again.",
     tryAgain: 'Try Again',
     join: 'Join',
-    SearchResult: "Search Result",
+    searchResult: "Search Result",
     noEvent: "There is no event today!"
 }

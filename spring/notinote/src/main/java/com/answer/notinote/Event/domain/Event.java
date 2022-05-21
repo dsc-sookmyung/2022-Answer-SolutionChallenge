@@ -17,7 +17,7 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Event extends Timestamped implements Comparable<Event> {
+public class Event extends Timestamped implements Comparable<Event>  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

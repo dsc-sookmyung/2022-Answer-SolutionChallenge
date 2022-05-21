@@ -37,7 +37,7 @@ export default function JoinScreen({ navigation }: Navigation) {
 		else if (auth?.userData?.uroleType==='GUEST') {
 			setUser(auth?.userData);
 		}
-	}, [auth]);
+	}, [auth?.userData]);
 
 	useEffect(() => {
 		if (user?.username) {
