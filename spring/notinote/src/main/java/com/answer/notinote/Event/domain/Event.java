@@ -77,11 +77,8 @@ public class Event extends Timestamped implements Comparable<Event>  {
 
     @Override
     public int compareTo(Event e) {
-        if (this.index_start < e.index_start) {
-            return -1;
-        } else if (this.index_start > e.index_start) {
-            return 1;
-        }
+        if (this.index_start < e.index_start) return -1;
+        if (this.index_start > e.index_start) return 1;
         return 0;
     }
 }

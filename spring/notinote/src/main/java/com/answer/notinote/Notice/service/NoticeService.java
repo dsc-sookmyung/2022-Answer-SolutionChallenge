@@ -87,7 +87,7 @@ public class NoticeService {
 
     public String transText(String korean, String targetLanguage) throws IOException {
         String text = korean;
-        String projectId = "notinote-341918";
+        String projectId = "solution-challenge-342914";
         ArrayList <String> textlist = new ArrayList<String>();
 
         try (TranslationServiceClient client = TranslationServiceClient.create()) {
@@ -260,7 +260,6 @@ public class NoticeService {
         noticeRepository.save(notice);
 
         List<Event> events = detectEvent(notice, user.getUlanguage());
-
         List<NoticeSentenceDto> sentences = extractSentenceFromEvent(notice.getTrans_full(), events);
 
         return new NoticeTitleListDto(notice, sentences);
@@ -302,6 +301,7 @@ public class NoticeService {
             String sentence = text.substring(event.getIndex_start(), event.getIndex_end());
             NoticeSentenceDto dto = NoticeSentenceDto.builder()
                     .id(id++)
+                    .eid(event.getEid())
                     .content(sentence)
                     .date(event.getDate())
                     .highlight(true)
