@@ -86,7 +86,7 @@ export default function SearchScreen({ navigation }: Navigation) {
         setDatePickerVisibility(false);
     };
 
-    const handleConfirm = (date: Date) => () => {
+    const handleConfirm = (date: Date) => {
         console.log("A date has been picked: ", date);
         const splitedDate = date.toISOString().split("T")[0];
         setSearchDate(splitedDate);
@@ -101,7 +101,7 @@ export default function SearchScreen({ navigation }: Navigation) {
         hideDatePicker();
     };
 
-    const searchFilter = (text: string | void) => () => {
+    const searchFilter = (text: string | void) => {
         if (text) {
             const newData = notices?.filter((notice) => {
                 const noticeData = notice.saved_titles?.join().toUpperCase();
