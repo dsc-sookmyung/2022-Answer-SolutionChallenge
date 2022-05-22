@@ -64,6 +64,6 @@ export default {
     authFailed: "認証に失敗しました。もう一度やり直してください。",
     tryAgain: '再試行',
     join: '参加',
-    SearchResult: "検索結果",
+    searchResult: "検索結果",
     noEvent: "今日はイベントはありません！"
 }

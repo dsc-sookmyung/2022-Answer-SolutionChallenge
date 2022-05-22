@@ -4,15 +4,17 @@ import { StyleSheet, View, Image, SafeAreaView, TouchableHighlight, Alert } from
 import { Text } from 'native-base'
 import { theme } from '../core/theme';
 import Swiper from 'react-native-swiper';
-import * as Localization from 'expo-localization'
 import i18n from 'i18n-js'
 import * as WebBrowser from 'expo-web-browser';
 import * as Google from 'expo-auth-session/providers/google';
-import { GOOGLE_CLIENT_ID_WEB } from '@env';
+// import { GOOGLE_CLIENT_ID_WEB } from '@env';
 import { useAuth } from '../contexts/Auth';
 import '../locales/i18n';
 
 WebBrowser.maybeCompleteAuthSession();
+
+const GOOGLE_CLIENT_ID_WEB='1044354965352-6qsilpb0i9ntmhbmktld5h68fphi85v5.apps.googleusercontent.com';
+const GOOGLE_CLIENT_ID_IOS='044354965352-j2jr4f1s04m3jhr2fikacbn5euhh8ndh.apps.googleusercontent.com';
 
 export default function HomeScreen({ navigation }: Navigation) {
     const [request, response, promptAsync] = Google.useAuthRequest({
@@ -54,7 +56,7 @@ export default function HomeScreen({ navigation }: Navigation) {
                         <Text>
                             {i18n.t('first_1')}
                         </Text>
-                        <Text style={styles.highlight}> Notenote</Text>
+                        <Text style={styles.highlight}> Notinote</Text>
                         <Text>
                             {i18n.t('first_2')}
                         </Text>

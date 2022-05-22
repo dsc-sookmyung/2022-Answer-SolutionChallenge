@@ -1,11 +1,9 @@
-BottomDrawer
-
 import React, { useState, useEffect, useRef } from 'react';
 import { StyleSheet, Dimensions, View, TouchableOpacity, TouchableHighlight, ScrollView, Alert, Linking } from 'react-native';
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import { Popover, Button, Text, Modal, FormControl, Input, VStack, Select, CheckIcon, AlertDialog } from 'native-base';
 import { theme } from '../core/theme';
-import type { BottomDrawerProps, EventForm, UserData } from '../types';
+import type { BottomDrawerProps, EventForm, ResultsForm, UserData } from '../types';
 import { useAuth } from '../contexts/Auth';
 import { useNavigation, StackActions } from '@react-navigation/native';
 import i18n from 'i18n-js';
@@ -17,23 +15,31 @@ const highlight = (text: string, registered: boolean) =>
 
 function BottomDrawer(props: BottomDrawerProps) {
     const [currentEvent, setCurrentEvent] = useState<number>(0);
-    const [openSaveForm, setOpenSaveForm] = useState<boolean>(false);
-    const [resultsTitle, setResultsTitle] = useState<string>('title');
     const [openEventForm, setOpenEventForm] = useState<boolean>(false); 
-    const [eventForm, setEventForm] = useState<EventForm>({cId: 1, title: '', date: '', description: ''});
+    const [eventForm, setEventForm] = useState<EventForm>({cid: 0, title: '', date: '', description: ''});
     const [calendarAlert, setCalendarAlert] = useState<boolean>(false);
     const [calendarUrl, setCalendarUrl] = useState<string>('');
+    const [resultsForm, setResultsForm] = useState<ResultsForm>({cid: 0, title: 'title'});
     const [user, setUser] = useState<UserData>();
+    const [firstCid, setFirstCid] = useState(0);
     const auth = useAuth();
     const navigation = useNavigation();
     const cancelRef = React.useRef(null);
 
     useEffect(()=> {
-        setUser(auth?.userData);
+        if (auth?.userData) {
+            setUser(auth?.userData);
+            if (auth?.userData?.uchildren && auth.userData.uchildren.length > 0) {
+                let cid = auth.userData.uchildren[0].cid
+                setEventForm({...eventForm, ['cid']: cid});
+                setResultsForm({...resultsForm, ['cid']: cid});
+                setFirstCid(cid);
+            }
+        }
     }, [auth]);
 
     useEffect(() => {
-        if (currentEvent && eventForm?.cId) {
+        if (currentEvent && eventForm?.cid) {
             let obj = props?.results?.fullText;
             let event = obj.find(function(item, index) {
                 if (item.id===currentEvent) {
@@ -41,10 +47,17 @@ function BottomDrawer(props: BottomDrawerProps) {
                 }
             });
             if (event?.content && user?.uchildren) {
-                setEventForm({title: '['+user.uchildren[eventForm.cId-1]?.cname+'] ' + event.content, date: event?.date ? event.date : '', cId: eventForm.cId, description: eventForm.description });
+                let cname = user.uchildren.filter(child => child.cid === eventForm.cid)[0].cname;
+                setEventForm({title: '['+cname+'] ' + event.content, date: event?.date ? event.date : '', cid: eventForm.cid, description: eventForm.description });
             }
         }
-    }, [currentEvent, eventForm?.cId])
+    }, [currentEvent, eventForm?.cid])
+
+	useEffect(() => {
+        if (props.openSaveForm && firstCid) {
+            setResultsForm({ cid: firstCid, title: 'title' });
+        }
+	}, [props?.openSaveForm])
 
     const openPopup = (resultId: number) => () => {
         setCurrentEvent(resultId);
@@ -52,13 +65,6 @@ function BottomDrawer(props: BottomDrawerProps) {
 
     const closePopup = () => {
         setCurrentEvent(0);
-    }
-    
-    const handleOpenSaveForm = () => {
-        if (openSaveForm) {
-            setResultsTitle('title');
-        }
-        setOpenSaveForm(!openSaveForm);
     }
 
     const handleOpenEventForm = (prop?: string) => () => {
@@ -73,9 +79,6 @@ function BottomDrawer(props: BottomDrawerProps) {
     }
 
     const addEvent = () => {
-        // TODO: fetch api
-        let status = "success";
-
         if (auth?.authData?.jwt_token && eventForm) {
             console.log(eventForm, currentEvent);
             fetch(`http://localhost:8080/event/register?id=${currentEvent}`, {
@@ -93,6 +96,7 @@ function BottomDrawer(props: BottomDrawerProps) {
                 if (data.url) {
                     setCalendarUrl(data.url)    // console.log(data)
                     handleCalendarAlert();
+					// auth?.handleUpdate();
                 }
                 else {
                     Alert.alert(i18n.t('registerFailed'));
@@ -129,35 +133,50 @@ function BottomDrawer(props: BottomDrawerProps) {
                         <TouchableOpacity style={styles.rightSpace} onPress={props.handleKorean}>
                             <MaterialIcons name="translate" size={32} color="#000"/>
                         </TouchableOpacity>
-                        {props.isTranslateScreen &&
+                        {props.isTranslateScreen && props.handleOpenSaveForm && 
                         <>
-                            <TouchableOpacity onPress={() => handleOpenSaveForm()}>
+                            <TouchableOpacity onPress={props.handleOpenSaveForm}>
                                 <FontAwesome name="save" size={32} color='#000' />
                             </TouchableOpacity>
-                            <Modal isOpen={openSaveForm} onClose={() => handleOpenSaveForm()}>
+                            <Modal isOpen={props.openSaveForm} onClose={props.handleOpenSaveForm}>
                                 <Modal.Content maxWidth="400px">
                                 <Modal.CloseButton />
                                 <Modal.Header>{i18n.t('saveResults')}</Modal.Header>
                                 <Modal.Body>
-                                    <FormControl>
-                                    <FormControl.Label>Title</FormControl.Label>
-                                    <Input 
-                                        value={resultsTitle}
-                                        onChangeText={(text) => setResultsTitle(text)}
-                                    />
-                                    <FormControl.HelperText>
-                                        {i18n.t('helpertext')}
-                                    </FormControl.HelperText>
-                                    </FormControl>
+                                    <VStack space={2}>
+                                        <FormControl>
+                                            <FormControl.Label>{i18n.t('child')}</FormControl.Label>
+                                                <Select selectedValue={resultsForm?.cid.toString()} accessibilityLabel="Child" onValueChange={itemValue => {
+                                                    setResultsForm({...resultsForm, ['cid']: Number(itemValue)})
+                                                }} _selectedItem={{
+                                                    bg: "skyblue.500",
+                                                    endIcon: <CheckIcon size={3} />
+                                                }}>
+                                                    {/* Country code 3 digit ISO */}
+                                                    {user?.uchildren?.map((child, index) => 
+                                                        child?.cname && child?.cid &&
+                                                            <Select.Item key={'cs_'+index} label={child?.cname} value={child?.cid.toString()} />
+                                                    )}
+                                                </Select>
+                                        </FormControl>
+                                        <FormControl>
+                                            <FormControl.Label>Title</FormControl.Label>
+                                            <Input 
+                                                value={resultsForm['title']}
+                                                onChangeText={(text) => setResultsForm({...resultsForm, ['title']: text})}
+                                            />
+                                            <FormControl.HelperText>
+                                                {i18n.t('helpertext')}
+                                            </FormControl.HelperText>
+                                        </FormControl>
+                                    </VStack>
                                 </Modal.Body>
                                 <Modal.Footer>
                                     <Button.Group space={2}>
-                                    <Button variant="ghost" colorScheme="blueGray" onPress={() => {
-                                    handleOpenSaveForm()
-                                    }}>
+                                    <Button variant="ghost" colorScheme="blueGray" onPress={props.handleOpenSaveForm}>
                                         {i18n.t('cancel')}
                                     </Button>
-                                    <Button onPress={() => props?.saveResults && props.saveResults(resultsTitle)}>
+                                    <Button onPress={() => props?.saveResults && props.saveResults(resultsForm)}>
                                         {i18n.t('save')}
                                     </Button>
                                     </Button.Group>
@@ -207,8 +226,8 @@ function BottomDrawer(props: BottomDrawerProps) {
                                                             <VStack space={2}>
                                                                 <FormControl>
                                                                     <FormControl.Label>{i18n.t('child')}</FormControl.Label>
-                                                                        <Select selectedValue={eventForm?.cId.toString()} accessibilityLabel="Child" onValueChange={itemValue => {
-                                                                            setEventForm({ ...eventForm, ['cId']: Number(itemValue) })
+                                                                        <Select selectedValue={eventForm?.cid.toString()} accessibilityLabel="Child" onValueChange={itemValue => {
+                                                                            setEventForm({ ...eventForm, ['cid']: Number(itemValue) })
                                                                         }} _selectedItem={{
                                                                             bg: "skyblue.500",
                                                                             endIcon: <CheckIcon size={3} />
@@ -300,7 +319,7 @@ function BottomDrawer(props: BottomDrawerProps) {
                                 </Popover>
                             ) : (
                                 <Text key={item.content}>
-                                    {item.content}
+                                    {item.content.slice(72)}
                                 </Text>
                             )
                         )
