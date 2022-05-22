@@ -16,17 +16,26 @@ const highlight = (text: string, registered: boolean) =>
 function BottomDrawer(props: BottomDrawerProps) {
     const [currentEvent, setCurrentEvent] = useState<number>(0);
     const [openEventForm, setOpenEventForm] = useState<boolean>(false); 
-    const [eventForm, setEventForm] = useState<EventForm>({cid: 1, title: '', date: '', description: ''});
+    const [eventForm, setEventForm] = useState<EventForm>({cid: 0, title: '', date: '', description: ''});
     const [calendarAlert, setCalendarAlert] = useState<boolean>(false);
     const [calendarUrl, setCalendarUrl] = useState<string>('');
-    const [resultsForm, setResultsForm] = useState<ResultsForm>({cid: 1, title: 'title'});
+    const [resultsForm, setResultsForm] = useState<ResultsForm>({cid: 0, title: 'title'});
     const [user, setUser] = useState<UserData>();
+    const [firstCid, setFirstCid] = useState(0);
     const auth = useAuth();
     const navigation = useNavigation();
     const cancelRef = React.useRef(null);
 
     useEffect(()=> {
-        setUser(auth?.userData);
+        if (auth?.userData) {
+            setUser(auth?.userData);
+            if (auth?.userData?.uchildren && auth.userData.uchildren.length > 0) {
+                let cid = auth.userData.uchildren[0].cid
+                setEventForm({...eventForm, ['cid']: cid});
+                setResultsForm({...resultsForm, ['cid']: cid});
+                setFirstCid(cid);
+            }
+        }
     }, [auth]);
 
     useEffect(() => {
@@ -38,14 +47,15 @@ function BottomDrawer(props: BottomDrawerProps) {
                 }
             });
             if (event?.content && user?.uchildren) {
-                setEventForm({title: '['+user.uchildren[eventForm.cid-1]?.cname+'] ' + event.content, date: event?.date ? event.date : '', cid: eventForm.cid, description: eventForm.description });
+                let cname = user.uchildren.filter(child => child.cid === eventForm.cid)[0].cname;
+                setEventForm({title: '['+cname+'] ' + event.content, date: event?.date ? event.date : '', cid: eventForm.cid, description: eventForm.description });
             }
         }
     }, [currentEvent, eventForm?.cid])
 
 	useEffect(() => {
-        if (props.openSaveForm) {
-            setResultsForm({ cid: 1, title: 'title' });
+        if (props.openSaveForm && firstCid) {
+            setResultsForm({ cid: firstCid, title: 'title' });
         }
 	}, [props?.openSaveForm])
 
@@ -69,8 +79,6 @@ function BottomDrawer(props: BottomDrawerProps) {
     }
 
     const addEvent = () => {
-		handleCalendarAlert();
-
         if (auth?.authData?.jwt_token && eventForm) {
             console.log(eventForm, currentEvent);
             fetch(`http://localhost:8080/event/register?id=${currentEvent}`, {
@@ -88,7 +96,7 @@ function BottomDrawer(props: BottomDrawerProps) {
                 if (data.url) {
                     setCalendarUrl(data.url)    // console.log(data)
                     handleCalendarAlert();
-					auth?.handleUpdate();
+					// auth?.handleUpdate();
                 }
                 else {
                     Alert.alert(i18n.t('registerFailed'));

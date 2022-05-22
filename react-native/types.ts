@@ -20,7 +20,7 @@ export type TextInput = {
 }
 
 interface Children {
-	cid?: number,
+	cid: number,
 	cname?: string,
 	color?: number,
 }
