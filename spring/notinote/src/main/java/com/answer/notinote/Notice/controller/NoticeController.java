@@ -55,12 +55,9 @@ public class NoticeController {
     @RequestMapping(value = "/notice/save", method = RequestMethod.POST)
     public NoticeTitleListDto saveNotice(
             @RequestPart(value = "uploadfile") MultipartFile uploadfile,
-            @RequestPart(value = "title") String title,
-            @RequestPart(value = "date") String stringdate,
-            @RequestPart(value = "korean") String korean,
-            @RequestPart(value = "trans_full") String fullText,
+            @RequestPart(value = "noticeRequestDto") NoticeRequestDto noticeRequestDto,
             HttpServletRequest request) throws IOException {
-
+        /*
         LocalDate date = LocalDate.parse(stringdate);
         NoticeRequestDto noticeRequestDto = NoticeRequestDto.builder()
                 .title(title)
@@ -68,6 +65,8 @@ public class NoticeController {
                 .korean(korean)
                 .fullText(fullText)
                 .build();
+
+         */
         NoticeTitleListDto notice_title = noticeService.saveNotice(uploadfile, noticeRequestDto, request); //notice 저장
         return notice_title;
     }

@@ -1,6 +1,7 @@
 package com.answer.notinote.Notice.service;
 
 import com.answer.notinote.Auth.token.provider.JwtTokenProvider;
+import com.answer.notinote.Child.service.ChildService;
 import com.answer.notinote.Event.domain.Event;
 import com.answer.notinote.Notice.dto.NoticeResponseBody;
 import com.answer.notinote.Event.dto.EventRequestDto;
@@ -48,6 +49,8 @@ public class NoticeService {
     JwtTokenProvider jwtTokenProvider;
     @Autowired
     EventService eventService;
+    @Autowired
+    ChildService childService;
 
     public String detectText(MultipartFile uploadfile) throws IOException{
         List<AnnotateImageRequest> requests = new ArrayList<>();
@@ -256,6 +259,7 @@ public class NoticeService {
                 .origin_full(noticeRequestDto.getKorean())
                 .trans_full(noticeRequestDto.getFullText())
                 .user(user)
+                .child(childService.findChildById(noticeRequestDto.getCid()))
                 .build();
         noticeRepository.save(notice);
 
