@@ -13,14 +13,16 @@ public class NoticeRequestDto {
     private LocalDate date;
     private String korean;
     private String fullText;
+    private Long cid;
 
 
     @Builder
-    public NoticeRequestDto (String title, LocalDate date, String korean, String fullText){
+    public NoticeRequestDto (String title, LocalDate date, String korean, String fullText, Long cid){
         this.title = title;
         this.date = date;
         this.korean = korean;
         this.fullText= fullText;
+        this.cid = cid;
     }
 
 }
