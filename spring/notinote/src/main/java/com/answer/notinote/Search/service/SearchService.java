@@ -1,6 +1,8 @@
 package com.answer.notinote.Search.service;
 
 import com.answer.notinote.Auth.token.provider.JwtTokenProvider;
+import com.answer.notinote.Child.domain.Child;
+import com.answer.notinote.Child.domain.repository.ChildRepository;
 import com.answer.notinote.Event.domain.Event;
 import com.answer.notinote.Event.service.EventService;
 import com.answer.notinote.Notice.domain.entity.Notice;
@@ -33,6 +35,8 @@ public class SearchService {
     NoticeService noticeService;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    ChildRepository childRepository;
     @Autowired
     JwtTokenProvider jwtTokenProvider;
 
@@ -106,5 +110,45 @@ public class SearchService {
                 .results(test)
                 .build();
 
+    }
+
+    public List<SearchListDto> searchChildList(Long cid, HttpServletRequest request){
+
+        String token = jwtTokenProvider.resolveToken(request);
+        String useremail = jwtTokenProvider.getUserEmail(token);
+        User user = userRepository.findByUemail(useremail).orElseThrow(IllegalArgumentException::new);
+        Child child = childRepository.findById(cid).orElseThrow(IllegalArgumentException::new);
+        List<Notice> notices = noticeRepository.findByUserAndChild(user,child);
+
+        List<LocalDate> dateList = new ArrayList<>();
+        List<List<String>> titleLists = new ArrayList<>();
+        List<SearchListDto> searchListDtos = new ArrayList<>();
+
+        //유니크한 날짜값만 리스트에 저장하는 jpa 쿼리 메소드
+        for(int i = 0; i < noticeRepository.findUniqueNdate(user).size(); i++){
+            dateList.add(noticeRepository.findUniqueNdate(user).get(i).getNdate());
+        }
+
+        dateList.sort(Comparator.reverseOrder()); //최신순 정렬
+
+        for(int i = 0; i < dateList.size(); i++){
+            List<String> titleList = new ArrayList<>();
+            for(int j = 0; j < notices.size(); j++){
+                if((notices.get(j).getNdate()).equals(dateList.get(i))) {
+                    if (notices.get(j).getTitle() != null) {
+                        titleList.add(notices.get(j).getTitle());
+                    }
+                }
+            }
+
+            if (!titleLists.get(i).isEmpty()) {
+                SearchListDto searchListDto = SearchListDto.builder()
+                        .date(dateList.get(i))
+                        .saved_titles(titleLists.get(i))
+                        .build();
+                searchListDtos.add(searchListDto);
+            }
+        }
+        return searchListDtos;
     }
 }

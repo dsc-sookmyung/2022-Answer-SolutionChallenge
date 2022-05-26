@@ -1,5 +1,6 @@
 package com.answer.notinote.Notice.domain.repository;
 
+import com.answer.notinote.Child.domain.Child;
 import com.answer.notinote.Notice.domain.entity.Notice;
 import com.answer.notinote.Search.domain.repository.SearchDateInf;
 import com.answer.notinote.User.domain.entity.User;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 
 @Repository
@@ -24,4 +24,7 @@ public interface NoticeRepository extends JpaRepository<Notice, Long> {
     List<Notice> findByUser(User user);
 
     List<Notice> findByNdate(LocalDate date);
+
+    List<Notice> findByUserAndChild(User user, Child child);
+
 }
