@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { Image, StatusBar, Platform } from 'react-native';
+import { LogBox, Image, StatusBar, Platform } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NativeBaseProvider } from 'native-base';
 import { nativeBaseTheme } from './core/theme';
@@ -17,32 +17,21 @@ import SearchScreen from './screens/SearchScreen';
 import LogoutButton from './components/LogoutButton';
 import SearchResultScreen from './screens/SearchResultScreen';
 import IntrodcutionScreen from './screens/IntroductionScreen'
-import AsyncStorage from '@react-native-async-storage/async-storage'
 
+import i18n from 'i18n-js';
+import './locales/i18n';
+
+
+LogBox.ignoreAllLogs();
+console.warn = () => {};
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   const [fontsLoaded, SetFontsLoaded] = useState<boolean>(false);
-  const [isFirstRun, setIsFirstRun] = useState<string>("true");
   const LoadFontsAndRestoreToken = async () => {
     await useFonts();
   };
-
-
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const value = await AsyncStorage.getItem("isFirstRun");
-        if (value !== null) {
-          setIsFirstRun(value);
-        }
-      } catch (error) {
-        console.log("error");
-      }
-    }
-    getData();
-  })
 
   if (!fontsLoaded) {
     return (
@@ -70,6 +59,7 @@ export default function App() {
               name="Join"
               component={JoinScreen}
               options={{
+                title: i18n.t('join'),
                 headerStyle: { backgroundColor: theme.colors.primary },
                 headerTintColor: '#fff',
               }}
@@ -103,6 +93,7 @@ export default function App() {
               name="Translate"
               component={TranslateScreen}
               options={{
+                title: i18n.t('translate'),
                 headerStyle: { backgroundColor: theme.colors.primary },
                 headerTintColor: '#fff',
               }}
@@ -111,6 +102,7 @@ export default function App() {
               name="Search"
               component={SearchScreen}
               options={{
+                title: i18n.t('search'),
                 headerStyle: { backgroundColor: theme.colors.primary },
                 headerTintColor: '#fff',
               }}
@@ -119,6 +111,7 @@ export default function App() {
               name="SearchResult"
               component={SearchResultScreen}
               options={{
+                title: i18n.t('searchResult'),
                 headerStyle: { backgroundColor: theme.colors.primary },
                 headerTintColor: '#fff',
               }}

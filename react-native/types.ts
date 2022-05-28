@@ -20,7 +20,7 @@ export type TextInput = {
 }
 
 interface Children {
-	cid?: number,
+	cid: number,
 	cname?: string,
 	color?: number,
 }
@@ -53,9 +53,11 @@ interface AuthContextData {
     authData?: AuthData;
     userData?: UserData;
     loading: boolean;
+	update: boolean;
     signUp(data: JoinData): Promise<void>;
     signIn(accessToken: string): Promise<void>;
     signOut(): void;
+	handleUpdate(): void;
 };
 interface Event {
 	id: number, 
@@ -66,23 +68,21 @@ interface Event {
 }
 
 interface Result {
-	id: number,
+	id?: number,
+	imageUri?: string,
 	fullText: Event[],
-	korean: string
+	korean: string,
+	trans_full?: string
 }
 
 interface Notice {
-	cid: number,
 	date: string,
-	notices: {
-		total_results: string[],
-		notice_body: {
-			title: string,
-			id: number,
-			fullText: Event[],
-			korean: string,
-		}[]
-	}
+	results: Result[]
+}
+
+interface Notices {
+	date: string,
+	saved_titles: string[]
 }
 
 interface BottomDrawerProps {
@@ -90,20 +90,27 @@ interface BottomDrawerProps {
 	showKorean?: boolean,
 	isFullDrawer?: boolean,
 	isTranslateScreen?: boolean,
+	openSaveForm?: boolean,
 	handleKorean?: () => void,
-	saveResults?: () => void,
+	saveResults?: (form: ResultsForm) => void,
 	closeResults?: () => void,
 	retakePicture?: () => void,
+	handleOpenSaveForm?: () => void
 }
 
 interface EventForm {
 	title: string, 
 	date: string, 
-	cId: number, 
+	cid: number, 
 	description: string
+}
+
+interface ResultsForm {
+	cid: number,
+	title: string
 }
 
 export type {
 	UserData, JoinData, AuthData, AuthResponse, AuthContextData, Children, 
-	Event, Result, Notice, BottomDrawerProps, EventForm
+	Event, Result, Notice, Notices, BottomDrawerProps, EventForm, ResultsForm
 }

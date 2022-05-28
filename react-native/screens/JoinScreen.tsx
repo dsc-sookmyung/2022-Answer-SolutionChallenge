@@ -5,6 +5,9 @@ import { nameValidator } from '../core/utils';
 import type { Navigation, UserData, JoinData } from '../types';
 import { theme } from '../core/theme';
 import { useAuth } from '../contexts/Auth';
+import i18n from 'i18n-js'
+import '../locales/i18n';
+
 
 export default function JoinScreen({ navigation }: Navigation) {
 	const [childrenNumber, setChildrenNumber] = useState<string>('1');
@@ -26,15 +29,15 @@ export default function JoinScreen({ navigation }: Navigation) {
 	useEffect(() => {
 		if (auth?.userData?.uroleType==='USER') {
 			Alert.alert(
-				"Success",
-				"Congratulations, your account has been successfully created."
+				i18n.t('loginSuccess'),
+				i18n.t('loginSuccessText')
 			)
 			navigation.navigate('Home');
 		}
 		else if (auth?.userData?.uroleType==='GUEST') {
 			setUser(auth?.userData);
 		}
-	}, [auth]);
+	}, [auth?.userData]);
 
 	useEffect(() => {
 		if (user?.username) {
@@ -44,7 +47,7 @@ export default function JoinScreen({ navigation }: Navigation) {
 
 	const errorAlert = (error: string) =>
 		Alert.alert(                    
-			"Join Failed",                 
+			i18n.t('joinFailed'),                 
 			error,                      
 			[
 				{ text: "OK", onPress: () => console.log("OK Pressed") }
@@ -73,7 +76,7 @@ export default function JoinScreen({ navigation }: Navigation) {
 			const childrenNameError = joinForm.uchildren?.some(child => child.cname === '');
 	
 			if (usernameError || childrenNameError || !joinForm.ulanguage) {
-				errorAlert("Please fill in all the blanks!");
+				errorAlert(i18n.t('fillAlarm'));
 				return;
 			}
 	
@@ -82,11 +85,11 @@ export default function JoinScreen({ navigation }: Navigation) {
 	};
 
 	return (
-		<KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"}>
-			<View style={styles.topView}>
+		<KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"} enabled keyboardVerticalOffset={100}>
+			<ScrollView>
 				<VStack space={4} style={{ flex: 1 }}>
 					<FormControl isRequired style={{ flex: 1.2 }}>
-						<FormControl.Label>Profile Image</FormControl.Label>
+						<FormControl.Label>{i18n.t('profileImage')}</FormControl.Label>
 						<ScrollView horizontal={true}>
 							{Array(7).fill(1).map((num, index) =>
 								<Button key={'b_'+index} variant="unstyled" onPress={handleProfileImg(index+1)}>
@@ -96,7 +99,7 @@ export default function JoinScreen({ navigation }: Navigation) {
 						</ScrollView>
 					</FormControl>
 					<FormControl isRequired style={{ flex: 1 }}>
-						<FormControl.Label>Username</FormControl.Label>
+						<FormControl.Label>{i18n.t('username')}</FormControl.Label>
 						<Input 
 							size="md"
 							value={joinForm.username}
@@ -107,7 +110,7 @@ export default function JoinScreen({ navigation }: Navigation) {
 						/>
 					</FormControl>
 					<FormControl isRequired style={{ flex: 1 }}>
-						<FormControl.Label>Select Your Language</FormControl.Label>
+						<FormControl.Label>{i18n.t('selectLang')}</FormControl.Label>
 						<Select selectedValue={joinForm?.ulanguage} size="md" minWidth={200} accessibilityLabel="Select your language" placeholder="Select your language" onValueChange={itemValue => {
 						setJoinForm({ ...joinForm, ['ulanguage']: itemValue })
 					}} _selectedItem={{
@@ -115,18 +118,17 @@ export default function JoinScreen({ navigation }: Navigation) {
 						endIcon: <CheckIcon size={5} />
 					}} mt={1}>
 							{/* Country code 3 digit ISO */}
-							<Select.Item label="Chinese" value="chn" />
-							<Select.Item label="English" value="eng" />
-							<Select.Item label="Filipino" value="phl" />
-							<Select.Item label="Japanese" value="jpn" />
-							<Select.Item label="Khmer" value="khm" />
-							<Select.Item label="Korean" value="kor" />
-							<Select.Item label="Thai" value="tha" />
-							<Select.Item label="Vietnamese" value="vnm" />
+							<Select.Item label="Chinese" value="zh" />
+							<Select.Item label="English" value="en" />
+							<Select.Item label="Japanese" value="ja" />
+							<Select.Item label="Khmer" value="km" />
+							<Select.Item label="Korean" value="ko" />
+							<Select.Item label="Thai" value="th" />
+							<Select.Item label="Vietnamese" value="vi" />
 						</Select>
 					</FormControl>
 					<FormControl isRequired style={{ flex: 1 }}>
-						<FormControl.Label>Number of Children</FormControl.Label>
+						<FormControl.Label>{i18n.t('childrenNum')}</FormControl.Label>
 						<Select selectedValue={childrenNumber} size="md" minWidth={200} accessibilityLabel="Select number of children" placeholder="Select number of children" onValueChange={itemValue => {
 						setChildrenNumber(itemValue);
 					}} _selectedItem={{
@@ -142,7 +144,7 @@ export default function JoinScreen({ navigation }: Navigation) {
 						</Select>
 					</FormControl>
 					<FormControl isRequired style={{ flex: 2 }}>
-						<FormControl.Label>Children name</FormControl.Label>
+						<FormControl.Label>{i18n.t('childrenName')}</FormControl.Label>
 						<ScrollView style={{height: '100%'}}>
 							{Array(Number(childrenNumber)).fill(1).map((child, index) => 
 								<Input 
@@ -163,12 +165,10 @@ export default function JoinScreen({ navigation }: Navigation) {
 						</ScrollView>
 					</FormControl>
 				</VStack>
-			</View>
-			<View style={styles.bottomView}>
-				<Button size="lg" onPress={onJoinPressed}>
-					Sign up
+				<Button size="lg" my={2} onPress={onJoinPressed}>
+					{i18n.t('signUp')}
 				</Button>
-			</View>
+			</ScrollView>
 		</KeyboardAvoidingView>
 	);
 }
@@ -180,12 +180,7 @@ const styles = StyleSheet.create({
 		backgroundColor: theme.colors.background,
 		flex: 1,
 		flexDirection: 'column',
-	},
-	topView: {
-		flex: 5, 
-	},
-	bottomView: {
-		flex: 1
+		justifyContent: 'center'
 	},
 	profileImage: {
 		width: 52,

@@ -13,10 +13,11 @@ const signIn = (accessToken: string): Promise<AuthResponse> => {
             let data = {
                 header: {
                     jwt_token: response.headers.jwt_token,
-                    refresh_token: response.headers.jwt_token
+                    refresh_token: response.headers.refresh_token
                 },
                 body: response.data
             }
+            console.log(data);
             resolve(data);
         })
         .catch(err => {
@@ -32,10 +33,11 @@ const signUp = (data: JoinData): Promise<AuthResponse> => {
             let data = {
                 header: {
                     jwt_token: response.headers.jwt_token,
-                    refresh_token: response.headers.jwt_token
+                    refresh_token: response.headers.refresh_token
                 },
                 body: response.data
             }
+            console.log(data);
             resolve(data);
         })
         .catch(err => {
