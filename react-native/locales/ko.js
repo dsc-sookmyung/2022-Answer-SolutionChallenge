@@ -6,6 +6,7 @@ export default {
     swipe: '계속하려면 넘겨주세요 ≫',
     start: 'NotiNote 시작하기',
     translate: '번역',
+    translation: '번역문',
     translateDesc: '가정통신문을 사진으로 찍기만 하면 번역부터 캘린더 등록까지 모두 가능합니다.',
     search: '검색',
     searchDesc: '이전에 번역한 가정통신문을 검색할 수 있습니다.',
@@ -61,7 +62,7 @@ export default {
     gotIt: '확인', 
     registerFailed: '이벤트를 추가하지 못했습니다. 다시 시도해 주세요.',
     authFailed: "인증에 실패했습니다. 다시 시도하십시오.",
-    tryAgain: '다시 시도',
+    retake: '다시 촬영',
     join: '가입',
     searchResult: "검색 결과",
     noEvent: "오늘은 이벤트가 없어요!"
