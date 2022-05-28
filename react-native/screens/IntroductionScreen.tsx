@@ -67,9 +67,6 @@ export default function HomeScreen({ navigation }: Navigation) {
             <Text style={styles.highlight}> Notinote</Text>
             <Text>{i18n.t("first_2")}</Text>
           </Text>
-          <Text style={[styles.highlight, styles.swipe]}>
-            {i18n.t("swipe")}
-          </Text>
         </View>
         <View style={styles.container}>
           <Image
@@ -78,9 +75,6 @@ export default function HomeScreen({ navigation }: Navigation) {
           />
           <Text fontSize="md" style={styles.description}>
             {i18n.t("second")}
-          </Text>
-          <Text style={[styles.highlight, styles.swipe]}>
-            {i18n.t("swipe")}
           </Text>
         </View>
         <View style={styles.container}>
