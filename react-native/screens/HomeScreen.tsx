@@ -27,12 +27,22 @@ export default function HomeScreen({ navigation }: Navigation) {
             ]
         }
     );
-    const [nowSelectedChildId, setNowSelectedChildId] = useState<number>(1);
+    const SHOW_ALL = -1;
+    const [nowSelectedChildId, setNowSelectedChildId] = useState<number>(SHOW_ALL);
     const [user, setUser] = useState<UserData>();
     const auth = useAuth();
+    
 
     useEffect(()=> {
         setUser(auth?.userData);
+        // setUser({
+        //     uid: 1,
+        //     username: "Soo",
+        //     uemail: "kaithape@gmail.com",
+        //     uprofileImg: 1,
+        //     ulanguage: "english",
+        //     uchildren:[{cid: 1, cname:"Soo"}, {cid: 2, cname:"Hee"}]
+        // })
 
         if (auth?.authData?.jwt_token) {
             fetch('http://localhost:8080/user/children', {
@@ -84,6 +94,13 @@ export default function HomeScreen({ navigation }: Navigation) {
                 <View style={styles.noticeWrapper}>
                     <Text style={styles.smallTitle} fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="xl">Today's Events</Text>
                     <View style={styles.childButtonWrapper}>
+                        <TouchableOpacity key={'n_all'} style={[styles.childButton, {
+                            backgroundColor: nowSelectedChildId === SHOW_ALL ? theme.colors.primary : "#ffffff",
+                        }]} onPress={() => handleNowSelectedChildId(-1)}>
+                            <Text fontWeight={500} style={[{
+                                color: nowSelectedChildId !== SHOW_ALL ? theme.colors.primary : "#ffffff",
+                            }]}>All</Text>
+                            </TouchableOpacity>
                         {events.children?.map((notice, index) => 
                             <TouchableOpacity key={'n_'+index} style={[styles.childButton, {
                                 backgroundColor: nowSelectedChildId === notice.cid ? theme.colors.primary : "#ffffff",
@@ -95,20 +112,26 @@ export default function HomeScreen({ navigation }: Navigation) {
                         )}
                     </View>
                     <View style={styles.todayNoticeWrapper}>
-                        {events.children.filter(child => child.cid === nowSelectedChildId).length > 0 && events.children.filter(child => child.cid === nowSelectedChildId)[0].events?.length ? (
-                                events.children?.filter(child => child.cid === nowSelectedChildId)[0].events?.map((item, index) => 
-                                    <View key={'e_'+index} style={{flexDirection: "row"}}>
-                                        {/* <Text fontWeight={500} fontSize="md" lineHeight={28} pr={4} style={{color: theme.colors.primary}}>{item.time}</Text> */}
-                                        <Text fontSize="md" lineHeight={28}>{index+1 + '. ' + item}</Text>
+                        {nowSelectedChildId === SHOW_ALL ? events.children.map((notice, index) =>
+                            <View key={'n_'+index}>
+                                {notice.events.map((event, index) => {
+                                    return (
+                                        <Text fontWeight={400} fontStyle="normal" fontSize="sm" marginBottom="1">{`[${notice.cname}] ` + event}</Text>
+                                    )
+                                })}
+                            </View>
+                        ) : events.children.filter(notice => notice.cid === nowSelectedChildId).map((notice, index) => {
+                                return (
+                                    <View key={'n_'+index}>
+                                        {notice.events.map((event, index) => {
+                                            return (
+                                                <Text fontWeight={400} fontStyle="normal" fontSize="sm" marginBottom="1">{event}</Text>
+                                            )
+                                        })}
                                     </View>
                                 )
-                            ) : (
-                                <Box style={styles.emptyBox}>
-                                    <Ionicons name="musical-note" size={64} />
-                                    <Text fontSize="md" pt={2}>There is no event today!</Text>
-                                </Box>
-                            )
-                        }
+                            }
+                        )}
                     </View>
                 </View>
                 <View style={styles.functionButtonWrapper}>
