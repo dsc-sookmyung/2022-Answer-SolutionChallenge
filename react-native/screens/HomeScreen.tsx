@@ -34,15 +34,25 @@ export default function HomeScreen({ navigation }: Navigation) {
     
 
     useEffect(()=> {
-        setUser(auth?.userData);
-        // setUser({
-        //     uid: 1,
-        //     username: "Soo",
-        //     uemail: "kaithape@gmail.com",
-        //     uprofileImg: 1,
-        //     ulanguage: "english",
-        //     uchildren:[{cid: 1, cname:"Soo"}, {cid: 2, cname:"Hee"}]
-        // })
+        // setUser(auth?.userData);
+        setUser({
+            uid: 1,
+            username: "Soo",
+            uemail: "kaithape@gmail.com",
+            uprofileImg: 1,
+            ulanguage: "english",
+            uchildren:[{cid: 1, cname:"Soo"}, {cid: 2, cname:"Hee"}]
+        })
+
+        navigation.setOptions({
+            headerRight: () => (
+                <TouchableOpacity onPress={() => {
+                    
+                }}>
+                    <Image style={{ width: 32, height: 32 }} source={require(`../assets/images/profile-images/profile-1.png`)} />
+                </TouchableOpacity>
+            )
+        });
 
         if (auth?.authData?.jwt_token) {
             fetch('http://localhost:8080/user/children', {
@@ -77,6 +87,7 @@ export default function HomeScreen({ navigation }: Navigation) {
     const handleNowSelectedChildId = (cid: number) => {
         setNowSelectedChildId(cid);
     }
+
     
     return (
         <>{
