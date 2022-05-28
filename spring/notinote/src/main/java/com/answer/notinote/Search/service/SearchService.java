@@ -40,7 +40,7 @@ public class SearchService {
     @Autowired
     JwtTokenProvider jwtTokenProvider;
 
-    public List<SearchListDto> searchList(HttpServletRequest request){
+    public List<SearchListDto> searchList(HttpServletRequest request) {
 
         String token = jwtTokenProvider.resolveToken(request);
         String useremail = jwtTokenProvider.getUserEmail(token);
@@ -53,16 +53,16 @@ public class SearchService {
         List<SearchListDto> searchListDtos = new ArrayList<>();
 
         //유니크한 날짜값만 리스트에 저장하는 jpa 쿼리 메소드
-        for(int i = 0; i < noticeRepository.findUniqueNdate(user).size(); i++){
+        for (int i = 0; i < noticeRepository.findUniqueNdate(user).size(); i++) {
             dateList.add(noticeRepository.findUniqueNdate(user).get(i).getNdate());
         }
 
         dateList.sort(Comparator.reverseOrder()); //최신순 정렬
 
-        for(int i = 0; i < dateList.size(); i++){
+        for (int i = 0; i < dateList.size(); i++) {
             List<String> titleList = new ArrayList<>();
-            for(int j = 0; j < notices.size(); j++){
-                if((notices.get(j).getNdate()).equals(dateList.get(i))) {
+            for (int j = 0; j < notices.size(); j++) {
+                if ((notices.get(j).getNdate()).equals(dateList.get(i))) {
                     titleList.add(notices.get(j).getTitle());
                 }
             }
@@ -88,14 +88,14 @@ public class SearchService {
         List<List<Object>> resultLists = new ArrayList<>();
         List<Object> test = new ArrayList<>();
 
-        for (int i = 0; i<notices.size(); i++){
+        for (int i = 0; i < notices.size(); i++) {
             Notice notice = notices.get(i);
 
             List<Event> events = eventService.findAllByNotice(notice);
             List<NoticeSentenceDto> fullText = noticeService.extractSentenceFromEvent(notice.getTrans_full(), events);
 
             SearchResultDetailDto searchResultDetailDto = SearchResultDetailDto.builder()
-                    .imageUri(notice.getNimageurl()+"/"+notice.getNimagename())
+                    .imageUri(notice.getNimageurl() + "/" + notice.getNimagename())
                     .id(notice.getNid())
                     .korean(notice.getOrigin_full())
                     .fullText(fullText)
@@ -112,36 +112,38 @@ public class SearchService {
 
     }
 
-    public List<SearchListDto> searchChildList(Long cid, HttpServletRequest request){
+    public List<SearchListDto> searchChildList(Long cid, HttpServletRequest request) {
 
         String token = jwtTokenProvider.resolveToken(request);
         String useremail = jwtTokenProvider.getUserEmail(token);
         User user = userRepository.findByUemail(useremail).orElseThrow(IllegalArgumentException::new);
         Child child = childRepository.findById(cid).orElseThrow(IllegalArgumentException::new);
-        List<Notice> notices = noticeRepository.findByUserAndChild(user,child);
+        List<Notice> notices = noticeRepository.findByUserAndChild(user, child);
 
         List<LocalDate> dateList = new ArrayList<>();
         List<List<String>> titleLists = new ArrayList<>();
         List<SearchListDto> searchListDtos = new ArrayList<>();
 
         //유니크한 날짜값만 리스트에 저장하는 jpa 쿼리 메소드
-        for(int i = 0; i < noticeRepository.findUniqueNdate(user).size(); i++){
+        for (int i = 0; i < noticeRepository.findUniqueNdate(user).size(); i++) {
             dateList.add(noticeRepository.findUniqueNdate(user).get(i).getNdate());
         }
 
         dateList.sort(Comparator.reverseOrder()); //최신순 정렬
 
-        for(int i = 0; i < dateList.size(); i++){
+        for (int i = 0; i < dateList.size(); i++) {
             List<String> titleList = new ArrayList<>();
-            for(int j = 0; j < notices.size(); j++){
-                if((notices.get(j).getNdate()).equals(dateList.get(i))) {
+            for (int j = 0; j < notices.size(); j++) {
+                if ((notices.get(j).getNdate()).equals(dateList.get(i))) {
                     if (notices.get(j).getTitle() != null) {
                         titleList.add(notices.get(j).getTitle());
                     }
                 }
             }
 
-            if (!titleLists.get(i).isEmpty()) {
+
+            if (!titleList.isEmpty()){
+                titleLists.add(titleList);
                 SearchListDto searchListDto = SearchListDto.builder()
                         .date(dateList.get(i))
                         .saved_titles(titleLists.get(i))
