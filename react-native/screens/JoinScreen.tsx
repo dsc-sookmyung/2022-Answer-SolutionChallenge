@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, KeyboardAvoidingView, Alert, Platform, ScrollView, Image, GestureResponderEvent, View, TouchableHighlight } from 'react-native';
-import { FormControl, Input, Button, VStack, Popover, Text } from 'native-base';
+import { FormControl, Input, Button, VStack, Popover, Text, useToast, Box } from 'native-base';
 import { Dropdown } from 'react-native-element-dropdown';
 import { nameValidator } from '../core/utils';
 import type { Navigation, UserData, JoinData } from '../types';
@@ -31,6 +31,7 @@ export default function JoinScreen({ navigation }: Navigation) {
 
 	const [user, setUser] = useState<UserData>();
 	const auth = useAuth();
+	const toast = useToast();
 
 	const [fontsLoaded, SetFontsLoaded] = useState<boolean>(false);
     const LoadFontsAndRestoreToken = async () => {
@@ -39,10 +40,15 @@ export default function JoinScreen({ navigation }: Navigation) {
 
 	useEffect(() => {
 		if (auth?.userData?.uroleType==='USER') {
-			Alert.alert(
-				i18n.t('loginSuccess'),
-				i18n.t('loginSuccessText')
-			)
+			toast.show({    // Design according to mui toast guidelines (https://material.io/components/snackbars#anatomy)
+				placement: "bottom",
+				render: () => {
+					return <Box bg="rgba(0,0,0,0.7)" p="4" rounded="xl" mx={2} shadow={2} alignItems="center">
+							<Text color="white" fontSize="lg" mb={2}>🎉&nbsp; {i18n.t('loginSuccess')} &nbsp;🎉</Text>
+							<Text color="white" textAlign="center">{i18n.t('loginSuccessText')}</Text>
+						</Box>;
+				}
+			});
 			navigation.navigate('Home');
 		}
 		else if (auth?.userData?.uroleType==='GUEST') {
