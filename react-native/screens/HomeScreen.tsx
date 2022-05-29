@@ -6,8 +6,8 @@ import type { Navigation, UserData } from '../types';
 import { useAuth } from '../contexts/Auth';
 import { StackActions } from '@react-navigation/native';
 import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
-import HomeMenu from '../components/HomeMenu';
-
+import HomeMenu from '../components/Home/HomeMenu';
+import NoEventBox from '../components/Home/NoEventBox';
 
 export default function HomeScreen({ navigation }: Navigation) {
     const [events, setEvents] = useState<{event_num: number, children: { cid: number, cname: string, events: string[] }[]}>(
@@ -75,16 +75,9 @@ export default function HomeScreen({ navigation }: Navigation) {
         }
     }, [auth]);
 
-    useEffect(() => {
-        if (events && events?.children?.length > 0) {
-            setNowSelectedChildId(events.children[0].cid);
-        }
-    }, [events]);
-
     const handleNowSelectedChildId = (cid: number) => {
         setNowSelectedChildId(cid);
     }
-
     
     return (
         <>{
@@ -111,7 +104,7 @@ export default function HomeScreen({ navigation }: Navigation) {
                     </View>
                 </ImageBackground>
                 <View style={styles.noticeWrapper}>
-                    <Text style={styles.smallTitle} fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="xl">Today's Events</Text>
+                    <Text style={styles.smallTitle} fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="2xl" lineHeight={60}>Today's Events</Text>
                     <View style={styles.childButtonWrapper}>
                         <TouchableOpacity key={'n_all'} style={[styles.childButton, {
                             backgroundColor: nowSelectedChildId === SHOW_ALL ? theme.colors.primary : "#ffffff",
@@ -120,7 +113,7 @@ export default function HomeScreen({ navigation }: Navigation) {
                                 color: nowSelectedChildId !== SHOW_ALL ? theme.colors.primary : "#ffffff",
                             }]}>All</Text>
                             </TouchableOpacity>
-                        {events.children?.map((notice, index) => 
+                        {events.children?.map((notice, index) =>
                             <TouchableOpacity key={'n_'+index} style={[styles.childButton, {
                                 backgroundColor: nowSelectedChildId === notice.cid ? theme.colors.primary : "#ffffff",
                             }]} onPress={() => handleNowSelectedChildId(notice.cid)}>
@@ -131,26 +124,25 @@ export default function HomeScreen({ navigation }: Navigation) {
                         )}
                     </View>
                     <View style={styles.todayNoticeWrapper}>
-                        {nowSelectedChildId === SHOW_ALL ? events.children.map((notice, index) =>
-                            <View key={'n_'+index}>
-                                {notice.events.map((event, index) => {
-                                    return (
-                                        <Text fontWeight={400} fontStyle="normal" fontSize="sm" marginBottom="1">{`[${notice.cname}] ` + event}</Text>
-                                    )
-                                })}
-                            </View>
-                        ) : events.children.filter(notice => notice.cid === nowSelectedChildId).map((notice, index) => {
-                                return (
-                                    <View key={'n_'+index}>
-                                        {notice.events.map((event, index) => {
-                                            return (
-                                                <Text fontWeight={400} fontStyle="normal" fontSize="sm" marginBottom="1">{event}</Text>
-                                            )
-                                        })}
-                                    </View>
-                                )
-                            }
-                        )}
+                        {nowSelectedChildId === SHOW_ALL ? (
+                            events.children.reduce((prevValue, child) => prevValue + child.events.length, 0) > 0 ? (
+                                events.children.map((notice, index) =>
+                                <View key={'n_'+index}>
+                                    {notice.events.map((event, index) => {
+                                        return (
+                                            <Text fontWeight={400} fontStyle="normal" fontSize="md" lineHeight={28}>{`[${notice.cname}] ` + event}</Text>
+                                        )
+                                    })}
+                                </View>))
+                            : <NoEventBox/>
+                        ) : events.children.filter(child => child.cid === nowSelectedChildId)[0].events?.length ? (
+                            events.children?.filter(child => child.cid === nowSelectedChildId)[0].events?.map((item, index) => 
+                                <View key={'e_'+index} style={{flexDirection: "row"}}>
+                                    <Text fontSize="md" lineHeight={28}>{index+1 + '. ' + item}</Text>
+                                </View>
+                            )
+                        ) : <NoEventBox/>
+                    }
                     </View>
                 </View>
             </SafeAreaView> )}
@@ -233,19 +225,19 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingBottom: 30,
         marginHorizontal: 20,
-        marginTop: -36
+        marginTop: -28
     },
     smallTitle: {
-        marginBottom: 8,
+        marginBottom: 0,
     },
     buttonName: {
         fontSize: 24,
     },
     bigButton: {
-        padding: 26,
-        marginBottom: 22,
+        padding: 34,
+        marginBottom: 20,
         borderRadius: 16,
-        height: 86
+        height: 100
     },
     bigButtonContentWrapper: {
         flex:1,
