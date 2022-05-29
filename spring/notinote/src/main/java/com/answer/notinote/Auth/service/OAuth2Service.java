@@ -15,7 +15,7 @@ import java.util.Collections;
 
 @Service
 @RequiredArgsConstructor
-public class OAuthService {
+public class OAuth2Service {
 
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate = new RestTemplate();
@@ -32,7 +32,7 @@ public class OAuthService {
 
             return restTemplate.exchange(url, HttpMethod.GET, request, String.class);
         } catch (Exception e) {
-            throw new CustomException(ErrorCode.TOKEN_INVALID);
+            throw new CustomException(ErrorCode.TOKEN_EXPIRED);
         }
     }
 
