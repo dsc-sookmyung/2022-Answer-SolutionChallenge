@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, KeyboardAvoidingView, Alert, Platform, ScrollView, Image, GestureResponderEvent, View } from 'react-native';
-import { FormControl, Input, Button, VStack, Select, CheckIcon, Popover } from 'native-base';
+import { StyleSheet, KeyboardAvoidingView, Alert, Platform, ScrollView, Image, GestureResponderEvent, View, TouchableHighlight } from 'react-native';
+import { FormControl, Input, Button, VStack, Popover, Text } from 'native-base';
+import { Dropdown } from 'react-native-element-dropdown';
 import { nameValidator } from '../core/utils';
 import type { Navigation, UserData, JoinData } from '../types';
 import { theme } from '../core/theme';
 import { useAuth } from '../contexts/Auth';
 import i18n from 'i18n-js'
 import '../locales/i18n';
+import useFonts from '../hooks/useFonts';
+import AppLoading from 'expo-app-loading';
 
 
 export default function JoinScreen({ navigation }: Navigation) {
@@ -29,6 +32,11 @@ export default function JoinScreen({ navigation }: Navigation) {
 	const [user, setUser] = useState<UserData>();
 	const auth = useAuth();
 
+	const [fontsLoaded, SetFontsLoaded] = useState<boolean>(false);
+    const LoadFontsAndRestoreToken = async () => {
+        await useFonts();
+    };
+
 	useEffect(() => {
 		if (auth?.userData?.uroleType==='USER') {
 			Alert.alert(
@@ -49,8 +57,8 @@ export default function JoinScreen({ navigation }: Navigation) {
 	}, [user]);
 
 	useEffect(() => {
-		//console.log(joinForm);
-	}, [joinForm])
+		// console.log(joinForm);
+	}, [joinForm]);
 
 	const errorAlert = (error: string) =>
 		Alert.alert(                    
@@ -104,15 +112,25 @@ export default function JoinScreen({ navigation }: Navigation) {
 		}
 	};
 
+	if (!fontsLoaded) {
+        return (
+          <AppLoading
+            startAsync={LoadFontsAndRestoreToken}
+            onFinish={() => SetFontsLoaded(true)}
+            onError={() => {}}
+          />
+        );
+    } 
+
 	return (
-		<KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"} enabled keyboardVerticalOffset={100}>
+		<KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"} enabled keyboardVerticalOffset={80}>
 			<ScrollView>
-				<VStack space={4} style={{ flex: 1 }}>
+				<VStack space={4} style={{ flex: 8 }}>
 					<FormControl isRequired style={{ flex: 1.2 }}>
 						<FormControl.Label>{i18n.t('profileImage')}</FormControl.Label>
 						<ScrollView horizontal={true}>
-							{Array(7).fill(1).map((num, index) =>
-								<Button key={'b_'+index} variant="unstyled" onPress={handleProfileImg(index+1)}>
+							{Array.from(Array(Number(7)).keys()).map((num, index) =>
+								<Button key={'ub_'+index} variant="unstyled" onPress={handleProfileImg(index+1)}>
 									<Image style={[styles.uprofileImage, joinForm.uprofileImg!==index+1 && styles.disabled]} source={uProfileImgSource[index]} />
 								</Button>
 							)}
@@ -131,73 +149,94 @@ export default function JoinScreen({ navigation }: Navigation) {
 					</FormControl>
 					<FormControl isRequired style={{ flex: 1 }}>
 						<FormControl.Label>{i18n.t('selectLang')}</FormControl.Label>
-						<Select selectedValue={joinForm?.ulanguage} size="md" minWidth={200} accessibilityLabel="Select your language" placeholder="Select your language" onValueChange={itemValue => {
-						setJoinForm({ ...joinForm, ['ulanguage']: itemValue })
-					}} _selectedItem={{
-						bg: "skyblue.500",
-						endIcon: <CheckIcon size={5} />
-					}} mt={1}>
-							{/* Country code 3 digit ISO */}
-							<Select.Item label="Chinese" value="zh" />
-							<Select.Item label="English" value="en" />
-							<Select.Item label="Japanese" value="ja" />
-							<Select.Item label="Khmer" value="km" />
-							<Select.Item label="Korean" value="ko" />
-							<Select.Item label="Thai" value="th" />
-							<Select.Item label="Vietnamese" value="vi" />
-						</Select>
+						<Dropdown
+							style={styles.dropdown}
+							placeholderStyle={styles.placeholderStyle}
+							selectedTextStyle={styles.selectedTextStyle}
+							inputSearchStyle={styles.inputSearchStyle}
+							data={[
+								{label: "中文", value: "zh"},
+								{label: "English", value: "en"},
+								{label: "日本語", value: "ja"},
+								{label: "ខ្មែរ", value: "km"},
+								{label: "한국어", value: "ko"},
+								{label: "ไทย", value: "th"},
+								{label: "Tiếng Việt", value: "vi"},
+							]}
+							search
+							maxHeight={236}
+							labelField="label"
+							valueField="value"
+							placeholder={i18n.t('selectLang')}
+							searchPlaceholder="Search..."
+							value={joinForm?.ulanguage}
+							onChange={item => {
+								setJoinForm({ ...joinForm, ['ulanguage']: item.value })
+							}}
+						/>
 					</FormControl>
 					<FormControl isRequired style={{ flex: 1 }}>
 						<FormControl.Label>{i18n.t('childrenNum')}</FormControl.Label>
-						<Select selectedValue={childrenNumber} size="md" minWidth={200} accessibilityLabel="Select number of children" placeholder="Select number of children" onValueChange={itemValue => {
-						setChildrenNumber(itemValue);
-					}} _selectedItem={{
-						bg: "skyblue.500",
-						endIcon: <CheckIcon size={3} />
-					}} mt={1}>
-						<Select.Item label="1" value="1" />
-						<Select.Item label="2" value="2" />
-						<Select.Item label="3" value="3" />
-						<Select.Item label="4" value="4" />
-						<Select.Item label="5" value="5" />
-						<Select.Item label="6" value="6" />
-						</Select>
+						<Dropdown
+							style={styles.dropdown}
+							placeholderStyle={styles.placeholderStyle}
+							selectedTextStyle={styles.selectedTextStyle}
+							inputSearchStyle={styles.inputSearchStyle}
+							data={[
+								{label: "1", value: "1"},
+								{label: "2", value: "2"},
+								{label: "3", value: "3"},
+								{label: "4", value: "4"},
+								{label: "5", value: "5"},
+								{label: "6", value: "6"},
+							]}
+							maxHeight={185}
+							labelField="label"
+							valueField="value"
+							placeholder={i18n.t('childrenNum')}
+							searchPlaceholder="Search..."
+							value={childrenNumber}
+							onChange={item => {
+								setChildrenNumber(item.value)
+							}}
+						/>
 					</FormControl>
-					<FormControl isRequired style={{ flex: 2 }}>
+					<FormControl isRequired style={{ flex: 3 }}>
 						<FormControl.Label>{i18n.t('childrenName')}</FormControl.Label>
-						<ScrollView style={{height: '100%'}}>
-							{Array(Number(childrenNumber)).fill(1).map((child, index) => 
+						<ScrollView style={{height: 170 }}>
+							{Array.from(Array(Number(childrenNumber)).keys()).map((child, index) => 
 								<Input 
-									key={'i_'+index}
+									key={'i_'+child}
 									size="md"
 									variant="underlined"
-									value={joinForm?.uchildren && joinForm.uchildren[index]?.cname}
-									onChangeText={(text) => handleChildrenName(index, text)}
+									value={joinForm?.uchildren && joinForm.uchildren[child]?.cname}
+									onChangeText={(text) => handleChildrenName(child, text)}
 									autoCapitalize="none"
 									mb={2}
 									InputRightElement={
 										<Popover 
-										isOpen={open===index}
-										onOpen={() => setOpen(index)}                                 
+										key={'p_'+child}
+										isOpen={open===child}
+										onOpen={() => setOpen(child)}                                 
 										onClose={() => setOpen(-1)}
 										trigger={triggerProps => {
-											return <Button {...triggerProps} variant="unstyled" onPress={() => setOpen(index)}>
+											return <Button {...triggerProps} variant="unstyled" onPress={() => setOpen(child)}>
 												{joinForm && joinForm.uchildren && 
-													<Image style={[styles.cprofileImage]} source={cProfileImgSource[joinForm?.uchildren[index]?.cprofileImg-1]} />
+													<Image style={[styles.cprofileImage]} source={cProfileImgSource[joinForm?.uchildren[child]?.cprofileImg-1]} />
 												}
 											</Button>
 										}}
 										>
 											<View style={styles.shadow}>
 												<Popover.Content accessibilityLabel="Profile Image" w="90%">
-													<Popover.Body>
+													<Popover.Body key={'pb_'+child}>
 														<FormControl isRequired style={{ flex: 1.2 }}>
 															<FormControl.Label>{i18n.t('profileImage')}</FormControl.Label>
 															<ScrollView horizontal={true}>
-																{Array(7).fill(1).map((num, i) =>
-																	<Button key={'b_'+i} variant="unstyled" onPress={handleChildrenProfileImg(index, i+1)}>
+																{Array.from(Array(Number(9)).keys()).map((num, i) =>
+																	<Button key={'cb_'+num} variant="unstyled" onPress={handleChildrenProfileImg(child, num+1)}>
 																		{joinForm && joinForm.uchildren && 
-																			<Image style={[styles.uprofileImage, joinForm?.uchildren[index]?.cprofileImg!==i+1 && styles.disabled]} source={cProfileImgSource[i]} />
+																			<Image style={[styles.uprofileImage, joinForm?.uchildren[child]?.cprofileImg!==num+1 && styles.disabled]} source={cProfileImgSource[num]} />
 																		}
 																	</Button>
 																)}
@@ -213,9 +252,11 @@ export default function JoinScreen({ navigation }: Navigation) {
 						</ScrollView>
 					</FormControl>
 				</VStack>
-				<Button size="lg" my={2} onPress={onJoinPressed}>
-					{i18n.t('signUp')}
-				</Button>
+				<TouchableHighlight style={styles.startButton} onPress={onJoinPressed}>
+					<Text fontWeight={600} style={styles.buttonStyle}>
+						{i18n.t("signUp")}
+					</Text>
+				</TouchableHighlight>
 			</ScrollView>
 		</KeyboardAvoidingView>
 	);
@@ -223,12 +264,13 @@ export default function JoinScreen({ navigation }: Navigation) {
 
 const styles = StyleSheet.create({
 	container: {
-		paddingHorizontal: 25,
-		paddingVertical: 40,
+		paddingHorizontal: "5%",
+		paddingVertical: 30,
 		backgroundColor: theme.colors.background,
 		flex: 1,
 		flexDirection: 'column',
-		justifyContent: 'center'
+		justifyContent: 'center',
+		alignContent: 'space-between'
 	},
 	uprofileImage: {
 		width: 52,
@@ -249,6 +291,49 @@ const styles = StyleSheet.create({
           height: 0,
           width: 0,
         },
-	}
+	},
+	dropdown: {
+		height: 38,
+		borderColor: '#e5e5e5',
+		borderWidth: 0.6,
+		borderRadius: 5,
+		paddingHorizontal: 8,
+		marginTop: 1
+	},
+	label: {
+		position: 'absolute',
+		backgroundColor: 'white',
+		left: 22,
+		top: 8,
+		zIndex: 999,
+		paddingHorizontal: 8,
+		fontSize: 14,
+		fontFamily: 'Lora_400Regular',
+	},
+	placeholderStyle: {
+		fontSize: 14,
+		fontFamily: 'Lora_400Regular',
+		color: '#a3a3a3'
+	},
+	selectedTextStyle: {
+		fontSize: 14,
+		fontFamily: 'Lora_400Regular',
+	},
+	inputSearchStyle: {
+		height: 36,
+		fontSize: 14,
+		fontFamily: 'Lora_400Regular',
+	},
+	startButton: {
+		backgroundColor: theme.colors.primary,
+		padding: 10,
+		borderRadius: 8,
+		marginTop: 20,
+		marginBottom: 40,
+	},
+	buttonStyle: {
+		textAlign: "center",
+		color: "white",
+	},
 });
 
