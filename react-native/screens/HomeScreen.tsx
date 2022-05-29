@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, SafeAreaView, TouchableOpacity, Image, ImageBackground, Alert } from 'react-native';
-import { Text, Box } from 'native-base'
-import { Ionicons } from '@expo/vector-icons';
+import { Text } from 'native-base'
 import { theme } from '../core/theme';
 import type { Navigation, UserData } from '../types';
 import { useAuth } from '../contexts/Auth';
 import { StackActions } from '@react-navigation/native';
-
+import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
+import HomeMenu from '../components/Home/HomeMenu';
+import NoEventBox from '../components/Home/NoEventBox';
 
 export default function HomeScreen({ navigation }: Navigation) {
     const [events, setEvents] = useState<{event_num: number, children: { cid: number, cname: string, events: string[] }[]}>(
@@ -27,12 +28,28 @@ export default function HomeScreen({ navigation }: Navigation) {
             ]
         }
     );
-    const [nowSelectedChildId, setNowSelectedChildId] = useState<number>(1);
+    const SHOW_ALL = -1;
+    const [nowSelectedChildId, setNowSelectedChildId] = useState<number>(SHOW_ALL);
     const [user, setUser] = useState<UserData>();
     const auth = useAuth();
+    
 
     useEffect(()=> {
-        setUser(auth?.userData);
+        // setUser(auth?.userData);
+        setUser({
+            uid: 1,
+            username: "Soo",
+            uemail: "kaithape@gmail.com",
+            uprofileImg: 1,
+            ulanguage: "english",
+            uchildren:[{cid: 1, cname:"Soo"}, {cid: 2, cname:"Hee"}]
+        })
+
+        navigation.setOptions({
+            headerRight: () => (
+                <HomeMenu/>
+            )
+        });
 
         if (auth?.authData?.jwt_token) {
             fetch('http://localhost:8080/user/children', {
@@ -48,7 +65,7 @@ export default function HomeScreen({ navigation }: Navigation) {
             }) // console.log(data)
             .catch((error) => {
                 console.log(error)
-                if(error?.response?.status==401) {
+                if (error?.response?.status==401) {
                     //redirect to login
                     Alert.alert("The session has expired. Please log in again.");
                     auth.signOut();
@@ -58,12 +75,6 @@ export default function HomeScreen({ navigation }: Navigation) {
         }
     }, [auth]);
 
-    useEffect(() => {
-        if (events && events?.children?.length > 0) {
-            setNowSelectedChildId(events.children[0].cid);
-        }
-    }, [events]);
-
     const handleNowSelectedChildId = (cid: number) => {
         setNowSelectedChildId(cid);
     }
@@ -72,19 +83,37 @@ export default function HomeScreen({ navigation }: Navigation) {
         <>{
             user && events && events.children?.length > 0 && (
             <SafeAreaView style={styles.container}>
-                <View style={styles.profile}>
-                    <ImageBackground style={styles.backgroundImage} source={require("../assets/images/pink-background-cropped.png")} resizeMode="cover" imageStyle={{ borderRadius: 12 }}>
-                        <Image style={styles.profileImage} source={require(`../assets/images/profile-images/profile-1.png`)} />
-                        <View style={styles.profielTextWrapper}>
-                            <Text fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="xl">{"Hi, " + user.username + "!"}</Text>
-                            <Text fontFamily="mono" fontWeight={400} fontStyle="normal" fontSize="sm">You've got {events.event_num} events today.</Text>
-                        </View>
-                    </ImageBackground>
-                </View>
+                <ImageBackground source={require("../assets/images/home-button-background.png")} style={[styles.functionButtonImageBackground]} imageStyle={{}}>
+                    <View style={styles.functionButtonWrapper}>
+                        <TouchableOpacity onPress={() => navigation.navigate('Translate')}>
+                            <ImageBackground source={require("../assets/images/pink-background-cropped.png")} style={[styles.bigButton]} imageStyle={{ borderRadius: 12 }}>
+                                <View style={[styles.bigButtonContentWrapper]}>
+                                    <Text style={[styles.buttonName, styles.deepBlue]} fontWeight={700} fontSize="xl" pb={2}>Translate</Text>
+                                    <MaterialIcons name="g-translate" size={32} color="#333"/>
+                                </View>
+                            </ImageBackground>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => navigation.navigate('Search')}>
+                            <ImageBackground source={require("../assets/images/pink-background-cropped.png")} style={[styles.bigButton]} imageStyle={{ borderRadius: 12 }}>
+                                <View style={[styles.bigButtonContentWrapper]}>
+                                    <Text style={[styles.buttonName, styles.deepBlue]} fontWeight={700} fontSize="xl" pb={2}>Search</Text>
+                                    <MaterialIcons name="search" size={32} color="#333"/>
+                                </View>
+                            </ImageBackground>
+                        </TouchableOpacity>
+                    </View>
+                </ImageBackground>
                 <View style={styles.noticeWrapper}>
-                    <Text style={styles.smallTitle} fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="xl">Today's Events</Text>
+                    <Text style={styles.smallTitle} fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="2xl" lineHeight={60}>Today's Events</Text>
                     <View style={styles.childButtonWrapper}>
-                        {events.children?.map((notice, index) => 
+                        <TouchableOpacity key={'n_all'} style={[styles.childButton, {
+                            backgroundColor: nowSelectedChildId === SHOW_ALL ? theme.colors.primary : "#ffffff",
+                        }]} onPress={() => handleNowSelectedChildId(-1)}>
+                            <Text fontWeight={500} style={[{
+                                color: nowSelectedChildId !== SHOW_ALL ? theme.colors.primary : "#ffffff",
+                            }]}>All</Text>
+                            </TouchableOpacity>
+                        {events.children?.map((notice, index) =>
                             <TouchableOpacity key={'n_'+index} style={[styles.childButton, {
                                 backgroundColor: nowSelectedChildId === notice.cid ? theme.colors.primary : "#ffffff",
                             }]} onPress={() => handleNowSelectedChildId(notice.cid)}>
@@ -95,41 +124,26 @@ export default function HomeScreen({ navigation }: Navigation) {
                         )}
                     </View>
                     <View style={styles.todayNoticeWrapper}>
-                        {events.children.filter(child => child.cid === nowSelectedChildId).length > 0 && events.children.filter(child => child.cid === nowSelectedChildId)[0].events?.length ? (
-                                events.children?.filter(child => child.cid === nowSelectedChildId)[0].events?.map((item, index) => 
-                                    <View key={'e_'+index} style={{flexDirection: "row"}}>
-                                        {/* <Text fontWeight={500} fontSize="md" lineHeight={28} pr={4} style={{color: theme.colors.primary}}>{item.time}</Text> */}
-                                        <Text fontSize="md" lineHeight={28}>{index+1 + '. ' + item}</Text>
-                                    </View>
-                                )
-                            ) : (
-                                <Box style={styles.emptyBox}>
-                                    <Ionicons name="musical-note" size={64} />
-                                    <Text fontSize="md" pt={2}>There is no event today!</Text>
-                                </Box>
+                        {nowSelectedChildId === SHOW_ALL ? (
+                            events.children.reduce((prevValue, child) => prevValue + child.events.length, 0) > 0 ? (
+                                events.children.map((notice, index) =>
+                                <View key={'n_'+index}>
+                                    {notice.events.map((event, index) => {
+                                        return (
+                                            <Text fontWeight={400} fontStyle="normal" fontSize="md" lineHeight={28}>{`[${notice.cname}] ` + event}</Text>
+                                        )
+                                    })}
+                                </View>))
+                            : <NoEventBox/>
+                        ) : events.children.filter(child => child.cid === nowSelectedChildId)[0].events?.length ? (
+                            events.children?.filter(child => child.cid === nowSelectedChildId)[0].events?.map((item, index) => 
+                                <View key={'e_'+index} style={{flexDirection: "row"}}>
+                                    <Text fontSize="md" lineHeight={28}>{index+1 + '. ' + item}</Text>
+                                </View>
                             )
-                        }
+                        ) : <NoEventBox/>
+                    }
                     </View>
-                </View>
-                <View style={styles.functionButtonWrapper}>
-                    <Text style={styles.smallTitle} fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="xl">Functions</Text>
-                    
-                    <TouchableOpacity onPress={() => navigation.navigate('Translate')}>
-                        <ImageBackground source={require("../assets/images/button-background.png")} style={[styles.bigButton]} imageStyle={{ borderRadius: 12 }}>
-                            <View>
-                                <Text style={[styles.buttonName, styles.deepBlue]} fontWeight={700} fontSize="xl" pb={2}>Translate</Text>
-                                <Text style={styles.deepBlue} fontSize="sm">Translation, summarization, and calendar registration are all possible just by taking a picture of the notice.</Text>
-                            </View>
-                        </ImageBackground>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.navigate('Search')}>
-                        <ImageBackground source={require("../assets/images/button-background.png")} style={[styles.bigButton]} imageStyle={{ borderRadius: 12 }}>
-                            <View>
-                                <Text style={[styles.buttonName, styles.deepBlue]} fontWeight={700} fontSize="xl" pb={2}>Search</Text>
-                                <Text style={styles.deepBlue} fontSize="sm">You can find notices you have translated.</Text>
-                            </View>
-                        </ImageBackground>
-                    </TouchableOpacity>
                 </View>
             </SafeAreaView> )}
         </>
@@ -202,31 +216,36 @@ const styles = StyleSheet.create({
     profielTextWrapper: {
         paddingRight: 30,
     },
+    functionButtonImageBackground: {
+        flex: 1.16,
+        flexDirection: "row",
+        alignItems: "center",
+    },
     functionButtonWrapper: {
-        flex: 1.5,
-        width: '88%',
+        flex: 1,
         paddingBottom: 30,
+        marginHorizontal: 20,
+        marginTop: -28
     },
     smallTitle: {
-        marginBottom: 8,
+        marginBottom: 0,
     },
     buttonName: {
         fontSize: 24,
     },
     bigButton: {
-        padding: 26,
-        marginBottom: 18,
+        padding: 34,
+        marginBottom: 20,
         borderRadius: 16,
-        shadowColor: "#999999",
-        shadowOpacity: 0.5,
-        shadowRadius: 8,
-        shadowOffset: {
-          height: 0,
-          width: 0,
-        },
+        height: 100
+    },
+    bigButtonContentWrapper: {
+        flex:1,
+        flexDirection:'row',
+        justifyContent:'space-between'
     },
     deepBlue: {
-        color: theme.colors.secondary,
+        color: "#333333",
     },
     lightPink: {
         color: theme.colors.primary,
