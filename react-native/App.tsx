@@ -14,7 +14,6 @@ import JoinScreen from './screens/JoinScreen';
 import HomeScreen from './screens/HomeScreen';
 import TranslateScreen from './screens/TranslateScreen';
 import SearchScreen from './screens/SearchScreen';
-import LogoutButton from './components/LogoutButton';
 import SearchResultScreen from './screens/SearchResultScreen';
 import IntrodcutionScreen from './screens/IntroductionScreen'
 
@@ -78,7 +77,6 @@ export default function App() {
                 headerStyle: { backgroundColor: theme.colors.primary },
                 title: "Home",
                 headerBackVisible: false,
-                headerRight: () => <LogoutButton/>,
                 headerTitle: (props) => ( // App Logo
                   <Image
                     style={{ width: 90, height: 50 }}
