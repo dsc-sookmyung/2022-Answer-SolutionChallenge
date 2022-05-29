@@ -1,12 +1,15 @@
 import React from "react";
 import { View, Image, StyleSheet } from "react-native";
-import { Text } from 'native-base'
+import { Text } from 'native-base';
+import i18n from 'i18n-js'
+import '../../locales/i18n';
+
 
 export default function NoEventBox() {
   return (
     <View style={[styles.container]}>
         <Image source={require("../../assets/images/no-event.png")} style={styles.imageStyle} />
-        <Text color="#666" fontSize="md">There's no events today!</Text>
+        <Text color="#666" fontSize="md">{i18n.t('noEvent')}</Text>
     </View>
   );
 }
