@@ -25,7 +25,7 @@ export default function JoinScreen({ navigation }: Navigation) {
 		uprofileImg: 1,
 		username: '',
 		ulanguage: '',
-		uchildren: colors.map(color => ({'cname': '', 'cprofileImg': 1, 'color': color?.id}))
+		uchildren: colors.map(color => ({ cname: '', cprofileImg: 1, color: color?.id }))
 	})
 	const [open, setOpen] = useState(-1);
 
@@ -89,7 +89,7 @@ export default function JoinScreen({ navigation }: Navigation) {
 
 	const handleChildrenProfileImg = (childNum: number,value: number) => (event: GestureResponderEvent) => {
 		let array = joinForm?.uchildren;
-		console.log(array);
+		// console.log(array);
 		if (array) {
 			array[childNum].cprofileImg = value;
 			setOpen(-1);
@@ -227,8 +227,8 @@ export default function JoinScreen({ navigation }: Navigation) {
 										onClose={() => setOpen(-1)}
 										trigger={triggerProps => {
 											return <Button {...triggerProps} variant="unstyled" onPress={() => setOpen(child)}>
-												{joinForm && joinForm.uchildren && 
-													<Image style={[styles.cprofileImage]} source={cProfileImgSource[joinForm?.uchildren[child]?.cprofileImg-1]} />
+												{joinForm && joinForm.uchildren &&
+													<Image style={[styles.cprofileImage]} source={cProfileImgSource[joinForm.uchildren[child]?.cprofileImg-1]} />
 												}
 											</Button>
 										}}
