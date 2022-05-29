@@ -111,6 +111,7 @@ export default function TranslateScreen({ navigation }: Navigation) {
 
     const extractText = async(): Promise<any> => {
         if (imageUri) {
+            // console.log(imageUri);
             let FormData = require('form-data');
             const formdata = new FormData();
             formdata.append("uploadfile", {
@@ -118,6 +119,8 @@ export default function TranslateScreen({ navigation }: Navigation) {
                 type: mime.getType(imageUri),
                 name: imageUri.split("/").pop()
             });
+
+            console.log('ocr',formdata);
 
             setLoading(true);
 
@@ -147,25 +150,6 @@ export default function TranslateScreen({ navigation }: Navigation) {
                     }
                 });
             }
-            // TEST: mockup data
-//             setResults({
-//                 fullText: [
-//                     {id: 1, content: "1. Schedule of the closing ceremony and diploma presentation ceremony: Friday, January 4, 2019 at 9 o'clock for students to go to school.\n1) ", date: "", highlight: false, registered: false},
-//                     {id: 2, content: "Closing ceremony", date: "2022-01-04", highlight: true, registered: false},
-//                     {id: 3, content: ": 1st and 2nd graders, each classroom, 9:00-10:50 (no meals)\n2) ", date: "", highlight: false, registered: false},
-//                     {id: 4, content: "Diploma representation ceremony", date: "2022-01-04", highlight: true, registered: true},
-//                     {id: 5, content: ": 3rd grade, multi-purpose auditorium (2nd floor), 10:30-12:20\n2. School opening and entrance ceremony for new students: March 4th (Mon), 2019 at 9 o'clock for students to go to school.", date: "", highlight: false, registered: false},
-//                 ],
-//                 korean: "가정통신문\n예당중학교\n8053-8388\n꿈은 크게. 마음은 넘게·\n행동은 바르게\n학부모님께\n희망찬 새해를 맞이하며 학부모님 가정에 건강과 행운이 함께 하시기를 기원 드립니다.\n드릴 말씀은, 2018학년도 종업식 및 졸업장 수여식과 2019학년도 개학 및 신입생 입학식을 다음과 같이 안내드리오니, 이후 3월 개학 때까지 학생들이 자기주도 학습 능력을 배양하고 다양한 체험 활동을 통하여 심신이 건강해지며 각종 유해 환경에 노출되지 않고 안전하고 줄거운 시간이 되도록 지도해 주시기 바랍니다.\n\
-// 1. 종업식 및 졸업장 수여식 일정 : 2019년 1월 4일(금), 학생 등교 9시\n\
-// 1) 종업식 : 1· 2학년, 각 교실, 9:00-10:50 (급식 없음)\n\
-// 2) 졸업장 수여식 : 3학년, 다목적 강당(2층), 10:30~12:20\n\
-// 2. 개학 및 신입생 입학식 : 2019년 3월 4일(월), 학생 등교 9시\n\
-// 1) 3월 4일 일정 : 월요일 정상수업 (급식 실시)\n\
-// (준비물: 교과서, 노트, 필기도구. 학생용 실내화(흰색) 등)\n\
-// 2) 신입생 입학식 : 다목적 강당(2층) 10시 30분, 신입생 등교 9시(신반 교실로 입장)\n",
-//                 trans_full: ''
-//             })
         }
     }
     
@@ -193,14 +177,23 @@ export default function TranslateScreen({ navigation }: Navigation) {
                  type: mime.getType(imageUri),
                  name: imageUri.split("/").pop()
             });
-            // formdata.append('noticeRequestDTO',  new Blob([JSON.stringify(data)], {type: 'application/json'}));
-            formdata.append('cid', form?.cid);
-            formdata.append('title', form?.title);
-            formdata.append('date', new Date().toISOString().slice(0, 10));
-            formdata.append('korean', results?.korean);
-            formdata.append('trans_full', results?.trans_full);
+            let data = {
+                cid: form?.cid,
+                title: form?.title,
+                date: new Date().toISOString().slice(0, 10),
+                korean: results?.korean,
+                fullText: results?.trans_full
+            }
+            formdata.append("noticeRequestDto", JSON.stringify(data));
+            // formdata.append('noticeRequestDto', new Blob([JSON.stringify(data)], {type: 'application/json'}));
             
-            console.log(formdata);
+            // formdata.append('cid', form?.cid);
+            // formdata.append('title', form?.title);
+            // formdata.append('date', new Date().toISOString().slice(0, 10));
+            // formdata.append('korean', results?.korean);
+            // formdata.append('trans_full', results?.trans_full);
+            
+            // console.log(formdata);
             
             if (auth?.authData?.jwt_token) {
                 fetch('http://localhost:8080/notice/save', {
@@ -247,43 +240,46 @@ export default function TranslateScreen({ navigation }: Navigation) {
             {imageUri ? (
                 /* After taking a picture and press the check button */
                 results?.fullText && results?.korean ? (
-                    <ImageBackground style={styles.container} resizeMode="cover" imageStyle={{ opacity: 0.5 }} source={{ uri: imageUri }}>
-                        <SwipeUpDown
-                            itemMini={
-                                <BottomDrawer 
-                                    results={results}
-                                    showKorean={showKorean}
-                                    isFullDrawer={isFullDrawer}
-                                    isTranslateScreen={true}
-                                    openSaveForm={openSaveForm}
-                                    handleKorean={handleKorean}
-                                    saveResults={saveResults}
-                                    closeResults={closeResults}
-                                    retakePicture={retakePicture}
-                                    handleOpenSaveForm={handleOpenSaveForm}
-                                />
-                            }
-                            itemFull={
-                                <BottomDrawer 
-                                    results={results}
-                                    showKorean={showKorean}
-                                    isFullDrawer={isFullDrawer}
-                                    isTranslateScreen={true}
-                                    openSaveForm={openSaveForm}
-                                    handleKorean={handleKorean}
-                                    saveResults={saveResults}
-                                    closeResults={closeResults}
-                                    retakePicture={retakePicture}
-                                    handleOpenSaveForm={handleOpenSaveForm}
-                                />
-                            }
-                            onShowMini={() => setFullDrawer(false)}
-                            onShowFull={() => setFullDrawer(true)}
-                            animation="easeInEaseOut"
-                            disableSwipeIcon
-                            extraMarginTop={10}
-                            swipeHeight={Dimensions.get('window').height*0.5}
-                        />
+                    <ImageBackground style={styles.container} resizeMode="cover" source={{ uri: imageUri }}>
+                        <View style={styles.backdrop}>
+                            <SwipeUpDown
+                                itemMini={
+                                    <BottomDrawer 
+                                        results={results}
+                                        showKorean={showKorean}
+                                        isFullDrawer={isFullDrawer}
+                                        isTranslateScreen={true}
+                                        openSaveForm={openSaveForm}
+                                        handleKorean={handleKorean}
+                                        saveResults={saveResults}
+                                        closeResults={closeResults}
+                                        retakePicture={retakePicture}
+                                        handleOpenSaveForm={handleOpenSaveForm}
+                                    />
+                                }
+                                itemFull={
+                                    <BottomDrawer 
+                                        results={results}
+                                        showKorean={showKorean}
+                                        isFullDrawer={isFullDrawer}
+                                        isTranslateScreen={true}
+                                        openSaveForm={openSaveForm}
+                                        handleKorean={handleKorean}
+                                        saveResults={saveResults}
+                                        closeResults={closeResults}
+                                        retakePicture={retakePicture}
+                                        handleOpenSaveForm={handleOpenSaveForm}
+                                    />
+                                }
+                                onShowMini={() => setFullDrawer(false)}
+                                onShowFull={() => setFullDrawer(true)}
+                                animation="easeInEaseOut"
+                                disableSwipeIcon
+                                extraMarginTop={10}
+                                swipeHeight={Dimensions.get('window').height*0.65}
+                            />
+                        </View>
+
                     </ImageBackground>
                 ) : (
                     /* After taking a picture, before OCR(pressing the check button) */
@@ -324,6 +320,7 @@ export default function TranslateScreen({ navigation }: Navigation) {
                         <Ionicons name="camera-reverse-outline" size={32} color="white" />
                     </TouchableOpacity>
                 </View>
+                
                 </>
             )}
         </View>
@@ -373,5 +370,9 @@ const styles = StyleSheet.create({
         height: 56,
         width: 56,
         borderWidth: 2
+    },
+    backdrop: {
+        flex: 1, 
+        backgroundColor: 'rgba(0,0,0, 0.60)'
     }
 }); 
