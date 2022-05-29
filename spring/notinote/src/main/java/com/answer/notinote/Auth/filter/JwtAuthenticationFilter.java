@@ -21,27 +21,10 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        String jwtToken = jwtTokenProvider.resolveToken((HttpServletRequest) request);
-        String refreshToken = jwtTokenProvider.resolveRefreshToken((HttpServletRequest) request);
+        String accessToken = jwtTokenProvider.resolveAccessToken((HttpServletRequest) request);
+        if (accessToken != null && jwtTokenProvider.validateToken(accessToken))
+            setAuthentication(accessToken);
 
-        if (jwtToken != null) {
-            if (jwtTokenProvider.validateToken(jwtToken)) {
-                // jwt token이 유효한 경우
-                setAuthentication(jwtToken);
-            }
-            else {
-                if (refreshToken != null) {
-                    if (jwtTokenProvider.validateToken(refreshToken) && jwtTokenProvider.existsRefreshToken(refreshToken)) {
-                        // jwt token이 만료되고, refresh token이 유효한 경우
-                        String email = jwtTokenProvider.getUserEmail(refreshToken);
-                        String newToken = jwtTokenProvider.createToken(email);
-                        jwtTokenProvider.setHeaderToken((HttpServletResponse) response, newToken);
-
-                        setAuthentication(newToken);
-                    }
-                }
-            }
-        }
         chain.doFilter(request, response);
     }
 
