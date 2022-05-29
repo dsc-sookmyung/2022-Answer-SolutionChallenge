@@ -51,11 +51,11 @@ export default function HomeScreen({ navigation }: Navigation) {
             )
         });
 
-        if (auth?.authData?.jwt_token) {
+        if (auth?.authData?.access_token) {
             fetch('http://localhost:8080/user/children', {
                 method: 'GET',
                 headers: {
-                    'JWT_TOKEN': auth.authData.jwt_token
+                    'ACCESS-TOKEN': auth.authData.access_token
                 },
                 redirect: 'follow'
             })

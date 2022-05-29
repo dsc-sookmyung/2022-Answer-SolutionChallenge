@@ -79,12 +79,12 @@ function BottomDrawer(props: BottomDrawerProps) {
     }
 
     const addEvent = () => {
-        if (auth?.authData?.jwt_token && eventForm) {
+        if (auth?.authData?.access_token && eventForm) {
             console.log(eventForm, currentEvent);
             fetch(`http://localhost:8080/event/register?id=${currentEvent}`, {
                 method: 'PUT',
                 headers: {
-                    'JWT_TOKEN': auth.authData.jwt_token,
+                    'ACCESS-TOKEN': auth.authData.access_token,
                     'Content-Type': 'application/json;charset=UTF-8'
                 },
                 body: JSON.stringify(eventForm),
