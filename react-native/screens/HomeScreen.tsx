@@ -6,6 +6,7 @@ import { theme } from '../core/theme';
 import type { Navigation, UserData } from '../types';
 import { useAuth } from '../contexts/Auth';
 import { StackActions } from '@react-navigation/native';
+import HomeMenu from '../components/HomeMenu';
 
 
 export default function HomeScreen({ navigation }: Navigation) {
@@ -46,11 +47,7 @@ export default function HomeScreen({ navigation }: Navigation) {
 
         navigation.setOptions({
             headerRight: () => (
-                <TouchableOpacity onPress={() => {
-                    
-                }}>
-                    <Image style={{ width: 32, height: 32 }} source={require(`../assets/images/profile-images/profile-1.png`)} />
-                </TouchableOpacity>
+                <HomeMenu/>
             )
         });
 
@@ -68,7 +65,7 @@ export default function HomeScreen({ navigation }: Navigation) {
             }) // console.log(data)
             .catch((error) => {
                 console.log(error)
-                if(error?.response?.status==401) {
+                if (error?.response?.status==401) {
                     //redirect to login
                     Alert.alert("The session has expired. Please log in again.");
                     auth.signOut();
