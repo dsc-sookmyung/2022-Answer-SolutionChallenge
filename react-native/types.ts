@@ -22,6 +22,7 @@ export type TextInput = {
 interface Children {
 	cid: number,
 	cname?: string,
+	cProfileImg?: number,
 	color?: number,
 }
 
@@ -30,7 +31,7 @@ interface JoinData {
 	uprofileImg?: number,
 	username?: string,
 	ulanguage?: string,
-	uchildren?: Children[]
+	uchildren?: { cname: string, cprofileImg: number, color: number }[]
 }
 
 interface UserData extends JoinData {

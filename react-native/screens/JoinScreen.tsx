@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, KeyboardAvoidingView, Alert, Platform, ScrollView, Image, GestureResponderEvent } from 'react-native';
-import { FormControl, Input, Button, VStack, Select, CheckIcon } from 'native-base';
+import { StyleSheet, KeyboardAvoidingView, Alert, Platform, ScrollView, Image, GestureResponderEvent, View } from 'react-native';
+import { FormControl, Input, Button, VStack, Select, CheckIcon, Popover } from 'native-base';
 import { nameValidator } from '../core/utils';
 import type { Navigation, UserData, JoinData } from '../types';
 import { theme } from '../core/theme';
@@ -11,8 +11,10 @@ import '../locales/i18n';
 
 export default function JoinScreen({ navigation }: Navigation) {
 	const [childrenNumber, setChildrenNumber] = useState<string>('1');
-	const imgSource = [require(`../assets/images/profile-images/profile-1.png`), require(`../assets/images/profile-images/profile-2.png`), require(`../assets/images/profile-images/profile-3.png`),
+	const uProfileImgSource = [require(`../assets/images/profile-images/profile-1.png`), require(`../assets/images/profile-images/profile-2.png`), require(`../assets/images/profile-images/profile-3.png`),
 	require(`../assets/images/profile-images/profile-4.png`), require(`../assets/images/profile-images/profile-5.png`), require(`../assets/images/profile-images/profile-6.png`), require(`../assets/images/profile-images/profile-7.png`)];
+	const cProfileImgSource = [require(`../assets/images/cprofile-images/profile-1.png`), require(`../assets/images/cprofile-images/profile-2.png`), require(`../assets/images/cprofile-images/profile-3.png`),
+	require(`../assets/images/cprofile-images/profile-4.png`), require(`../assets/images/cprofile-images/profile-5.png`), require(`../assets/images/cprofile-images/profile-6.png`), require(`../assets/images/cprofile-images/profile-7.png`), require(`../assets/images/cprofile-images/profile-8.png`), require(`../assets/images/cprofile-images/profile-9.png`)];
 	const colors = [{id: 1, hex: '#7986cb'}, {id: 3, hex: '#8e24aa'}, {id: 4, hex: '#e67c73'}, {id: 5, hex: '#f6bf26'}, {id: 7, hex: '#039be5'}, {id: 10, hex: '#0b8043'}]
 	// 1 3 4 5 7 10
 	const [joinForm, setJoinForm] = useState<JoinData>({
@@ -20,8 +22,9 @@ export default function JoinScreen({ navigation }: Navigation) {
 		uprofileImg: 1,
 		username: '',
 		ulanguage: '',
-		uchildren: colors.map(color => ({'cname': '', 'color': color?.id}))
+		uchildren: colors.map(color => ({'cname': '', 'cprofileImg': 1, 'color': color?.id}))
 	})
+	const [open, setOpen] = useState(-1);
 
 	const [user, setUser] = useState<UserData>();
 	const auth = useAuth();
@@ -45,6 +48,10 @@ export default function JoinScreen({ navigation }: Navigation) {
 		}
 	}, [user]);
 
+	useEffect(() => {
+		//console.log(joinForm);
+	}, [joinForm])
+
 	const errorAlert = (error: string) =>
 		Alert.alert(                    
 			i18n.t('joinFailed'),                 
@@ -58,9 +65,21 @@ export default function JoinScreen({ navigation }: Navigation) {
 		setJoinForm({ ...joinForm, ['uprofileImg']: profileType });
 	}
 
-	const handleChildren = (childNum: number, text: string) => {
+	const handleChildrenName = (childNum: number, value: string) => {
 		let array = joinForm?.uchildren;
-		if (array) array[childNum].cname = text;
+		if (array) {
+			array[childNum].cname = value;
+		}
+		setJoinForm({ ...joinForm, ['uchildren']: array });	
+	}
+
+	const handleChildrenProfileImg = (childNum: number,value: number) => (event: GestureResponderEvent) => {
+		let array = joinForm?.uchildren;
+		console.log(array);
+		if (array) {
+			array[childNum].cprofileImg = value;
+			setOpen(-1);
+		}
 		setJoinForm({ ...joinForm, ['uchildren']: array });
 	}
 
@@ -70,16 +89,17 @@ export default function JoinScreen({ navigation }: Navigation) {
 
 			let childrenArr = joinForm?.uchildren;
 			childrenArr = childrenArr?.slice(0, Number(childrenNumber));
-			joinForm.uchildren = childrenArr;
 
 			const usernameError = nameValidator(joinForm.username);
-			const childrenNameError = joinForm.uchildren?.some(child => child.cname === '');
+			const childrenNameError = childrenArr?.some(child => child.cname === '');
 	
 			if (usernameError || childrenNameError || !joinForm.ulanguage) {
 				errorAlert(i18n.t('fillAlarm'));
 				return;
 			}
 	
+			joinForm.uchildren = childrenArr;
+			
 			auth.signUp(joinForm);
 		}
 	};
@@ -93,7 +113,7 @@ export default function JoinScreen({ navigation }: Navigation) {
 						<ScrollView horizontal={true}>
 							{Array(7).fill(1).map((num, index) =>
 								<Button key={'b_'+index} variant="unstyled" onPress={handleProfileImg(index+1)}>
-									<Image style={[styles.profileImage, joinForm.uprofileImg!==index+1 && styles.disabled]} source={imgSource[index]} />
+									<Image style={[styles.uprofileImage, joinForm.uprofileImg!==index+1 && styles.disabled]} source={uProfileImgSource[index]} />
 								</Button>
 							)}
 						</ScrollView>
@@ -152,13 +172,41 @@ export default function JoinScreen({ navigation }: Navigation) {
 									size="md"
 									variant="underlined"
 									value={joinForm?.uchildren && joinForm.uchildren[index]?.cname}
-									onChangeText={(text) => handleChildren(index, text)}
+									onChangeText={(text) => handleChildrenName(index, text)}
 									autoCapitalize="none"
 									mb={2}
 									InputRightElement={
-										<Button bg={colors[index]?.hex} borderRadius="full" m={1} size="xs" height={childrenNumber==="1" ? "60%": "50%"}>
-											&nbsp;
-										</Button>
+										<Popover 
+										isOpen={open===index}
+										onOpen={() => setOpen(index)}                                 
+										onClose={() => setOpen(-1)}
+										trigger={triggerProps => {
+											return <Button {...triggerProps} variant="unstyled" onPress={() => setOpen(index)}>
+												{joinForm && joinForm.uchildren && 
+													<Image style={[styles.cprofileImage]} source={cProfileImgSource[joinForm?.uchildren[index]?.cprofileImg-1]} />
+												}
+											</Button>
+										}}
+										>
+											<View style={styles.shadow}>
+												<Popover.Content accessibilityLabel="Profile Image" w="90%">
+													<Popover.Body>
+														<FormControl isRequired style={{ flex: 1.2 }}>
+															<FormControl.Label>{i18n.t('profileImage')}</FormControl.Label>
+															<ScrollView horizontal={true}>
+																{Array(7).fill(1).map((num, i) =>
+																	<Button key={'b_'+i} variant="unstyled" onPress={handleChildrenProfileImg(index, i+1)}>
+																		{joinForm && joinForm.uchildren && 
+																			<Image style={[styles.uprofileImage, joinForm?.uchildren[index]?.cprofileImg!==i+1 && styles.disabled]} source={cProfileImgSource[i]} />
+																		}
+																	</Button>
+																)}
+															</ScrollView>
+														</FormControl>
+													</Popover.Body>
+												</Popover.Content>
+											</View>
+										</Popover>
 									}
 								/>
 							)}
@@ -182,12 +230,25 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 		justifyContent: 'center'
 	},
-	profileImage: {
+	uprofileImage: {
 		width: 52,
 		height: 52,
 	},
+	cprofileImage: {
+		width: 32,
+		height: 32,
+	},
 	disabled: {
 		opacity: 0.3
+	},
+	shadow: {
+		shadowColor: "#999999",
+        shadowOpacity: 0.5,
+        shadowRadius: 8,
+        shadowOffset: {
+          height: 0,
+          width: 0,
+        },
 	}
 });
 
