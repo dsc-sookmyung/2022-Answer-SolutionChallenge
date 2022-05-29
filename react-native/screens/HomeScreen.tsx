@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, SafeAreaView, TouchableOpacity, Image, ImageBackground, Alert } from 'react-native';
+import { StyleSheet, View, SafeAreaView, TouchableOpacity, ImageBackground, Alert } from 'react-native';
 import { Text } from 'native-base'
 import { theme } from '../core/theme';
 import type { Navigation, UserData } from '../types';
 import { useAuth } from '../contexts/Auth';
 import { StackActions } from '@react-navigation/native';
-import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import HomeMenu from '../components/Home/HomeMenu';
 import NoEventBox from '../components/Home/NoEventBox';
+import i18n from 'i18n-js'
+import '../locales/i18n';
 
 export default function HomeScreen({ navigation }: Navigation) {
     const [events, setEvents] = useState<{event_num: number, children: { cid: number, cname: string, events: string[] }[]}>(
@@ -30,20 +32,21 @@ export default function HomeScreen({ navigation }: Navigation) {
     );
     const SHOW_ALL = -1;
     const [nowSelectedChildId, setNowSelectedChildId] = useState<number>(SHOW_ALL);
-    const [user, setUser] = useState<UserData>();
+    const [user, setUser] = useState<UserData>({
+        uid: 1,
+        username: "Soo",
+        uemail: "kaithape@gmail.com",
+        uprofileImg: 1,
+        ulanguage: "english",
+        uchildren:[{ cid: 1, cname:"Soo", cprofileImg: 1 }, { cid: 2, cname:"Hee", cprofileImg: 4 }]
+    });
     const auth = useAuth();
     
 
     useEffect(()=> {
-        // setUser(auth?.userData);
-        setUser({
-            uid: 1,
-            username: "Soo",
-            uemail: "kaithape@gmail.com",
-            uprofileImg: 1,
-            ulanguage: "english",
-            uchildren:[{cid: 1, cname:"Soo"}, {cid: 2, cname:"Hee"}]
-        })
+        if (auth?.userData) {
+            setUser(auth?.userData);
+        }
 
         navigation.setOptions({
             headerRight: () => (
@@ -62,18 +65,25 @@ export default function HomeScreen({ navigation }: Navigation) {
             .then(response => response.json())
             .then(data => {
                 setEvents(data);
-            }) // console.log(data)
+                // console.log(data);
+            }) 
             .catch((error) => {
                 console.log(error)
                 if (error?.response?.status==401) {
                     //redirect to login
-                    Alert.alert("The session has expired. Please log in again.");
+                    Alert.alert(i18n.t('sessionExpired'));
                     auth.signOut();
                     navigation.dispatch(StackActions.popToTop())
                 }
             });
         }
     }, [auth]);
+
+    useEffect(() => {
+        if (events && events?.children?.length > 0) {
+            setNowSelectedChildId(events.children[0].cid);
+        }
+    }, [events]);
 
     const handleNowSelectedChildId = (cid: number) => {
         setNowSelectedChildId(cid);
@@ -88,7 +98,7 @@ export default function HomeScreen({ navigation }: Navigation) {
                         <TouchableOpacity onPress={() => navigation.navigate('Translate')}>
                             <ImageBackground source={require("../assets/images/pink-background-cropped.png")} style={[styles.bigButton]} imageStyle={{ borderRadius: 12 }}>
                                 <View style={[styles.bigButtonContentWrapper]}>
-                                    <Text style={[styles.buttonName, styles.deepBlue]} fontWeight={700} fontSize="xl" pb={2}>Translate</Text>
+                                    <Text style={[styles.buttonName, styles.deepBlue]} fontWeight={700} fontSize="xl" pb={2}>{i18n.t('translate')}</Text>
                                     <MaterialIcons name="g-translate" size={32} color="#333"/>
                                 </View>
                             </ImageBackground>
@@ -96,7 +106,7 @@ export default function HomeScreen({ navigation }: Navigation) {
                         <TouchableOpacity onPress={() => navigation.navigate('Search')}>
                             <ImageBackground source={require("../assets/images/pink-background-cropped.png")} style={[styles.bigButton]} imageStyle={{ borderRadius: 12 }}>
                                 <View style={[styles.bigButtonContentWrapper]}>
-                                    <Text style={[styles.buttonName, styles.deepBlue]} fontWeight={700} fontSize="xl" pb={2}>Search</Text>
+                                    <Text style={[styles.buttonName, styles.deepBlue]} fontWeight={700} fontSize="xl" pb={2}>{i18n.t('search')}</Text>
                                     <MaterialIcons name="search" size={32} color="#333"/>
                                 </View>
                             </ImageBackground>
@@ -104,7 +114,7 @@ export default function HomeScreen({ navigation }: Navigation) {
                     </View>
                 </ImageBackground>
                 <View style={styles.noticeWrapper}>
-                    <Text style={styles.smallTitle} fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="2xl" lineHeight={60}>Today's Events</Text>
+                    <Text style={styles.smallTitle} fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="2xl" lineHeight={60}>{i18n.t('todayEvent')}</Text>
                     <View style={styles.childButtonWrapper}>
                         <TouchableOpacity key={'n_all'} style={[styles.childButton, {
                             backgroundColor: nowSelectedChildId === SHOW_ALL ? theme.colors.primary : "#ffffff",
@@ -130,7 +140,7 @@ export default function HomeScreen({ navigation }: Navigation) {
                                 <View key={'n_'+index}>
                                     {notice.events.map((event, index) => {
                                         return (
-                                            <Text fontWeight={400} fontStyle="normal" fontSize="md" lineHeight={28}>{`[${notice.cname}] ` + event}</Text>
+                                            <Text key={'t_'+index} fontWeight={400} fontStyle="normal" fontSize="md" lineHeight={28}>{`[${notice.cname}] ` + event}</Text>
                                         )
                                     })}
                                 </View>))
@@ -257,3 +267,4 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     }
 })
+
