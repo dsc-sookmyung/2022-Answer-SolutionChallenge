@@ -5,6 +5,7 @@ import { theme } from '../core/theme';
 import type { Navigation, UserData } from '../types';
 import { useAuth } from '../contexts/Auth';
 import { StackActions } from '@react-navigation/native';
+import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import HomeMenu from '../components/HomeMenu';
 
 
@@ -89,15 +90,26 @@ export default function HomeScreen({ navigation }: Navigation) {
         <>{
             user && events && events.children?.length > 0 && (
             <SafeAreaView style={styles.container}>
-                <View style={styles.profile}>
-                    <ImageBackground style={styles.backgroundImage} source={require("../assets/images/pink-background-cropped.png")} resizeMode="cover" imageStyle={{ borderRadius: 12 }}>
-                        <Image style={styles.profileImage} source={require(`../assets/images/profile-images/profile-1.png`)} />
-                        <View style={styles.profielTextWrapper}>
-                            <Text fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="xl">{"Hi, " + user.username + "!"}</Text>
-                            <Text fontFamily="mono" fontWeight={400} fontStyle="normal" fontSize="sm">You've got {events.event_num} events today.</Text>
-                        </View>
-                    </ImageBackground>
-                </View>
+                <ImageBackground source={require("../assets/images/home-button-background.png")} style={[styles.functionButtonImageBackground]} imageStyle={{}}>
+                    <View style={styles.functionButtonWrapper}>
+                        <TouchableOpacity onPress={() => navigation.navigate('Translate')}>
+                            <ImageBackground source={require("../assets/images/pink-background-cropped.png")} style={[styles.bigButton]} imageStyle={{ borderRadius: 12 }}>
+                                <View style={[styles.bigButtonContentWrapper]}>
+                                    <Text style={[styles.buttonName, styles.deepBlue]} fontWeight={700} fontSize="xl" pb={2}>Translate</Text>
+                                    <MaterialIcons name="g-translate" size={32} color="#333"/>
+                                </View>
+                            </ImageBackground>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => navigation.navigate('Search')}>
+                            <ImageBackground source={require("../assets/images/pink-background-cropped.png")} style={[styles.bigButton]} imageStyle={{ borderRadius: 12 }}>
+                                <View style={[styles.bigButtonContentWrapper]}>
+                                    <Text style={[styles.buttonName, styles.deepBlue]} fontWeight={700} fontSize="xl" pb={2}>Search</Text>
+                                    <MaterialIcons name="search" size={32} color="#333"/>
+                                </View>
+                            </ImageBackground>
+                        </TouchableOpacity>
+                    </View>
+                </ImageBackground>
                 <View style={styles.noticeWrapper}>
                     <Text style={styles.smallTitle} fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="xl">Today's Events</Text>
                     <View style={styles.childButtonWrapper}>
@@ -140,26 +152,6 @@ export default function HomeScreen({ navigation }: Navigation) {
                             }
                         )}
                     </View>
-                </View>
-                <View style={styles.functionButtonWrapper}>
-                    <Text style={styles.smallTitle} fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="xl">Functions</Text>
-                    
-                    <TouchableOpacity onPress={() => navigation.navigate('Translate')}>
-                        <ImageBackground source={require("../assets/images/button-background.png")} style={[styles.bigButton]} imageStyle={{ borderRadius: 12 }}>
-                            <View>
-                                <Text style={[styles.buttonName, styles.deepBlue]} fontWeight={700} fontSize="xl" pb={2}>Translate</Text>
-                                <Text style={styles.deepBlue} fontSize="sm">Translation, summarization, and calendar registration are all possible just by taking a picture of the notice.</Text>
-                            </View>
-                        </ImageBackground>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.navigate('Search')}>
-                        <ImageBackground source={require("../assets/images/button-background.png")} style={[styles.bigButton]} imageStyle={{ borderRadius: 12 }}>
-                            <View>
-                                <Text style={[styles.buttonName, styles.deepBlue]} fontWeight={700} fontSize="xl" pb={2}>Search</Text>
-                                <Text style={styles.deepBlue} fontSize="sm">You can find notices you have translated.</Text>
-                            </View>
-                        </ImageBackground>
-                    </TouchableOpacity>
                 </View>
             </SafeAreaView> )}
         </>
@@ -232,10 +224,16 @@ const styles = StyleSheet.create({
     profielTextWrapper: {
         paddingRight: 30,
     },
+    functionButtonImageBackground: {
+        flex: 1.16,
+        flexDirection: "row",
+        alignItems: "center",
+    },
     functionButtonWrapper: {
-        flex: 1.5,
-        width: '88%',
+        flex: 1,
         paddingBottom: 30,
+        marginHorizontal: 20,
+        marginTop: -36
     },
     smallTitle: {
         marginBottom: 8,
@@ -245,18 +243,17 @@ const styles = StyleSheet.create({
     },
     bigButton: {
         padding: 26,
-        marginBottom: 18,
+        marginBottom: 22,
         borderRadius: 16,
-        shadowColor: "#999999",
-        shadowOpacity: 0.5,
-        shadowRadius: 8,
-        shadowOffset: {
-          height: 0,
-          width: 0,
-        },
+        height: 86
+    },
+    bigButtonContentWrapper: {
+        flex:1,
+        flexDirection:'row',
+        justifyContent:'space-between'
     },
     deepBlue: {
-        color: theme.colors.secondary,
+        color: "#333333",
     },
     lightPink: {
         color: theme.colors.primary,

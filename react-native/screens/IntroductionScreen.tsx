@@ -33,6 +33,10 @@ export default function HomeScreen({ navigation }: Navigation) {
   const auth = useAuth();
 
   useEffect(() => {
+      navigation.navigate("Home");
+  })
+
+  useEffect(() => {
     if (response?.type === "success") {
       const { authentication } = response;
 
