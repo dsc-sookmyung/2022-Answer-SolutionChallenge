@@ -6,6 +6,7 @@ export default {
     swipe: 'Vuốt để tiếp tục ≫',
     start: 'Bắt ​​đầu NotiNote',
     translate: 'dịch',
+    translation: 'dịch',
     translateDesc: 'Bạn có thể làm mọi thứ từ dịch thuật đến đăng ký lịch chỉ bằng cách chụp ảnh thư từ tại nhà.',
     search: 'tìm kiếm',
     searchDesc: 'Bạn có thể tìm kiếm thư từ trong gia đình đã được dịch trước đây.',
@@ -61,7 +62,7 @@ export default {
     gotIt: 'Đã hiểu',
     registerFailed: 'Không thêm được sự kiện. Vui lòng thử lại.',
     authFailed: "Xác thực không thành công. Vui lòng thử lại.",
-    tryAgain: 'Thử lại',
+    retake: 'chụp lại',
     join: 'Tham gia',
     searchResult: "Kết quả tìm kiếm",
     noEvent: "Không có sự kiện hôm nay!"

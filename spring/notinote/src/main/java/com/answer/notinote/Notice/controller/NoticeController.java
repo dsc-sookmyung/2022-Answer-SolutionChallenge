@@ -17,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
 
 
@@ -39,7 +38,7 @@ public class NoticeController {
 
     @RequestMapping(value = "/notice/ocr", method = RequestMethod.POST)
     public NoticeOCRDto executeOCR (@RequestPart MultipartFile uploadfile, HttpServletRequest userrequest) throws IOException {
-        String token = jwtTokenProvider.resolveToken(userrequest);
+        String token = jwtTokenProvider.resolveAccessToken(userrequest);
         String email = jwtTokenProvider.getUserEmail(token);
         User user = userService.findUserByEmail(email);
         String targetLanguage = user.getUlanguage();
