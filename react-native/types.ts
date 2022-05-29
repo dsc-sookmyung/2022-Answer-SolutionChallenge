@@ -41,7 +41,7 @@ interface UserData extends JoinData {
 }
 
 interface AuthData {
-	jwt_token?: string,
+	access_token?: string,
 	refresh_token?: string,
 }
 

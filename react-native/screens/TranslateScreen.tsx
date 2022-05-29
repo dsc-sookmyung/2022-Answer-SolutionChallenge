@@ -124,11 +124,11 @@ export default function TranslateScreen({ navigation }: Navigation) {
 
             setLoading(true);
 
-            if (auth?.authData?.jwt_token) {
+            if (auth?.authData?.access_token) {
                 await fetch("http://localhost:8080/notice/ocr", {
                     method: 'POST',
                     headers: {
-                        'JWT_TOKEN': auth.authData.jwt_token
+                        'ACCESS-TOKEN': auth.authData.access_token
                     },
                     body: formdata,
                     redirect: 'follow'
@@ -195,11 +195,11 @@ export default function TranslateScreen({ navigation }: Navigation) {
             
             // console.log(formdata);
             
-            if (auth?.authData?.jwt_token) {
+            if (auth?.authData?.access_token) {
                 fetch('http://localhost:8080/notice/save', {
                     method: 'POST',
                     headers: {
-                        'JWT_TOKEN': auth.authData.jwt_token,
+                        'ACCESS-TOKEN': auth.authData.access_token,
                     },
                     body: formdata,
                     redirect: 'follow'

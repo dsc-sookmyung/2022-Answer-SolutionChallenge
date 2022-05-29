@@ -53,11 +53,11 @@ export default function SearchScreen({ navigation }: Navigation) {
     const [searchDate, setSearchDate] = useState<string>(i18n.t('searchByDateDefault'));
 
     useEffect(() => {
-        if (auth?.authData?.jwt_token) {
+        if (auth?.authData?.access_token) {
             fetch('http://localhost:8080/search', {
                 method: 'GET',
                 headers: {
-                    'JWT_TOKEN': auth.authData.jwt_token
+                    'ACCESS-TOKEN': auth.authData.access_token
                 },
                 redirect: 'follow'
             })
