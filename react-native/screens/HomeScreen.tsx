@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, View, SafeAreaView, TouchableOpacity, Image, ImageBackground, Alert } from 'react-native';
-import { Text, Box } from 'native-base'
-import { Ionicons } from '@expo/vector-icons';
+import { Text } from 'native-base'
 import { theme } from '../core/theme';
 import type { Navigation, UserData } from '../types';
 import { useAuth } from '../contexts/Auth';
