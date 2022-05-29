@@ -23,12 +23,14 @@ public class ChildDto {
     Long cid;
     String cname;
     Long color;
+    Long cprofileImg;
     List<EventResponseDto> events = new ArrayList<>();
 
     public ChildDto(Child child) {
         this.cid = child.getCid();
         this.cname = child.getCname();
         this.color = child.getColor();
+        this.cprofileImg = child.getCprofileImg();
 
         for(Event event : child.getEvents()) {
                 if (event.isRegistered() && event.getDate().isEqual(LocalDate.now()))
