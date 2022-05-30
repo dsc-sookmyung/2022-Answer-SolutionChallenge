@@ -1,6 +1,7 @@
 package com.answer.notinote.Notice.service;
 
 import com.answer.notinote.Auth.token.provider.JwtTokenProvider;
+import com.answer.notinote.Child.service.ChildService;
 import com.answer.notinote.Event.domain.Event;
 import com.answer.notinote.Notice.dto.NoticeResponseBody;
 import com.answer.notinote.Event.dto.EventRequestDto;
@@ -48,6 +49,8 @@ public class NoticeService {
     JwtTokenProvider jwtTokenProvider;
     @Autowired
     EventService eventService;
+    @Autowired
+    ChildService childService;
 
     public String detectText(MultipartFile uploadfile) throws IOException{
         List<AnnotateImageRequest> requests = new ArrayList<>();
@@ -87,7 +90,7 @@ public class NoticeService {
 
     public String transText(String korean, String targetLanguage) throws IOException {
         String text = korean;
-        String projectId = "notinote-341918";
+        String projectId = "solution-challenge-342914";
         ArrayList <String> textlist = new ArrayList<String>();
 
         try (TranslationServiceClient client = TranslationServiceClient.create()) {
@@ -234,7 +237,7 @@ public class NoticeService {
 
     public NoticeTitleListDto saveNotice(MultipartFile uploadfile, NoticeRequestDto noticeRequestDto, HttpServletRequest request) throws IOException{
         //요청한 사용자 확인
-        String token = jwtTokenProvider.resolveToken(request);
+        String token = jwtTokenProvider.resolveAccessToken(request);
         String useremail = jwtTokenProvider.getUserEmail(token);
         User user = userRepository.findByUemail(useremail).orElseThrow(IllegalArgumentException::new);
 
@@ -256,11 +259,11 @@ public class NoticeService {
                 .origin_full(noticeRequestDto.getKorean())
                 .trans_full(noticeRequestDto.getFullText())
                 .user(user)
+                .child(childService.findChildById(noticeRequestDto.getCid()))
                 .build();
         noticeRepository.save(notice);
 
         List<Event> events = detectEvent(notice, user.getUlanguage());
-
         List<NoticeSentenceDto> sentences = extractSentenceFromEvent(notice.getTrans_full(), events);
 
         return new NoticeTitleListDto(notice, sentences);
@@ -302,6 +305,7 @@ public class NoticeService {
             String sentence = text.substring(event.getIndex_start(), event.getIndex_end());
             NoticeSentenceDto dto = NoticeSentenceDto.builder()
                     .id(id++)
+                    .eid(event.getEid())
                     .content(sentence)
                     .date(event.getDate())
                     .highlight(true)

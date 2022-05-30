@@ -17,7 +17,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
 
 
@@ -39,7 +38,7 @@ public class NoticeController {
 
     @RequestMapping(value = "/notice/ocr", method = RequestMethod.POST)
     public NoticeOCRDto executeOCR (@RequestPart MultipartFile uploadfile, HttpServletRequest userrequest) throws IOException {
-        String token = jwtTokenProvider.resolveToken(userrequest);
+        String token = jwtTokenProvider.resolveAccessToken(userrequest);
         String email = jwtTokenProvider.getUserEmail(token);
         User user = userService.findUserByEmail(email);
         String targetLanguage = user.getUlanguage();
@@ -55,12 +54,9 @@ public class NoticeController {
     @RequestMapping(value = "/notice/save", method = RequestMethod.POST)
     public NoticeTitleListDto saveNotice(
             @RequestPart(value = "uploadfile") MultipartFile uploadfile,
-            @RequestPart(value = "title") String title,
-            @RequestPart(value = "date") String stringdate,
-            @RequestPart(value = "korean") String korean,
-            @RequestPart(value = "trans_full") String fullText,
+            @RequestPart(value = "noticeRequestDto") NoticeRequestDto noticeRequestDto,
             HttpServletRequest request) throws IOException {
-
+        /*
         LocalDate date = LocalDate.parse(stringdate);
         NoticeRequestDto noticeRequestDto = NoticeRequestDto.builder()
                 .title(title)
@@ -68,6 +64,8 @@ public class NoticeController {
                 .korean(korean)
                 .fullText(fullText)
                 .build();
+
+         */
         NoticeTitleListDto notice_title = noticeService.saveNotice(uploadfile, noticeRequestDto, request); //notice 저장
         return notice_title;
     }

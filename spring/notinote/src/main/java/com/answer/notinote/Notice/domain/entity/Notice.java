@@ -1,5 +1,6 @@
 package com.answer.notinote.Notice.domain.entity;
 
+import com.answer.notinote.Child.domain.Child;
 import com.answer.notinote.Event.domain.Event;
 import com.answer.notinote.User.domain.entity.User;
 import lombok.Builder;
@@ -33,8 +34,12 @@ public class Notice {
     private String trans_full;
 
     @ManyToOne
-    @JoinColumn
+    @JoinColumn(name = "uid")
     private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "cid")
+    private Child child;
 
     private String title;
 
@@ -48,7 +53,7 @@ public class Notice {
 
 
     @Builder
-    public Notice(String nimagename, String nimageoriginal, String nimageurl, String origin_full, String trans_full, LocalDate ndate, String title, User user) {
+    public Notice(String nimagename, String nimageoriginal, String nimageurl, String origin_full, String trans_full, LocalDate ndate, String title, User user, Child child) {
         this.nimagename = nimagename;
         this.nimageoriginal = nimageoriginal;
         this.nimageurl = nimageurl;
@@ -57,6 +62,7 @@ public class Notice {
         this.ndate = ndate;
         this.title = title;
         this.user = user;
+        this.child = child;
     }
 
 

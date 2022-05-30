@@ -17,6 +17,14 @@ public class EventResponseDto {
     public EventResponseDto(Event event) {
         this.eid = event.getEid();
         this.title = event.getTitle();
+
+        // [이름] 제거
+        if (this.title.charAt(0) == '[') {
+            while(this.title.charAt(0) != ']' || this.title.length() <= 1)
+                this.title = this.title.substring(1);
+            this.title = this.title.substring(1);
+        }
+
         this.description = event.getDescription();
         this.date = event.getDate();
     }

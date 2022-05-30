@@ -8,6 +8,7 @@ export default {
     start: 'Start NotiNote',
     /* Home */
     translate: 'Translate',
+    translation: 'Translation',
     translateDesc: 'Translation and calendar registration are all possible just by taking a picture of the notice.',
     search: 'Search',
     searchDesc: 'You can find notices you have translated.',
@@ -68,7 +69,7 @@ export default {
     tip_1: 'You can save the results and check them on the search screen!',
     registerFailed: 'Failed to add event. Please try again.',
     authFailed: "Authentication failed. Please try again.",
-    tryAgain: 'Try Again',
+    retake: 'Retake',
     join: 'Join',
     searchResult: "Search Result",
     noEvent: "There is no event today!"

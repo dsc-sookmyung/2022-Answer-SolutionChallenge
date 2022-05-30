@@ -10,10 +10,11 @@ const signIn = (accessToken: string): Promise<AuthResponse> => {
             }
         })
         .then(response => {
+            // console.log('response headers',response.headers);
             let data = {
                 header: {
-                    jwt_token: response.headers.jwt_token,
-                    refresh_token: response.headers.refresh_token
+                    access_token: response.headers["access-token"],
+                    refresh_token: response.headers["refresh-token"]
                 },
                 body: response.data
             }
@@ -32,8 +33,8 @@ const signUp = (data: JoinData): Promise<AuthResponse> => {
         .then(response => {
             let data = {
                 header: {
-                    jwt_token: response.headers.jwt_token,
-                    refresh_token: response.headers.refresh_token
+                    access_token: response.headers["access-token"],
+                    refresh_token: response.headers["refresh-token"]
                 },
                 body: response.data
             }
