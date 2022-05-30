@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, TouchableOpacity, ImageBackground, Dimensions, Alert } from 'react-native';
+import { useToast, Box, Modal, Button, HStack, Text, Divider } from 'native-base';
 import { Camera } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../core/theme';
 import type { Navigation, Result, ResultsForm } from '../types';
-import AppLoading from 'expo-app-loading';
-import useFonts from '../hooks/useFonts'
 import SwipeUpDown from 'react-native-swipe-up-down';
 import BottomDrawer from '../components/BottomDrawer';
-import { useToast, Box } from 'native-base';
 import mime from "mime";
 import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../contexts/Auth';
@@ -27,22 +25,18 @@ const date = new Date();
 
 export default function TranslateScreen({ navigation }: Navigation) {
     const [hasPermission, setHasPermission] = useState<boolean>(false);
-    const [fontsLoaded, SetFontsLoaded] = useState<boolean>(false);
     const [type, setType] = useState(Camera.Constants.Type.back);
     const [camera, setCamera] = useState<any>(null);
     const [imageUri, setImageUri] = useState<string>(''); 
-    const [results, setResults] = useState<Result>({fullText: [], korean: '', trans_full: ''});
+    const [results, setResults] = useState<Result>();
     const [showKorean, setShowKorean] = useState<boolean>(false);
     const [isFullDrawer, setFullDrawer] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [openSaveForm, setOpenSaveForm] = useState<boolean>(false);
+    const [openInitialEventForm, setOpenInitialEventForm] = useState<boolean>(false); 
 
     const toast = useToast();
     const auth = useAuth();
-
-    const LoadFontsAndRestoreToken = async () => {
-        await useFonts();
-    };
 
     useEffect(() => {
         (async () => {
@@ -55,20 +49,34 @@ export default function TranslateScreen({ navigation }: Navigation) {
         if (imageUri) {
             extractText
         }
-    }, [imageUri])
+    }, [imageUri]);
 
     useEffect(() => {
         if (results?.fullText && results.fullText.filter(item => item.highlight === true).length > 0) {
-            const message = i18n.t('translateMessage_1')
-            toast.show({    // Design according to mui toast guidelines (https://material.io/components/snackbars#anatomy)
-                render: () => {
-                    return <Box bg="rgba(0,0,0,0.8)" px="3" py="2" rounded="xl" mx={2} mb={12} shadow={2}>
-                            {message}
-                        </Box>;
-                }
-            });
+            // const message = i18n.t('translateMessage_1')
+            // toast.show({    // Design according to mui toast guidelines (https://material.io/components/snackbars#anatomy)
+            //     render: () => {
+            //         return <Box bg="rgba(0,0,0,0.8)" px="3" py="2" rounded="xl" mx={2} mb={12} shadow={2}>
+            //                 {message}
+            //             </Box>;
+            //     }
+            // });
+            if (results?.event_num) {
+                setOpenInitialEventForm(true);
+            }
+            else {
+                const message = "There are no extracted events!"
+                toast.show({    // Design according to mui toast guidelines (https://material.io/components/snackbars#anatomy)
+                    placement: "top",
+                    render: () => {
+                        return <Box bg="rgba(0,0,0,0.7)" p="4" rounded="xl" mx={2} mt={20} shadow={2}>
+                                {message}
+                            </Box>;
+                    }
+                });
+            }
         }
-    }, [results])
+    }, [results]);
 
     // DEV TEST 
     // if (hasPermission === null) {
@@ -77,16 +85,6 @@ export default function TranslateScreen({ navigation }: Navigation) {
     // else if (hasPermission === false) {
     //  return <Text>No access to camera!</Text>
     // }
-
-    if (!fontsLoaded) {
-        return (
-        <AppLoading
-            startAsync={LoadFontsAndRestoreToken}
-            onFinish={() => SetFontsLoaded(true)}
-            onError={() => {}}
-        />
-        );
-    }
 
     const takePicture = async () => {
         if (camera) {
@@ -135,9 +133,9 @@ export default function TranslateScreen({ navigation }: Navigation) {
                 })
                 .then(response => response.json())
                 .then(data => { 
-                    console.log(data)
-                    setResults(data)
-                    setLoading(false)
+                    console.log(data);
+                    setResults(data);
+                    setLoading(false);
                 })
                 .catch(function (error) {
                     console.log(error?.response?.status) // 401
@@ -151,6 +149,30 @@ export default function TranslateScreen({ navigation }: Navigation) {
                 });
             }
         }
+
+        // TEST: mockup data
+        // setResults({
+        //     fullText: [
+        //         {id: 1, content: "1. Schedule of the closing ceremony and diploma presentation ceremony: Friday, January 4, 2019 at 9 o'clock for students to go to school.\n1) ", date: "", highlight: false, registered: false},
+        //         {id: 2, content: "Closing ceremony", date: "2022-01-04", highlight: true, registered: false},
+        //         {id: 3, content: ": 1st and 2nd graders, each classroom, 9:00-10:50 (no meals)\n2) ", date: "", highlight: false, registered: false},
+        //         {id: 4, content: "Diploma representation ceremony", date: "2022-01-04", highlight: true, registered: true},
+        //         {id: 5, content: ": 3rd grade, multi-purpose auditorium (2nd floor), 10:30-12:20\n2. School opening and entrance ceremony for new students: March 4th (Mon), 2019 at 9 o'clock for students to go to school.", date: "", highlight: false, registered: false},
+        //     ],
+        //     korean: "가정통신문\n예당중학교\n8053-8388\n꿈은 크게. 마음은 넘게·\n행동은 바르게\n학부모님께\n희망찬 새해를 맞이하며 학부모님 가정에 건강과 행운이 함께 하시기를 기원 드립니다.\n드릴 말씀은, 2018학년도 종업식 및 졸업장 수여식과 2019학년도 개학 및 신입생 입학식을 다음과 같이 안내드리오니, 이후 3월 개학 때까지 학생들이 자기주도 학습 능력을 배양하고 다양한 체험 활동을 통하여 심신이 건강해지며 각종 유해 환경에 노출되지 않고 안전하고 줄거운 시간이 되도록 지도해 주시기 바랍니다.\n",
+        //     trans_full: "",
+        //     event_num: 2,
+        //     events: [
+        //         {
+        //             title: "opening ceremony",
+        //             date: "2022-03-24"
+        //         },
+        //         {
+        //             title: "closing ceremony",
+        //             date: "2022-03-24"
+        //         }
+        //     ]
+        // })
     }
     
     const handleKorean = (): void => {
@@ -223,10 +245,6 @@ export default function TranslateScreen({ navigation }: Navigation) {
         }
     }
 
-    const closeResults = (): void => {
-        navigation.navigate('Home');
-    }
-
     const retakePicture = (): void => {
         setImageUri('');
         setResults({id: 0, fullText: [], korean: ''});
@@ -252,7 +270,6 @@ export default function TranslateScreen({ navigation }: Navigation) {
                                         openSaveForm={openSaveForm}
                                         handleKorean={handleKorean}
                                         saveResults={saveResults}
-                                        closeResults={closeResults}
                                         retakePicture={retakePicture}
                                         handleOpenSaveForm={handleOpenSaveForm}
                                     />
@@ -266,7 +283,6 @@ export default function TranslateScreen({ navigation }: Navigation) {
                                         openSaveForm={openSaveForm}
                                         handleKorean={handleKorean}
                                         saveResults={saveResults}
-                                        closeResults={closeResults}
                                         retakePicture={retakePicture}
                                         handleOpenSaveForm={handleOpenSaveForm}
                                     />
@@ -278,8 +294,28 @@ export default function TranslateScreen({ navigation }: Navigation) {
                                 extraMarginTop={10}
                                 swipeHeight={Dimensions.get('window').height*0.65}
                             />
+                            <Modal isOpen={openInitialEventForm}>
+                                <Modal.Content maxWidth="400">
+                                <Modal.Header>
+                                    <Text fontSize="lg" fontWeight={600} textAlign="center">{results?.event_num} Events Extracted</Text>
+                                </Modal.Header>
+                                <Modal.Body maxHeight={200}>
+                                    {results?.events?.map((item, index) => 
+                                        <HStack key={'re_'+index} space={2} my={1}>
+                                            <Text fontWeight={600}>{item.date}&nbsp;</Text>
+                                            <Text>{item.title}</Text>
+                                        </HStack>
+                                    )}
+                                </Modal.Body>
+                                <Divider />
+                                <Modal.Footer alignSelf="center" bgColor="muted.50" p={2}>
+                                    <Button variant="unstyled" onPress={() => setOpenInitialEventForm(false)}>
+                                        OK
+                                    </Button>
+                                </Modal.Footer>
+                                </Modal.Content>
+                            </Modal>
                         </View>
-
                     </ImageBackground>
                 ) : (
                     /* After taking a picture, before OCR(pressing the check button) */
