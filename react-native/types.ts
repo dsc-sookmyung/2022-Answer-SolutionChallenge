@@ -90,7 +90,7 @@ interface Notice {
 
 interface Notices {
     date: string,
-    saved_titles: string[]
+	saved: { cid: number, titles: string[] }[]
 }
 
 interface BottomDrawerProps {

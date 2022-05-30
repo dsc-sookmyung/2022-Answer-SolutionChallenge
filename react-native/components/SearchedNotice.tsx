@@ -1,24 +1,37 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, TouchableOpacity, Image } from 'react-native';
+import { VStack, Text } from 'native-base';
 import { useNavigation } from '@react-navigation/native';
-import type { Notices } from '../types';
+import type { Notices, UserData } from '../types';
 import useFonts from '../hooks/useFonts'
 import AppLoading from 'expo-app-loading';
-import { AntDesign } from '@expo/vector-icons';
 import { theme } from '../core/theme';
+import { useAuth } from '../contexts/Auth';
 
 
 export default function SearchedNotice(props: Notices) {
+    const cProfileImgSource = [require(`../assets/images/cprofile-images/profile-1.png`), require(`../assets/images/cprofile-images/profile-2.png`), require(`../assets/images/cprofile-images/profile-3.png`),
+	require(`../assets/images/cprofile-images/profile-4.png`), require(`../assets/images/cprofile-images/profile-5.png`), require(`../assets/images/cprofile-images/profile-6.png`), require(`../assets/images/cprofile-images/profile-7.png`), require(`../assets/images/cprofile-images/profile-8.png`), require(`../assets/images/cprofile-images/profile-9.png`)];
     const navigation = useNavigation<any>();
-    const [componentOpened, setComponentOpened] = useState<boolean>(false);
+    const auth = useAuth();
+    const [user, setUser] = useState<UserData>({
+        uid: 1,
+        username: "Soo",
+        uemail: "kaithape@gmail.com",
+        uprofileImg: 1,
+        ulanguage: "english",
+        uchildren:[{ cid: 1, cname:"Soo", cprofileImg: 1 }, { cid: 2, cname:"Hee", cprofileImg: 4 }]
+    });
     const [fontsLoaded, SetFontsLoaded] = useState<boolean>(false);
     const LoadFontsAndRestoreToken = async () => {
         await useFonts();
     };
 
-    const updateComponentOpened = () => {
-        setComponentOpened(!componentOpened);
-    }
+    useEffect(() => {
+        if (auth?.userData) {
+            setUser(auth?.userData);
+        };
+    }, [auth]);
 
     if (!fontsLoaded) {
         return (
@@ -31,35 +44,38 @@ export default function SearchedNotice(props: Notices) {
     } 
 
     return (
-        <View style={[styles.container, {
-            height: componentOpened ? (80 + props?.saved_titles?.length * 22): 60,
-            paddingBottom: componentOpened ? 20: 0
-        }]}>
+        <View style={styles.container}>         
             <View style={styles.headerContainer}>
-                <Text style={[styles.date, {
-                    color: componentOpened ? theme.colors.primary : "#2A2A2A",
-                    textDecorationLine: componentOpened ? "underline": "none"
-                }]}>{props?.date}</Text>
-                <TouchableOpacity onPress={updateComponentOpened}>
-                    <AntDesign name={componentOpened ? "caretup" : "caretdown"} color={componentOpened ? theme.colors.primary : "#000"} size={14}/>
-                </TouchableOpacity>
+                <Text fontWeight={700} color="white">Saved on {props?.date.replaceAll("-", ". ")}</Text>
             </View>
-             {componentOpened && (
-                <TouchableOpacity onPress={() => navigation.navigate('SearchResult', {date: props?.date})}>
-                    <View>
-                        {props?.saved_titles?.map((notice, index) => 
-                            <Text key={'st_'+index} style={styles.notices}>{(index + 1) + ". " + notice}</Text>
+            <VStack space={4}>
+                {props?.saved?.map((child, index) =>
+                    <TouchableOpacity 
+                        key={'sc_'+index} 
+                        onPress={() => navigation.navigate('SearchResult', {date: props?.date, cid: child?.cid})}
+                        style={ styles.childNotice }
+                    >
+                        <View style={{ justifyContent: "space-between" }}>
+                        {user.uchildren &&
+                            <View style={ styles.cprofile }>
+                                <Image style={styles.cprofileImageLg} source={cProfileImgSource[user.uchildren.filter(uchild => uchild.cid === child.cid)[0]?.cprofileImg-1]} />    
+                                <Text>{user.uchildren.filter(uchild => uchild.cid === child.cid)[0]?.cname}</Text>                    
+                            </View>
+                        }
+                        {child?.titles?.map((title, tIndex) => 
+                            <Text key={'sct_'+tIndex} style={styles.notices}>{"Title " + (tIndex + 1) + ". " + title}</Text>
                         )}
-                    </View>
-                </TouchableOpacity>
-            )}
+                        </View>
+                    </TouchableOpacity>
+                )}
+            </VStack>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: "#fff",
+        backgroundColor: theme.colors.primary,
         width: '100%',
         marginVertical: 4,
         paddingVertical: 20,
@@ -74,9 +90,8 @@ const styles = StyleSheet.create({
         }
     },
     headerContainer: {
-        flex: 1,
         flexDirection: "row",
-        justifyContent: "space-between"
+        paddingBottom: 20,
     },
     date: {
         fontFamily: 'Lora_700Bold',
@@ -85,5 +100,18 @@ const styles = StyleSheet.create({
     notices: {
         lineHeight: 22,
         color: "#2A2A2A",
-    }
+    },
+    childNotice: {
+        backgroundColor: "#fff",
+        borderRadius: 16,
+        padding: 16,
+    },
+    cprofile: {
+        alignItems: "center"
+    },
+    cprofileImageLg: {
+        width: 32,
+        height: 32,
+        marginBottom: 2
+    },
 })
