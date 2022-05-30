@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, SafeAreaView, TouchableOpacity, ImageBackground, Alert } from 'react-native';
+import { StyleSheet, View, SafeAreaView, TouchableOpacity, ImageBackground, Alert, Image } from 'react-native';
 import { Text } from 'native-base'
 import { theme } from '../core/theme';
 import type { Navigation, UserData } from '../types';
@@ -12,20 +12,24 @@ import i18n from 'i18n-js'
 import '../locales/i18n';
 
 export default function HomeScreen({ navigation }: Navigation) {
-    const [events, setEvents] = useState<{event_num: number, children: { cid: number, cname: string, events: string[] }[]}>(
+    const cProfileImgSource = [require(`../assets/images/cprofile-images/profile-1.png`), require(`../assets/images/cprofile-images/profile-2.png`), require(`../assets/images/cprofile-images/profile-3.png`),
+	require(`../assets/images/cprofile-images/profile-4.png`), require(`../assets/images/cprofile-images/profile-5.png`), require(`../assets/images/cprofile-images/profile-6.png`), require(`../assets/images/cprofile-images/profile-7.png`), require(`../assets/images/cprofile-images/profile-8.png`), require(`../assets/images/cprofile-images/profile-9.png`)];
+    const [events, setEvents] = useState<{event_num: number, children: { cid: number, cname: string, cprofileImg: number, events: string[] }[]}>(
         {event_num: 4,
             children: [
                 {
                     cid: 1,
                     cname: "Soo",
+                    cprofileImg: 2,
                     events: [
                         "the 17th Graduate Seremony",
                         "Do-Dream Festival"
-                    ]
+                    ],
                 }, {
                     cid: 2,
                     cname: "Hee",
-                    events: []
+                    events: [],
+                    cprofileImg: 1,
                 }
             ]
         }
@@ -123,13 +127,14 @@ export default function HomeScreen({ navigation }: Navigation) {
                                 color: nowSelectedChildId !== SHOW_ALL ? theme.colors.primary : "#ffffff",
                             }]}>All</Text>
                             </TouchableOpacity>
-                        {events.children?.map((notice, index) =>
+                        {events.children?.map((child, index) =>
                             <TouchableOpacity key={'n_'+index} style={[styles.childButton, {
-                                backgroundColor: nowSelectedChildId === notice.cid ? theme.colors.primary : "#ffffff",
-                            }]} onPress={() => handleNowSelectedChildId(notice.cid)}>
+                                backgroundColor: nowSelectedChildId === child.cid ? theme.colors.primary : "#ffffff",
+                            }]} onPress={() => handleNowSelectedChildId(child.cid)}>
+                                <Image style={styles.cprofileImage} source={cProfileImgSource[child.cprofileImg]} />
                                 <Text fontWeight={500} style={[{
-                                    color: nowSelectedChildId !== notice.cid ? theme.colors.primary : "#ffffff",
-                                }]}>{notice.cname}</Text>
+                                    color: nowSelectedChildId !== child.cid ? theme.colors.primary : "#ffffff",
+                                }]}>{child.cname}</Text>
                             </TouchableOpacity>
                         )}
                     </View>
@@ -203,13 +208,14 @@ const styles = StyleSheet.create({
     childButton: {
         borderWidth: 1,
         borderColor: theme.colors.primary,
-        height: 30,
-        borderRadius: 16,
-        justifyContent: "center",
+        height: 40,
+        borderRadius: 32,
+        flexDirection: "row",
+        justifyContent: "space-between",
         alignItems: "center",
         paddingHorizontal: 16,
         alignSelf: 'flex-start',
-        marginRight: 8,
+        marginRight: 12,
     },
     todayNoticeWrapper: {
         alignSelf: "flex-start",
@@ -265,6 +271,10 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    cprofileImage: {
+        width: 20,
+        height: 20,
+        marginRight: 12
     }
 })
-
