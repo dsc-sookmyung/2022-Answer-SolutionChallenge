@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, TouchableOpacity, ImageBackground, Dimensions, Alert } from 'react-native';
-import { useToast, Box, Modal, Button, HStack, Text, Divider } from 'native-base';
+import { useToast, Box, Button, HStack, Text, Divider, Modal } from 'native-base';
 import { Camera } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
 import { theme } from '../core/theme';
@@ -61,7 +61,7 @@ export default function TranslateScreen({ navigation }: Navigation) {
             //             </Box>;
             //     }
             // });
-            if (results?.event_num) {
+            if (results?.event_num && results.event_num > 0) {
                 setOpenInitialEventForm(true);
             }
             else {
@@ -77,6 +77,12 @@ export default function TranslateScreen({ navigation }: Navigation) {
             }
         }
     }, [results]);
+
+    useEffect(() => {
+        if (openInitialEventForm) {
+            setTimeout(() => {setOpenInitialEventForm(false)}, 5000);            
+        }
+    }, [openInitialEventForm])
 
     // DEV TEST 
     // if (hasPermission === null) {
@@ -172,7 +178,7 @@ export default function TranslateScreen({ navigation }: Navigation) {
         //             date: "2022-03-24"
         //         }
         //     ]
-        // })
+        // });
     }
     
     const handleKorean = (): void => {
@@ -294,7 +300,7 @@ export default function TranslateScreen({ navigation }: Navigation) {
                                 extraMarginTop={10}
                                 swipeHeight={Dimensions.get('window').height*0.65}
                             />
-                            <Modal isOpen={openInitialEventForm}>
+                            <Modal isOpen={openInitialEventForm} animationPreset="slide">
                                 <Modal.Content maxWidth="400">
                                 <Modal.Header>
                                     <Text fontSize="lg" fontWeight={600} textAlign="center">{results?.event_num} Events Extracted</Text>
