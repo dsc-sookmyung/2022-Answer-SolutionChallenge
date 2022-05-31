@@ -1,13 +1,9 @@
 package com.answer.notinote.Notice.controller;
 
 import com.answer.notinote.Auth.token.provider.JwtTokenProvider;
-import com.answer.notinote.Event.domain.Event;
 import com.answer.notinote.Event.dto.EventRequestDto;
 import com.answer.notinote.Event.service.EventService;
-import com.answer.notinote.Notice.dto.NoticeOCRDto;
-import com.answer.notinote.Notice.dto.NoticeRequestDto;
-import com.answer.notinote.Notice.dto.NoticeSentenceDto;
-import com.answer.notinote.Notice.dto.NoticeTitleListDto;
+import com.answer.notinote.Notice.dto.*;
 import com.answer.notinote.Notice.service.NoticeService;
 import com.answer.notinote.User.domain.entity.User;
 import com.answer.notinote.User.service.UserService;
@@ -18,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -45,10 +40,7 @@ public class NoticeController {
         String trans_full = noticeService.transText(korean, targetLanguage); //번역문 추출
 
         List<EventRequestDto> eventWords = noticeService.detectEvent(korean, trans_full, targetLanguage); //이벤트 추출
-        List<Event> events = new ArrayList<>();
-        for (EventRequestDto word : eventWords) events.add(eventService.create(word, null));
-
-        List<NoticeSentenceDto> fullText = noticeService.extractSentenceFromEvent(trans_full, events);
+        List<NoticeSentenceDto> fullText = noticeService.extractSentenceFromEventRequestDto(trans_full, eventWords);
         return new NoticeOCRDto(korean, trans_full, fullText);
     }
 
