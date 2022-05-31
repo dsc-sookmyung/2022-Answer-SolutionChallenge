@@ -277,6 +277,17 @@ public class NoticeService {
         return sentences;
     }
 
+    public List<NoticeEventListDto> extractEventList(List<NoticeSentenceDto> fullText){
+        List<NoticeEventListDto> events = new ArrayList<>();
+
+        for (int i = 0; i < fullText.size(); i++){
+            if(fullText.get(i).isHighlight()){
+                NoticeEventListDto event = new NoticeEventListDto(fullText.get(i).getContent(), fullText.get(i).getDate());
+                events.add(event);
+            }
+        }
+        return events;
+    }
 
     public Notice findNoticeById(Long id) {
         return noticeRepository.findById(id).orElseThrow(

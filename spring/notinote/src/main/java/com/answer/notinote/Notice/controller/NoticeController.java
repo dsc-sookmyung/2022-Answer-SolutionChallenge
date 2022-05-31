@@ -41,7 +41,9 @@ public class NoticeController {
         String en_full = noticeService.englishText(korean); // 영어 추출
         List<EventRequestDto> eventWords = noticeService.detectEvent(korean, trans_full, targetLanguage, en_full); //이벤트 추출
         List<NoticeSentenceDto> fullText = noticeService.extractSentenceFromEventRequestDto(trans_full, eventWords);
-        return new NoticeOCRDto(korean, trans_full, fullText);
+        List<NoticeEventListDto> events = noticeService.extractEventList(fullText);
+        Integer event_num = events.size();
+        return new NoticeOCRDto(korean, trans_full, fullText, event_num, events);
     }
 
     @RequestMapping(value = "/notice/save", method = RequestMethod.POST)
