@@ -237,7 +237,7 @@ public class NoticeService {
 
     public NoticeTitleListDto saveNotice(MultipartFile uploadfile, NoticeRequestDto noticeRequestDto, HttpServletRequest request) throws IOException{
         //요청한 사용자 확인
-        String token = jwtTokenProvider.resolveToken(request);
+        String token = jwtTokenProvider.resolveAccessToken(request);
         String useremail = jwtTokenProvider.getUserEmail(token);
         User user = userRepository.findByUemail(useremail).orElseThrow(IllegalArgumentException::new);
 

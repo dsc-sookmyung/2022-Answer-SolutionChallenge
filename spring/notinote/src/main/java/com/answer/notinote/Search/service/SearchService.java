@@ -38,7 +38,7 @@ public class SearchService {
 
     public List<SearchListDto> searchList(HttpServletRequest request){
 
-        String token = jwtTokenProvider.resolveToken(request);
+        String token = jwtTokenProvider.resolveAccessToken(request);
         String useremail = jwtTokenProvider.getUserEmail(token);
         User user = userRepository.findByUemail(useremail).orElseThrow(IllegalArgumentException::new);
 
@@ -74,7 +74,7 @@ public class SearchService {
 
     public SearchDetailDto searchDetailList(String date, HttpServletRequest request) {
 
-        String token = jwtTokenProvider.resolveToken(request);
+        String token = jwtTokenProvider.resolveAccessToken(request);
         String useremail = jwtTokenProvider.getUserEmail(token);
         User user = userRepository.findByUemail(useremail).orElseThrow(IllegalArgumentException::new);
         LocalDate trans_date = LocalDate.parse(date, DateTimeFormatter.ISO_DATE);

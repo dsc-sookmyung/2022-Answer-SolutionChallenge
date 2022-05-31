@@ -6,6 +6,7 @@ export default {
     swipe: 'スワイプして続行します ≫',
     start: 'NotiNoteを起動します',
     translate: '翻訳',
+    translation: '翻訳文',
     translateDesc: '通知の写真を撮るだけで、翻訳やカレンダー登録が可能です。',
     search: '検索',
     searchDesc: 'あなたが翻訳した通知を見つけることができます。',
@@ -62,7 +63,7 @@ export default {
     gotIt: '了解しました',
     registerFailed: 'イベントの追加に失敗しました。 もう一度やり直してください。',
     authFailed: "認証に失敗しました。もう一度やり直してください。",
-    tryAgain: '再試行',
+    retake: '再撮影',
     join: '参加',
     searchResult: "検索結果",
     noEvent: "今日はイベントはありません！"

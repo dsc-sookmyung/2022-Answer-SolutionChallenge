@@ -6,6 +6,7 @@ export default {
     swipe: '滑动继续≫',
     start: '启动 NotiNote',
     translate: '翻译',
+    translation: '翻译',
     translateDesc: '您只需拍摄家庭信件的照片即可完成从翻译到日历登记的所有工作。',
     search: '搜索',
     searchDesc: '您可以搜索以前翻译的家庭信件。',
@@ -61,7 +62,7 @@ export default {
     gotIt: '得到它',
     registerFailed: '添加事件失败。 请再试一次。',
     authFailed: "验证失败，请重试。",
-    tryAgain: '再试一次',
+    retake: '重拍',
     join: '加入',
     searchResult: "搜索结果",
     noEvent: "今天没有活动！"
