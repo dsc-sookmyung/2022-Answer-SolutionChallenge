@@ -20,7 +20,7 @@ public class UserResponseDto {
     private String uemail;
     private String ulanguage;
     private Long uprofileImg;
-    private List<ChildDto> uchildren = new ArrayList<>();
+    private List<ChildDto> uchildren;
     private RoleType uroleType;
 
     public UserResponseDto(User user) {
@@ -30,6 +30,7 @@ public class UserResponseDto {
         this.ulanguage = user.getUlanguage();
         this.uprofileImg = user.getUprofileImg();
         this.uroleType = user.getUroleType();
+        this.uchildren = new ArrayList<>();
 
         if (user.getUchildren() != null) {
             user.getUchildren().forEach( child -> this.uchildren.add(new ChildDto(child)));
