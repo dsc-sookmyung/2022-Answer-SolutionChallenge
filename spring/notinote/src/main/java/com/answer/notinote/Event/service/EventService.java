@@ -28,7 +28,7 @@ public class EventService {
 
     public Event create(EventRequestDto requestDto, Notice notice) {
         Event event = new Event(requestDto);
-        event.setNotice(notice);
+        if (notice != null) event.setNotice(notice);
         eventRepository.save(event);
 
         return event;
