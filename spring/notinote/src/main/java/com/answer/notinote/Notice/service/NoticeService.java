@@ -3,16 +3,13 @@ package com.answer.notinote.Notice.service;
 import com.answer.notinote.Auth.token.provider.JwtTokenProvider;
 import com.answer.notinote.Child.service.ChildService;
 import com.answer.notinote.Event.domain.Event;
-import com.answer.notinote.Notice.dto.NoticeResponseBody;
+import com.answer.notinote.Notice.dto.*;
 import com.answer.notinote.Event.dto.EventRequestDto;
 import com.answer.notinote.Event.service.EventService;
 import com.answer.notinote.Exception.CustomException;
 import com.answer.notinote.Exception.ErrorCode;
 import com.answer.notinote.Notice.domain.entity.Notice;
 import com.answer.notinote.Notice.domain.repository.NoticeRepository;
-import com.answer.notinote.Notice.dto.NoticeRequestDto;
-import com.answer.notinote.Notice.dto.NoticeSentenceDto;
-import com.answer.notinote.Notice.dto.NoticeTitleListDto;
 import com.answer.notinote.User.domain.entity.User;
 import com.answer.notinote.User.domain.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -116,7 +113,7 @@ public class NoticeService {
         return textlist.get(0);
     }
 
-    public List<EventRequestDto> detectEventOCR(String korean, String trans_full, String language) throws JsonProcessingException {
+    public List<EventRequestDto> detectEvent(String korean, String translation, String language) throws JsonProcessingException {
         String url = "https://notinote.herokuapp.com/event-dict";
 
         HttpHeaders headers = new HttpHeaders();
@@ -124,115 +121,19 @@ public class NoticeService {
 
         JSONObject body = new JSONObject();
         body.put("language", language);
-        body.put("kr_text",korean);
-        body.put("translated_text", trans_full);
-
+        body.put("kr_text", korean);
+        body.put("translated_text", translation);
         HttpEntity<String> request = new HttpEntity<>(body.toString(), headers);
+
         String response = new RestTemplate().postForObject(url, request, String.class);
-
         JsonNode root = new ObjectMapper().readTree(response);
-        if (root.path("message") != null) {
-            if (root.path("message").asText().equals("no events")) {
-                return null;
-            }
-        }
 
-        EventRequestDto[] eventDtos = new ObjectMapper().treeToValue(root.path("body"), EventRequestDto[].class);
-        List<EventRequestDto>  events = new ArrayList<>();
-        for (EventRequestDto dto : eventDtos) {
-            events.add(dto);
-        }
-        return events;
-    }
-
-    public List<NoticeSentenceDto> extractSentenceFromEventOCR(String text, List<EventRequestDto> events) {
-        List<NoticeSentenceDto> sentences = new ArrayList<>();
-        int lastIndex = 0, id = 1;
-
-        if (events == null) {
-            NoticeSentenceDto dto = NoticeSentenceDto.builder()
-                    .id(id)
-                    .date(null)
-                    .content(text)
-                    .highlight(false)
-                    .registered(false)
-                    .build();
-            sentences.add(dto);
-            return sentences;
-        }
-
-        Collections.sort(events);
-
-        for (EventRequestDto event : events) {
-            if (lastIndex != event.getS_index()) {
-                // event가 아닌 경우
-                String sentence = text.substring(lastIndex, event.getS_index());
-                NoticeSentenceDto dto = NoticeSentenceDto.builder()
-                        .id(id++)
-                        .content(sentence)
-                        .date(null)
-                        .highlight(false)
-                        .registered(false)
-                        .build();
-                sentences.add(dto);
-            }
-
-            // event인 경우
-            String sentence = text.substring(event.getS_index(), event.getE_index());
-
-            NoticeSentenceDto dto = NoticeSentenceDto.builder()
-                    .id(id++)
-                    .content(sentence)
-                    .date(LocalDate.parse(event.getDate()))
-                    .highlight(true)
-                    .registered(false)
-                    .build();
-            sentences.add(dto);
-
-            lastIndex = event.getE_index();
-        }
-        if (lastIndex != text.length() - 1) {
-            String sentence = text.substring(lastIndex, text.length() - 1);
-            NoticeSentenceDto dto = NoticeSentenceDto.builder()
-                    .id(id)
-                    .content(sentence)
-                    .date(null)
-                    .highlight(false)
-                    .registered(false)
-                    .build();
-            sentences.add(dto);
-        }
-
-        return sentences;
-    }
-
-    public List<Event> detectEvent(Notice notice, String language) throws JsonProcessingException {
-        String url = "https://notinote.herokuapp.com/event-dict";
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        JSONObject body = new JSONObject();
-        body.put("language", language);
-        body.put("kr_text", notice.getOrigin_full());
-        body.put("translated_text", notice.getTrans_full());
-
-        HttpEntity<String> request = new HttpEntity<>(body.toString(), headers);
-        String response = new RestTemplate().postForObject(url, request, String.class);
-
-        JsonNode root = new ObjectMapper().readTree(response);
-        if (root.path("message") != null) {
-            if (root.path("message").asText().equals("no events")) {
-                return null;
-            }
-        }
+        boolean noEvents = root.path("message") != null && root.path("message").asText().equals("no events");
+        if (noEvents) return null;
 
         NoticeResponseBody responseBody = new ObjectMapper().treeToValue(root, NoticeResponseBody.class);
-        List<Event>  events = new ArrayList<>();
-        for (EventRequestDto dto : responseBody.getBody()) {
-            events.add(eventService.create(dto, notice));
-        }
-        return events;
+
+        return responseBody.getBody();
     }
 
     public NoticeTitleListDto saveNotice(MultipartFile uploadfile, NoticeRequestDto noticeRequestDto, HttpServletRequest request) throws IOException{
@@ -263,24 +164,21 @@ public class NoticeService {
                 .build();
         noticeRepository.save(notice);
 
-        List<Event> events = detectEvent(notice, user.getUlanguage());
-        List<NoticeSentenceDto> sentences = extractSentenceFromEvent(notice.getTrans_full(), events);
+        List<EventRequestDto> eventWords = detectEvent(notice.getOrigin_full(), notice.getTrans_full(), user.getUlanguage());
+        List<Event> events = new ArrayList<>();
+        for (EventRequestDto dto : eventWords) events.add(eventService.create(dto, notice));
+
+        List<NoticeEventDto> sentences = extractSentenceFromEvent(notice.getTrans_full(), events);
 
         return new NoticeTitleListDto(notice, sentences);
     }
 
-    public List<NoticeSentenceDto> extractSentenceFromEvent(String text, List<Event> events) {
-        List<NoticeSentenceDto> sentences = new ArrayList<>();
+    public List<NoticeEventDto> extractSentenceFromEvent(String text, List<Event> events) {
+        List<NoticeEventDto> sentences = new ArrayList<>();
         int lastIndex = 0, id = 1;
 
         if (events == null) {
-            NoticeSentenceDto dto = NoticeSentenceDto.builder()
-                    .id(id)
-                    .date(null)
-                    .content(text)
-                    .highlight(false)
-                    .registered(false)
-                    .build();
+            NoticeEventDto dto = new NoticeEventDto(id, -1, text, null, false, false);
             sentences.add(dto);
             return sentences;
         }
@@ -291,44 +189,64 @@ public class NoticeService {
             if (lastIndex != event.getIndex_start()) {
                 // event가 아닌 경우
                 String sentence = text.substring(lastIndex, event.getIndex_start());
-                NoticeSentenceDto dto = NoticeSentenceDto.builder()
-                        .id(id++)
-                        .content(sentence)
-                        .date(null)
-                        .highlight(false)
-                        .registered(false)
-                        .build();
+                NoticeEventDto dto = new NoticeEventDto(id++, -1, sentence, null, false, false);
                 sentences.add(dto);
             }
 
             // event인 경우
             String sentence = text.substring(event.getIndex_start(), event.getIndex_end());
-            NoticeSentenceDto dto = NoticeSentenceDto.builder()
-                    .id(id++)
-                    .eid(event.getEid())
-                    .content(sentence)
-                    .date(event.getDate())
-                    .highlight(true)
-                    .registered(event.isRegistered())
-                    .build();
+            NoticeEventDto dto = new NoticeEventDto(id++, event.getEid(), sentence, event.getDate(), true, event.isRegistered());
             sentences.add(dto);
 
             lastIndex = event.getIndex_end();
         }
+
         if (lastIndex != text.length() - 1) {
             String sentence = text.substring(lastIndex, text.length() - 1);
-            NoticeSentenceDto dto = NoticeSentenceDto.builder()
-                    .id(id)
-                    .content(sentence)
-                    .date(null)
-                    .highlight(false)
-                    .registered(false)
-                    .build();
+            NoticeEventDto dto = new NoticeEventDto(id, -1, sentence, null, false, false);
             sentences.add(dto);
         }
 
         return sentences;
     }
+
+    public List<NoticeSentenceDto> extractSentenceFromEventRequestDto(String text, List<EventRequestDto> events) {
+        List<NoticeSentenceDto> sentences = new ArrayList<>();
+        int lastIndex = 0, id = 1;
+
+        if (events == null) {
+            NoticeSentenceDto dto = new NoticeSentenceDto(id, text, null, false);
+            sentences.add(dto);
+            return sentences;
+        }
+
+        Collections.sort(events);
+
+        for (EventRequestDto event : events) {
+            if (lastIndex != event.getS_index()) {
+                // event가 아닌 경우
+                String sentence = text.substring(lastIndex, event.getS_index());
+                NoticeSentenceDto dto = new NoticeSentenceDto(id++, sentence, null, false);
+                sentences.add(dto);
+            }
+
+            // event인 경우
+            String sentence = text.substring(event.getS_index(), event.getE_index());
+            NoticeSentenceDto dto = new NoticeSentenceDto(id++, sentence, LocalDate.parse(event.getDate()), true);
+            sentences.add(dto);
+
+            lastIndex = event.getE_index();
+        }
+
+        if (lastIndex != text.length() - 1) {
+            String sentence = text.substring(lastIndex, text.length() - 1);
+            NoticeSentenceDto dto = new NoticeSentenceDto(id, sentence, null, false);
+            sentences.add(dto);
+        }
+
+        return sentences;
+    }
+
 
     public Notice findNoticeById(Long id) {
         return noticeRepository.findById(id).orElseThrow(
