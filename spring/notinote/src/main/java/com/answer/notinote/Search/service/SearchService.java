@@ -5,7 +5,7 @@ import com.answer.notinote.Event.domain.Event;
 import com.answer.notinote.Event.service.EventService;
 import com.answer.notinote.Notice.domain.entity.Notice;
 import com.answer.notinote.Notice.domain.repository.NoticeRepository;
-import com.answer.notinote.Notice.dto.NoticeSentenceDto;
+import com.answer.notinote.Notice.dto.NoticeEventDto;
 import com.answer.notinote.Notice.service.NoticeService;
 import com.answer.notinote.Search.dto.SearchDetailDto;
 import com.answer.notinote.Search.dto.SearchListDto;
@@ -88,7 +88,7 @@ public class SearchService {
             Notice notice = notices.get(i);
 
             List<Event> events = eventService.findAllByNotice(notice);
-            List<NoticeSentenceDto> fullText = noticeService.extractSentenceFromEvent(notice.getTrans_full(), events);
+            List<NoticeEventDto> fullText = noticeService.extractSentenceFromEvent(notice.getTrans_full(), events);
 
             SearchResultDetailDto searchResultDetailDto = SearchResultDetailDto.builder()
                     .imageUri(notice.getNimageurl()+"/"+notice.getNimagename())
