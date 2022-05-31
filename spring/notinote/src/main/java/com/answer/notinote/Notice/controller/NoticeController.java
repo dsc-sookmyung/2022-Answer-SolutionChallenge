@@ -38,8 +38,8 @@ public class NoticeController {
 
         String korean = noticeService.detectText(uploadfile); //원문 추출
         String trans_full = noticeService.transText(korean, targetLanguage); //번역문 추출
-
-        List<EventRequestDto> eventWords = noticeService.detectEvent(korean, trans_full, targetLanguage); //이벤트 추출
+        String en_full = noticeService.englishText(korean); // 영어 추출
+        List<EventRequestDto> eventWords = noticeService.detectEvent(korean, trans_full, targetLanguage, en_full); //이벤트 추출
         List<NoticeSentenceDto> fullText = noticeService.extractSentenceFromEventRequestDto(trans_full, eventWords);
         return new NoticeOCRDto(korean, trans_full, fullText);
     }

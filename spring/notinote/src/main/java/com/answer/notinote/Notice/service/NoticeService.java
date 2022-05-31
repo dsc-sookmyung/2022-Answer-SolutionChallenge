@@ -113,7 +113,35 @@ public class NoticeService {
         return textlist.get(0);
     }
 
-    public List<EventRequestDto> detectEvent(String korean, String translation, String language) throws JsonProcessingException {
+    public String englishText(String korean) throws IOException {
+        String text = korean;
+        String projectId = "solution-challenge-342914";
+        ArrayList <String> textlist = new ArrayList<String>();
+
+        try (TranslationServiceClient client = TranslationServiceClient.create()) {
+            LocationName parent = LocationName.of(projectId, "global");
+
+            // Supported Mime Types: https://cloud.google.com/translate/docs/supported-formats
+            TranslateTextRequest request =
+                    TranslateTextRequest.newBuilder()
+                            .setParent(parent.toString())
+                            .setMimeType("text/plain")
+                            .setTargetLanguageCode("en")
+                            .addContents(text)
+                            .build();
+
+            TranslateTextResponse response = client.translateText(request);
+
+            for (Translation translation : response.getTranslationsList()) {
+                textlist.add(String.format("%s", translation.getTranslatedText()));
+            }
+            //System.out.println("Text : "+textlist.get(0));
+        }
+
+        return textlist.get(0);
+    }
+
+    public List<EventRequestDto> detectEvent(String korean, String translation, String language, String English) throws JsonProcessingException {
         String url = "https://notinote.herokuapp.com/event-dict";
 
         HttpHeaders headers = new HttpHeaders();
@@ -123,6 +151,7 @@ public class NoticeService {
         body.put("language", language);
         body.put("kr_text", korean);
         body.put("translated_text", translation);
+        body.put("en_text", English);
         HttpEntity<String> request = new HttpEntity<>(body.toString(), headers);
 
         String response = new RestTemplate().postForObject(url, request, String.class);
@@ -164,7 +193,8 @@ public class NoticeService {
                 .build();
         noticeRepository.save(notice);
 
-        List<EventRequestDto> eventWords = detectEvent(notice.getOrigin_full(), notice.getTrans_full(), user.getUlanguage());
+        String en_full = englishText(noticeRequestDto.getKorean());
+        List<EventRequestDto> eventWords = detectEvent(notice.getOrigin_full(), notice.getTrans_full(), user.getUlanguage(), en_full);
         List<Event> events = new ArrayList<>();
         for (EventRequestDto dto : eventWords) events.add(eventService.create(dto, notice));
 
