@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, TouchableOpacity, Alert, Image, ScrollView } from 'react-native';
-import { Text, HStack } from 'native-base'
+import { Text, HStack, VStack } from 'native-base'
 import { theme } from '../core/theme';
 import type { Navigation, Notices, UserData } from '../types';
 import SearchedNotice from '../components/SearchedNotice';
@@ -46,6 +46,18 @@ export default function SearchScreen({ navigation }: Navigation) {
                     }
                 ]
             },
+            {
+                date: "2022-02-15",
+                saved: [
+                    {
+                        cid: 1,
+                        titles: [
+                            "17th Graduation Ceremony",
+                            "School Day",
+                        ]
+                    }
+                ]
+            },
         ]
     );
     const [notices, setNotices] = useState<Notices[]>(
@@ -64,6 +76,18 @@ export default function SearchScreen({ navigation }: Navigation) {
                         cid: 2,
                         titles: [
                             "Opening Ceremony",
+                        ]
+                    }
+                ]
+            },
+            {
+                date: "2022-02-15",
+                saved: [
+                    {
+                        cid: 1,
+                        titles: [
+                            "17th Graduation Ceremony",
+                            "School Day",
                         ]
                     }
                 ]
@@ -89,8 +113,10 @@ export default function SearchScreen({ navigation }: Navigation) {
             })
             .then(response => response.json())
             .then(data => {
-                setNotices(data);
-                setFilteredNotices(data);
+                if (data?.date && data?.saved?.length) {
+                    setNotices(data);
+                    setFilteredNotices(data);    
+                }
             })
             .catch(function (error) {
                 console.log(error)
@@ -199,33 +225,42 @@ export default function SearchScreen({ navigation }: Navigation) {
                     />
                 </View>
             </HStack>
-            <ScrollView horizontal={true} style={styles.childButtonWrapper}>
-                <TouchableOpacity key={'n_all'} style={[styles.childButton, {
-                    backgroundColor: nowSelectedChildId === SHOW_ALL ? theme.colors.primary : "#ffffff",
-                }]} onPress={() => handleNowSelectedChildId(-1)}>
-                    <Text fontWeight={500} color={nowSelectedChildId !== SHOW_ALL ? theme.colors.primary : "#ffffff"}>
-                        All
-                    </Text>
-                </TouchableOpacity>
-                {user.uchildren?.map((child, index) =>
-                    <TouchableOpacity key={'n_'+index} style={[styles.childButton, {
-                        backgroundColor: nowSelectedChildId === child.cid ? theme.colors.primary : "#ffffff",
-                    }]} onPress={() => handleNowSelectedChildId(child.cid)}>
-                        <Image style={styles.cprofileImage} source={cProfileImgSource[child.cprofileImg-1]} />
-                        <Text fontWeight={500} style={[{
-                            color: nowSelectedChildId !== child.cid ? theme.colors.primary : "#ffffff",
-                        }]}>{child.cname}</Text>
+            
+            <View style={styles.childButtonWrapper}>
+                <ScrollView horizontal={true}>
+                    <TouchableOpacity key={'n_all'} style={[styles.childButton, {
+                        backgroundColor: nowSelectedChildId === SHOW_ALL ? theme.colors.primary : "#ffffff",
+                    }]} onPress={() => handleNowSelectedChildId(-1)}>
+                        <Text fontWeight={500} color={nowSelectedChildId !== SHOW_ALL ? theme.colors.primary : "#ffffff"}>
+                            All
+                        </Text>
                     </TouchableOpacity>
-                )}
-            </ScrollView>
-            {filteredNotices && filteredNotices.length > 0 &&
-                <View style={styles.searchResults}>
-                    <Text style={styles.smallDescription}>RESULTS</Text>
-                    {filteredNotices?.map((notice, index) => 
-                        <SearchedNotice key={"nt_" + index} date={notice?.date} saved={notice?.saved} />
+                    {user.uchildren?.map((child, index) =>
+                        <TouchableOpacity key={'n_'+index} style={[styles.childButton, {
+                            backgroundColor: nowSelectedChildId === child.cid ? theme.colors.primary : "#ffffff",
+                        }]} onPress={() => handleNowSelectedChildId(child.cid)}>
+                            <Image style={styles.cprofileImage} source={cProfileImgSource[child.cprofileImg-1]} />
+                            <Text fontWeight={500} style={[{
+                                color: nowSelectedChildId !== child.cid ? theme.colors.primary : "#ffffff",
+                            }]}>{child.cname}</Text>
+                        </TouchableOpacity>
                     )}
-                </View>
-            }
+                </ScrollView>
+            </View>
+            
+            <Text style={styles.smallDescription}>{i18n.t('results_cap')}</Text>
+
+            <ScrollView style={styles.searchResults}>
+                {filteredNotices && filteredNotices.length > 0 && (
+                    filteredNotices?.map((notice, index) => 
+                        <SearchedNotice key={"nt_" + index} date={notice?.date} saved={notice?.saved} />
+                    )
+                )}
+                {/* TODO: empty icon
+                : (
+                    <Text>There are no results yet. Translate and save the results.</Text>
+                )} */}
+            </ScrollView>
         </View> 
     );
 }
@@ -236,6 +271,7 @@ const styles = StyleSheet.create({
         padding: 20,
         flexDirection: 'column',
         alignItems: 'center',
+        justifyContent: 'flex-start'
     },
     smallDescription: {
         alignSelf: "flex-start",
@@ -249,7 +285,7 @@ const styles = StyleSheet.create({
         paddingRight: 12
     },
     searchResults: {
-        width: '100%'
+        width: '100%',
     },
     calendarIcon: {
         fontSize: 24,
@@ -263,7 +299,7 @@ const styles = StyleSheet.create({
     childButtonWrapper: {
         flexDirection: "row",
         alignSelf: "flex-start",
-        paddingBottom: 20
+        paddingBottom: 30
     },
     childButton: {
         borderWidth: 1,

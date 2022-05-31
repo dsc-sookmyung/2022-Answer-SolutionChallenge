@@ -63,7 +63,11 @@ export default function SearchResultScreen(props: SearchResultScreenProps) {
                 redirect: 'follow'
             })
             .then(response => response.json())
-            .then(data => setNotices(data))
+            .then(data => {
+                if (data?.date && data?.results.length) {
+                    setNotices(data);
+                }
+            })
             .catch(function (error) {
                 console.log(error)
                 if(error.response.status==401) {
