@@ -52,15 +52,7 @@ export default function TranslateScreen({ navigation }: Navigation) {
     }, [imageUri]);
 
     useEffect(() => {
-        if (results?.fullText && results.fullText.filter(item => item.highlight === true).length > 0) {
-            // const message = i18n.t('translateMessage_1')
-            // toast.show({    // Design according to mui toast guidelines (https://material.io/components/snackbars#anatomy)
-            //     render: () => {
-            //         return <Box bg="rgba(0,0,0,0.8)" px="3" py="2" rounded="xl" mx={2} mb={12} shadow={2}>
-            //                 {message}
-            //             </Box>;
-            //     }
-            // });
+        if (results?.fullText) {
             setOpenInitialEventForm(true);
         }
     }, [results]);
@@ -215,12 +207,14 @@ export default function TranslateScreen({ navigation }: Navigation) {
                 })
                 .then(response => response.json())
                 .then(data => {
+                    console.log(data);
                     Alert.alert(`The result was saved in Search as [${data?.title}]`);
+                    setResults(data);
                     handleOpenSaveForm();   
 					// auth?.handleUpdate();
                 })
                 .catch(function (error) {
-                    console.log(error)
+                    console.log('error',error);
                     if(error.response.status==401) {
                         //redirect to login
                         Alert.alert("The session has expired. Please log in again.");
@@ -288,7 +282,7 @@ export default function TranslateScreen({ navigation }: Navigation) {
                                         {results?.event_num ? (
                                             <Text fontSize="lg" fontWeight={600} textAlign="center">We found {results.event_num} events for you</Text>
                                         ) : (
-                                            <Text fontSize="lg" fontWeight={600} textAlign="center">There are no extracted events</Text>
+                                            <Text fontSize="lg" fontWeight={600} textAlign="center">{i18n.t('eventNotFound')}</Text>
                                         )}
                                     </VStack>
                                 </Modal.Header>
