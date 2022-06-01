@@ -66,5 +66,7 @@ export default {
     retake: 'ถ่ายใหม่',
     join: 'เข้าร่วม',
     searchResult: "ผลการค้นหา",
-    noEvent: "วันนี้ไม่มีกิจกรรม!"
+    noEvent: "วันนี้ไม่มีกิจกรรม!",
+    saveFirst: "คลิกปุ่มบันทึกเพื่อบันทึกผลลัพธ์ก่อน!",
+    eventNotFound: "ไม่พบกิจกรรม"
 }

@@ -66,6 +66,7 @@ interface AuthContextData {
 };
 interface Event {
     id: number, 
+	eid: number,
     content: string, 
     date?: string, 
     highlight: boolean, 
@@ -79,6 +80,8 @@ interface Result {
     korean: string,
     trans_full?: string,
 	
+	title?: string,
+
 	event_num?: number,
 	events?: { title: string, date: string }[]
 }

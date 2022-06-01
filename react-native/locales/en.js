@@ -72,5 +72,7 @@ export default {
     retake: 'Retake',
     join: 'Join',
     searchResult: "Search Result",
-    noEvent: "There is no event today!"
+    noEvent: "There is no event today!",
+    saveFirst: "Click the Save button to save the results first!",
+    eventNotFound: "No event found"
 }
