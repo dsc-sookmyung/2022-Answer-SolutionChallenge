@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, TouchableOpacity, Image } from 'react-native';
-import { VStack, Text } from 'native-base';
+import { VStack, Text, HStack } from 'native-base';
 import { useNavigation } from '@react-navigation/native';
 import type { Notices, UserData } from '../types';
 import useFonts from '../hooks/useFonts'
 import AppLoading from 'expo-app-loading';
 import { theme } from '../core/theme';
 import { useAuth } from '../contexts/Auth';
+import i18n from 'i18n-js'
+import '../locales/i18n';
 
 
 export default function SearchedNotice(props: Notices) {
@@ -56,15 +58,18 @@ export default function SearchedNotice(props: Notices) {
                         style={ styles.childNotice }
                     >
                         <View style={{ justifyContent: "space-between" }}>
-                        {user.uchildren &&
-                            <View style={ styles.cprofile }>
-                                <Image style={styles.cprofileImageLg} source={cProfileImgSource[user.uchildren.filter(uchild => uchild.cid === child.cid)[0]?.cprofileImg-1]} />    
-                                <Text>{user.uchildren.filter(uchild => uchild.cid === child.cid)[0]?.cname}</Text>                    
-                            </View>
-                        }
-                        {child?.titles?.map((title, tIndex) => 
-                            <Text key={'sct_'+tIndex} style={styles.notices}>{"Title " + (tIndex + 1) + ". " + title}</Text>
-                        )}
+                            <HStack style={styles.noticeHeader}>
+                                <Text fontWeight={500}>{i18n.t('title')}</Text>
+                                {user.uchildren &&
+                                    <HStack style={ styles.cprofile }>
+                                        <Text fontWeight={500}>{user.uchildren.filter(uchild => uchild.cid === child.cid)[0]?.cname}</Text>                    
+                                        <Image style={styles.cprofileImageLg} source={cProfileImgSource[user.uchildren.filter(uchild => uchild.cid === child.cid)[0]?.cprofileImg-1]} />    
+                                    </HStack>
+                                }
+                            </HStack>
+                            {child?.titles?.map((title, tIndex) => 
+                                <Text key={'sct_'+tIndex} style={styles.notices}>{(tIndex + 1) + ". " + title}</Text>
+                            )}
                         </View>
                     </TouchableOpacity>
                 )}
@@ -77,7 +82,7 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: theme.colors.primary,
         width: '100%',
-        marginVertical: 4,
+        marginVertical: 8,
         paddingVertical: 20,
         paddingHorizontal: 28,
         borderRadius: 16,
@@ -105,13 +110,25 @@ const styles = StyleSheet.create({
         backgroundColor: "#fff",
         borderRadius: 16,
         padding: 16,
+        shadowColor: "#acacac",
+        shadowOpacity: 0.4,
+        shadowRadius: 8,
+        shadowOffset: {
+          height: 0,
+          width: 0,
+        }
     },
     cprofile: {
-        alignItems: "center"
+        alignItems: "center",
     },
     cprofileImageLg: {
         width: 32,
         height: 32,
-        marginBottom: 2
+        marginLeft: 8
     },
+    noticeHeader: { 
+        alignItems: "center", 
+        justifyContent: "space-between", 
+        paddingBottom: 6 
+    }
 })
