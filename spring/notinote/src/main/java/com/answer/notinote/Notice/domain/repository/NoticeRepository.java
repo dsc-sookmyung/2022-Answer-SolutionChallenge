@@ -25,6 +25,4 @@ public interface NoticeRepository extends JpaRepository<Notice, Long> {
 
     List<Notice> findByNdate(LocalDate date);
 
-    List<Notice> findByUserAndChild(User user, Child child);
-
 }

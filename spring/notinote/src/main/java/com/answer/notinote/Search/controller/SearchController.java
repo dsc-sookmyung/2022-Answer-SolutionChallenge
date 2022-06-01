@@ -33,10 +33,10 @@ public class SearchController {
         return searchService.searchDetailList(date, request);
     }
 
-    @RequestMapping(value="/search/child", method = RequestMethod.GET)
-    public List<SearchListDto> searchChildList(@RequestParam("cid") Long cid, HttpServletRequest request){
-        return searchService.searchChildList(cid, request);
-    }
+    //@RequestMapping(value="/search/child", method = RequestMethod.GET)
+    //public List<SearchListDto> searchChildList(@RequestParam("cid") Long cid, HttpServletRequest request){
+    //    return searchService.searchChildList(cid, request);
+    //}
 
 
 }

@@ -9,6 +9,7 @@ import com.answer.notinote.Notice.domain.entity.Notice;
 import com.answer.notinote.Notice.domain.repository.NoticeRepository;
 import com.answer.notinote.Notice.dto.NoticeSentenceDto;
 import com.answer.notinote.Notice.service.NoticeService;
+import com.answer.notinote.Search.dto.SearchSavedListDto;
 import com.answer.notinote.Search.dto.SearchDetailDto;
 import com.answer.notinote.Search.dto.SearchListDto;
 import com.answer.notinote.Search.dto.SearchResultDetailDto;
@@ -49,8 +50,7 @@ public class SearchService {
         List<Notice> notices = noticeRepository.findByUser(user);
 
         List<LocalDate> dateList = new ArrayList<>();
-        List<List<String>> titleLists = new ArrayList<>();
-        List<SearchListDto> searchListDtos = new ArrayList<>();
+        List<SearchListDto> saved = new ArrayList<>();
 
         //유니크한 날짜값만 리스트에 저장하는 jpa 쿼리 메소드
         for (int i = 0; i < noticeRepository.findUniqueNdate(user).size(); i++) {
@@ -61,19 +61,26 @@ public class SearchService {
 
         for (int i = 0; i < dateList.size(); i++) {
             List<String> titleList = new ArrayList<>();
+            List<SearchSavedListDto> savedLists = new ArrayList<>();
             for (int j = 0; j < notices.size(); j++) {
                 if ((notices.get(j).getNdate()).equals(dateList.get(i))) {
                     titleList.add(notices.get(j).getTitle());
+                    SearchSavedListDto searchSavedListDto = SearchSavedListDto.builder()
+                            .nid(notices.get(j).getNid())
+                            .cid(notices.get(j).getChild().getCid())
+                            .title(notices.get(j).getTitle())
+                            .build();
+                    savedLists.add(searchSavedListDto);
                 }
             }
-            titleLists.add(titleList);
             SearchListDto searchListDto = SearchListDto.builder()
                     .date(dateList.get(i))
-                    .saved_titles(titleLists.get(i))
+                    .saved(savedLists)
                     .build();
-            searchListDtos.add(searchListDto);
+            saved.add(searchListDto);
         }
-        return searchListDtos;
+
+        return saved;
     }
 
     public SearchDetailDto searchDetailList(String date, HttpServletRequest request) {
@@ -111,7 +118,7 @@ public class SearchService {
                 .build();
 
     }
-
+    /*
     public List<SearchListDto> searchChildList(Long cid, HttpServletRequest request) {
 
         String token = jwtTokenProvider.resolveToken(request);
@@ -153,4 +160,5 @@ public class SearchService {
         }
         return searchListDtos;
     }
+     */
 }
