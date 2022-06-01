@@ -168,17 +168,17 @@ public class NoticeService {
         List<Event> events = new ArrayList<>();
         for (EventRequestDto dto : eventWords) events.add(eventService.create(dto, notice));
 
-        List<NoticeEventDto> sentences = extractSentenceFromEvent(notice.getTrans_full(), events);
+        List<NoticeSentenceDto> sentences = extractSentenceFromEvent(notice.getTrans_full(), events);
 
         return new NoticeTitleListDto(notice, sentences);
     }
 
-    public List<NoticeEventDto> extractSentenceFromEvent(String text, List<Event> events) {
-        List<NoticeEventDto> sentences = new ArrayList<>();
+    public List<NoticeSentenceDto> extractSentenceFromEvent(String text, List<Event> events) {
+        List<NoticeSentenceDto> sentences = new ArrayList<>();
         int lastIndex = 0, id = 1;
 
         if (events == null) {
-            NoticeEventDto dto = new NoticeEventDto(id, -1, text, null, false, false);
+            NoticeSentenceDto dto = new NoticeSentenceDto(id, -1, text, null, false, false);
             sentences.add(dto);
             return sentences;
         }
@@ -189,13 +189,13 @@ public class NoticeService {
             if (lastIndex != event.getIndex_start()) {
                 // event가 아닌 경우
                 String sentence = text.substring(lastIndex, event.getIndex_start());
-                NoticeEventDto dto = new NoticeEventDto(id++, -1, sentence, null, false, false);
+                NoticeSentenceDto dto = new NoticeSentenceDto(id++, -1, sentence, null, false, false);
                 sentences.add(dto);
             }
 
             // event인 경우
             String sentence = text.substring(event.getIndex_start(), event.getIndex_end());
-            NoticeEventDto dto = new NoticeEventDto(id++, event.getEid(), sentence, event.getDate(), true, event.isRegistered());
+            NoticeSentenceDto dto = new NoticeSentenceDto(id++, event.getEid(), sentence, event.getDate(), true, event.isRegistered());
             sentences.add(dto);
 
             lastIndex = event.getIndex_end();
@@ -203,7 +203,7 @@ public class NoticeService {
 
         if (lastIndex != text.length() - 1) {
             String sentence = text.substring(lastIndex, text.length() - 1);
-            NoticeEventDto dto = new NoticeEventDto(id, -1, sentence, null, false, false);
+            NoticeSentenceDto dto = new NoticeSentenceDto(id, -1, sentence, null, false, false);
             sentences.add(dto);
         }
 
@@ -215,7 +215,7 @@ public class NoticeService {
         int lastIndex = 0, id = 1;
 
         if (events == null) {
-            NoticeSentenceDto dto = new NoticeSentenceDto(id, text, null, false);
+            NoticeSentenceDto dto = new NoticeSentenceDto(id, -1, text, null, false, false);
             sentences.add(dto);
             return sentences;
         }
@@ -226,13 +226,13 @@ public class NoticeService {
             if (lastIndex != event.getS_index()) {
                 // event가 아닌 경우
                 String sentence = text.substring(lastIndex, event.getS_index());
-                NoticeSentenceDto dto = new NoticeSentenceDto(id++, sentence, null, false);
+                NoticeSentenceDto dto = new NoticeSentenceDto(id++, -1, sentence, null, false, false);
                 sentences.add(dto);
             }
 
             // event인 경우
             String sentence = text.substring(event.getS_index(), event.getE_index());
-            NoticeSentenceDto dto = new NoticeSentenceDto(id++, sentence, LocalDate.parse(event.getDate()), true);
+            NoticeSentenceDto dto = new NoticeSentenceDto(id++, -1, sentence, LocalDate.parse(event.getDate()), true, false);
             sentences.add(dto);
 
             lastIndex = event.getE_index();
@@ -240,7 +240,7 @@ public class NoticeService {
 
         if (lastIndex != text.length() - 1) {
             String sentence = text.substring(lastIndex, text.length() - 1);
-            NoticeSentenceDto dto = new NoticeSentenceDto(id, sentence, null, false);
+            NoticeSentenceDto dto = new NoticeSentenceDto(id, -1, sentence, null, false, false);
             sentences.add(dto);
         }
 
