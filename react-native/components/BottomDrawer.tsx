@@ -11,7 +11,7 @@ import '../locales/i18n';
 
 
 const highlight = (text: string, registered: boolean) =>
-    <Text fontFamily="body" fontWeight={700} fontStyle="normal" fontSize='md' pt={24} style={!registered ? styles.highlighted : styles.grayBackground}>{text}</Text>
+    <Text color="#fff" fontFamily="body" fontWeight={500} fontStyle="normal" fontSize='md' pt={24} style={!registered ? styles.highlighted : styles.grayBackground}>{text}</Text>
 
 function BottomDrawer(props: BottomDrawerProps) {
     const [currentEvent, setCurrentEvent] = useState<number>(0);
@@ -280,13 +280,13 @@ function BottomDrawer(props: BottomDrawerProps) {
             {props.isTranslateScreen && 
                 <View style={[styles.spaceBetween, props.isFullDrawer && styles.full ]}>
                     <TouchableHighlight style={[styles.regularButton, styles.grayBackground]} onPress={props.retakePicture}>
-                        <Text color="white">{i18n.t('retake')}</Text>
+                        <Text color="white" fontWeight={500}>{i18n.t('retake')}</Text>
                     </TouchableHighlight>
                     <View style={styles.gap} />
                     {props.handleOpenSaveForm && 
                         <>
                         <TouchableHighlight style={[styles.regularButton, styles.primaryBackground]} onPress={props.handleOpenSaveForm}>
-                            <Text color="white">{i18n.t('save')}</Text>
+                            <Text color="white" fontWeight={500}>{i18n.t('save')}</Text>
                         </TouchableHighlight>
                         <Modal isOpen={props.openSaveForm} onClose={props.handleOpenSaveForm}>
                             <Modal.Content maxWidth="400px">
@@ -387,7 +387,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     highlighted: {
-        backgroundColor: theme.colors.skyblue
+        backgroundColor: theme.colors.primary,
     },
     full: {
         paddingBottom: 96
