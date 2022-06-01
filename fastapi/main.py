@@ -88,7 +88,6 @@ async def root(request: Request):
             if translated_event_start_index == NOT_FOUNDED:
                 return {"status": 200, "message": "translation error"}
 
-            notice_title = ask_model(request.en_text, "What is the ")
             result = {
                 "event": en_to_tr_event_dict[event],
                 "s_index": translated_event_start_index,
@@ -97,4 +96,5 @@ async def root(request: Request):
             }
 
             events.append(result)
-    return {"status": 200, "body": events}
+    notice_title = ask_model(request.en_text, "What is the main school event?")
+    return {"status": 200, "body": {"title": notice_title, "events": events}}
