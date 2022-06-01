@@ -61,11 +61,9 @@ public class SearchService {
         dateList.sort(Comparator.reverseOrder()); //최신순 정렬
 
         for (int i = 0; i < dateList.size(); i++) {
-            List<String> titleList = new ArrayList<>();
             List<SearchSavedListDto> savedLists = new ArrayList<>();
             for (int j = 0; j < notices.size(); j++) {
                 if ((notices.get(j).getNdate()).equals(dateList.get(i))) {
-                    titleList.add(notices.get(j).getTitle());
                     SearchSavedListDto searchSavedListDto = SearchSavedListDto.builder()
                             .nid(notices.get(j).getNid())
                             .cid(notices.get(j).getChild().getCid())
@@ -122,7 +120,7 @@ public class SearchService {
                 .build();
 
     }
-    /*
+
     public List<SearchListDto> searchChildList(Long cid, HttpServletRequest request) {
 
         String token = jwtTokenProvider.resolveToken(request);
@@ -132,8 +130,7 @@ public class SearchService {
         List<Notice> notices = noticeRepository.findByUserAndChild(user, child);
 
         List<LocalDate> dateList = new ArrayList<>();
-        List<List<String>> titleLists = new ArrayList<>();
-        List<SearchListDto> searchListDtos = new ArrayList<>();
+        List<SearchListDto> saved = new ArrayList<>();
 
         //유니크한 날짜값만 리스트에 저장하는 jpa 쿼리 메소드
         for (int i = 0; i < noticeRepository.findUniqueNdate(user).size(); i++) {
@@ -143,26 +140,27 @@ public class SearchService {
         dateList.sort(Comparator.reverseOrder()); //최신순 정렬
 
         for (int i = 0; i < dateList.size(); i++) {
-            List<String> titleList = new ArrayList<>();
+            List<SearchSavedListDto> savedLists = new ArrayList<>();
             for (int j = 0; j < notices.size(); j++) {
                 if ((notices.get(j).getNdate()).equals(dateList.get(i))) {
-                    if (notices.get(j).getTitle() != null) {
-                        titleList.add(notices.get(j).getTitle());
-                    }
+                    SearchSavedListDto searchSavedListDto = SearchSavedListDto.builder()
+                            .nid(notices.get(j).getNid())
+                            .cid(notices.get(j).getChild().getCid())
+                            .title(notices.get(j).getTitle())
+                            .build();
+                    savedLists.add(searchSavedListDto);
                 }
             }
 
+            SearchListDto searchListDto = SearchListDto.builder()
+                    .date(dateList.get(i))
+                    .saved(savedLists)
+                    .build();
 
-            if (!titleList.isEmpty()){
-                titleLists.add(titleList);
-                SearchListDto searchListDto = SearchListDto.builder()
-                        .date(dateList.get(i))
-                        .saved_titles(titleLists.get(i))
-                        .build();
-                searchListDtos.add(searchListDto);
+            saved.add(searchListDto);
             }
-        }
-        return searchListDtos;
+        return saved ;
     }
-     */
 }
+
+
