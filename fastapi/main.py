@@ -1,5 +1,5 @@
 from transformers import pipeline
-import parsedatetime as pdt
+from dateutil import parser
 from fastapi import FastAPI
 from pydantic import BaseModel
 import re
@@ -15,11 +15,10 @@ class Request(BaseModel):
 
 
 app = FastAPI()
-cal = pdt.Calendar()
 qa_pipeline = pipeline(
     "question-answering",
-    model="deepset/roberta-base-squad2",
-    tokenizer="deepset/roberta-base-squad2"
+    model="deepset/bert-large-uncased-whole-word-masking-squad2",
+    tokenizer="deepset/bert-large-uncased-whole-word-masking-squad2"
 )
 events = []
 NOT_FOUNDED = -1
@@ -51,15 +50,12 @@ def ask_model(context, question):
     return answer
 
 
-def format_date(date):
-    date.replace(" ", "")
-    date.replace("/", "-")
-    date.replace(".", "-")
+def delete_weekday_from_datetext(date):
     # delete day information inside brackets e.g.(Mon)
     if date.find("(") != NOT_FOUNDED and date.find(")") != NOT_FOUNDED:
         open_index = date.find("(")
         close_index = date.find(")")
-        date = date[:open_index] + date[close_index + 1:]
+        date = date[:open_index] + date[close_index + 2:]
     return date
 
 
@@ -77,14 +73,11 @@ async def root(request: Request):
         if request.en_text.find(event) != NOT_FOUNDED:
             question = 'When is the {}?'.format(event)
             answer = ask_model(request.en_text, question)
-            extracted_date = format_date(answer)
-
+            extracted_date = delete_weekday_from_datetext(answer)
+            print(extracted_date)
             try:
-                if has_alpha(extracted_date):
-                    datetime = cal.parseDateText(extracted_date)
-                else:
-                    datetime = cal.parseDate(extracted_date)
-                datetime = str(datetime[0]) + "-" + str(datetime[1]).zfill(2) + "-" + str(datetime[2]).zfill(2)
+                datetime = parser.parse(extracted_date)
+                datetime = str(datetime.year) + "-" + str(datetime.month).zfill(2) + "-" + str(datetime.day).zfill(2)
             except:
                 return {"status": 200, "message": "no date information"}
 
@@ -95,6 +88,7 @@ async def root(request: Request):
             if translated_event_start_index == NOT_FOUNDED:
                 return {"status": 200, "message": "translation error"}
 
+            notice_title = ask_model(request.en_text, "What is the ")
             result = {
                 "event": en_to_tr_event_dict[event],
                 "s_index": translated_event_start_index,
