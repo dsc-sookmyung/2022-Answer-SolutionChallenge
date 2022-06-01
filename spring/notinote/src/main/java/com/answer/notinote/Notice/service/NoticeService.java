@@ -113,7 +113,35 @@ public class NoticeService {
         return textlist.get(0);
     }
 
-    public List<EventRequestDto> detectEvent(String korean, String translation, String language) throws JsonProcessingException {
+    public String englishText(String korean) throws IOException {
+        String text = korean;
+        String projectId = "solution-challenge-342914";
+        ArrayList <String> textlist = new ArrayList<String>();
+
+        try (TranslationServiceClient client = TranslationServiceClient.create()) {
+            LocationName parent = LocationName.of(projectId, "global");
+
+            // Supported Mime Types: https://cloud.google.com/translate/docs/supported-formats
+            TranslateTextRequest request =
+                    TranslateTextRequest.newBuilder()
+                            .setParent(parent.toString())
+                            .setMimeType("text/plain")
+                            .setTargetLanguageCode("en")
+                            .addContents(text)
+                            .build();
+
+            TranslateTextResponse response = client.translateText(request);
+
+            for (Translation translation : response.getTranslationsList()) {
+                textlist.add(String.format("%s", translation.getTranslatedText()));
+            }
+            //System.out.println("Text : "+textlist.get(0));
+        }
+
+        return textlist.get(0);
+    }
+
+    public List<EventRequestDto> detectEvent(String korean, String translation, String language, String English) throws JsonProcessingException {
         String url = "https://notinote.herokuapp.com/event-dict";
 
         HttpHeaders headers = new HttpHeaders();
@@ -123,6 +151,7 @@ public class NoticeService {
         body.put("language", language);
         body.put("kr_text", korean);
         body.put("translated_text", translation);
+        body.put("en_text", English);
         HttpEntity<String> request = new HttpEntity<>(body.toString(), headers);
 
         String response = new RestTemplate().postForObject(url, request, String.class);
@@ -164,21 +193,22 @@ public class NoticeService {
                 .build();
         noticeRepository.save(notice);
 
-        List<EventRequestDto> eventWords = detectEvent(notice.getOrigin_full(), notice.getTrans_full(), user.getUlanguage());
+        String en_full = englishText(noticeRequestDto.getKorean());
+        List<EventRequestDto> eventWords = detectEvent(notice.getOrigin_full(), notice.getTrans_full(), user.getUlanguage(), en_full);
         List<Event> events = new ArrayList<>();
         for (EventRequestDto dto : eventWords) events.add(eventService.create(dto, notice));
 
-        List<NoticeEventDto> sentences = extractSentenceFromEvent(notice.getTrans_full(), events);
+        List<NoticeSentenceDto> sentences = extractSentenceFromEvent(notice.getTrans_full(), events);
 
         return new NoticeTitleListDto(notice, sentences);
     }
 
-    public List<NoticeEventDto> extractSentenceFromEvent(String text, List<Event> events) {
-        List<NoticeEventDto> sentences = new ArrayList<>();
+    public List<NoticeSentenceDto> extractSentenceFromEvent(String text, List<Event> events) {
+        List<NoticeSentenceDto> sentences = new ArrayList<>();
         int lastIndex = 0, id = 1;
 
         if (events == null) {
-            NoticeEventDto dto = new NoticeEventDto(id, -1, text, null, false, false);
+            NoticeSentenceDto dto = new NoticeSentenceDto(id, -1, text, null, false, false);
             sentences.add(dto);
             return sentences;
         }
@@ -189,13 +219,13 @@ public class NoticeService {
             if (lastIndex != event.getIndex_start()) {
                 // event가 아닌 경우
                 String sentence = text.substring(lastIndex, event.getIndex_start());
-                NoticeEventDto dto = new NoticeEventDto(id++, -1, sentence, null, false, false);
+                NoticeSentenceDto dto = new NoticeSentenceDto(id++, -1, sentence, null, false, false);
                 sentences.add(dto);
             }
 
             // event인 경우
             String sentence = text.substring(event.getIndex_start(), event.getIndex_end());
-            NoticeEventDto dto = new NoticeEventDto(id++, event.getEid(), sentence, event.getDate(), true, event.isRegistered());
+            NoticeSentenceDto dto = new NoticeSentenceDto(id++, event.getEid(), sentence, event.getDate(), true, event.isRegistered());
             sentences.add(dto);
 
             lastIndex = event.getIndex_end();
@@ -203,7 +233,7 @@ public class NoticeService {
 
         if (lastIndex != text.length() - 1) {
             String sentence = text.substring(lastIndex, text.length() - 1);
-            NoticeEventDto dto = new NoticeEventDto(id, -1, sentence, null, false, false);
+            NoticeSentenceDto dto = new NoticeSentenceDto(id, -1, sentence, null, false, false);
             sentences.add(dto);
         }
 
@@ -215,7 +245,7 @@ public class NoticeService {
         int lastIndex = 0, id = 1;
 
         if (events == null) {
-            NoticeSentenceDto dto = new NoticeSentenceDto(id, text, null, false);
+            NoticeSentenceDto dto = new NoticeSentenceDto(id, -1, text, null, false, false);
             sentences.add(dto);
             return sentences;
         }
@@ -226,13 +256,13 @@ public class NoticeService {
             if (lastIndex != event.getS_index()) {
                 // event가 아닌 경우
                 String sentence = text.substring(lastIndex, event.getS_index());
-                NoticeSentenceDto dto = new NoticeSentenceDto(id++, sentence, null, false);
+                NoticeSentenceDto dto = new NoticeSentenceDto(id++, -1, sentence, null, false, false);
                 sentences.add(dto);
             }
 
             // event인 경우
             String sentence = text.substring(event.getS_index(), event.getE_index());
-            NoticeSentenceDto dto = new NoticeSentenceDto(id++, sentence, LocalDate.parse(event.getDate()), true);
+            NoticeSentenceDto dto = new NoticeSentenceDto(id++, -1, sentence, LocalDate.parse(event.getDate()), true, false);
             sentences.add(dto);
 
             lastIndex = event.getE_index();
@@ -240,13 +270,24 @@ public class NoticeService {
 
         if (lastIndex != text.length() - 1) {
             String sentence = text.substring(lastIndex, text.length() - 1);
-            NoticeSentenceDto dto = new NoticeSentenceDto(id, sentence, null, false);
+            NoticeSentenceDto dto = new NoticeSentenceDto(id, -1, sentence, null, false, false);
             sentences.add(dto);
         }
 
         return sentences;
     }
 
+    public List<NoticeEventListDto> extractEventList(List<NoticeSentenceDto> fullText){
+        List<NoticeEventListDto> events = new ArrayList<>();
+
+        for (int i = 0; i < fullText.size(); i++){
+            if(fullText.get(i).isHighlight()){
+                NoticeEventListDto event = new NoticeEventListDto(fullText.get(i).getContent(), fullText.get(i).getDate());
+                events.add(event);
+            }
+        }
+        return events;
+    }
 
     public Notice findNoticeById(Long id) {
         return noticeRepository.findById(id).orElseThrow(

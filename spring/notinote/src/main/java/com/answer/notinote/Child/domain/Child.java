@@ -35,7 +35,7 @@ public class Child extends Timestamped {
     @Column
     private Long cprofileImg;
 
-    @Column()
+    @Column
     Long color;
 
     @OneToMany(mappedBy = "child", cascade = CascadeType.ALL)

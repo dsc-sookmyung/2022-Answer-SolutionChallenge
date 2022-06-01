@@ -1,6 +1,6 @@
 package com.answer.notinote.Search.dto;
 
-import com.answer.notinote.Notice.dto.NoticeEventDto;
+import com.answer.notinote.Notice.dto.NoticeSentenceDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,11 +12,11 @@ import java.util.List;
 public class SearchResultDetailDto {
     private Long id;
     private String imageUri;
-    private List<NoticeEventDto> fullText;
+    private List<NoticeSentenceDto> fullText;
     private String korean;
 
     @Builder
-    public SearchResultDetailDto(Long id, String imageUri, List<NoticeEventDto> fullText, String korean){
+    public SearchResultDetailDto(Long id, String imageUri, List<NoticeSentenceDto> fullText, String korean){
         this.id = id;
         this.imageUri = imageUri;
         this.fullText = fullText;

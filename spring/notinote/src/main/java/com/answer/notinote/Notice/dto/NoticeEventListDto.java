@@ -9,11 +9,8 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 @Builder
-public class NoticeEventDto {
-    int id;
-    long eid;
-    String content;
+public class NoticeEventListDto {
+    String title;
     LocalDate date;
-    boolean highlight;
-    boolean registered;
+
 }

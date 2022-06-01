@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, TouchableOpacity, ImageBackground, Dimensions, Alert } from 'react-native';
-import { useToast, Box, Button, HStack, Text, Divider, Modal } from 'native-base';
+import { StyleSheet, View, TouchableOpacity, ImageBackground, Dimensions, Alert, Image } from 'react-native';
+import { useToast, Box, Button, HStack, Text, Divider, Modal, VStack } from 'native-base';
 import { Camera } from 'expo-camera';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, SimpleLineIcons, FontAwesome } from '@expo/vector-icons';
 import { theme } from '../core/theme';
 import type { Navigation, Result, ResultsForm } from '../types';
 import SwipeUpDown from 'react-native-swipe-up-down';
@@ -52,37 +52,10 @@ export default function TranslateScreen({ navigation }: Navigation) {
     }, [imageUri]);
 
     useEffect(() => {
-        if (results?.fullText && results.fullText.filter(item => item.highlight === true).length > 0) {
-            // const message = i18n.t('translateMessage_1')
-            // toast.show({    // Design according to mui toast guidelines (https://material.io/components/snackbars#anatomy)
-            //     render: () => {
-            //         return <Box bg="rgba(0,0,0,0.8)" px="3" py="2" rounded="xl" mx={2} mb={12} shadow={2}>
-            //                 {message}
-            //             </Box>;
-            //     }
-            // });
-            if (results?.event_num && results.event_num > 0) {
-                setOpenInitialEventForm(true);
-            }
-            else {
-                const message = "There are no extracted events!"
-                toast.show({    // Design according to mui toast guidelines (https://material.io/components/snackbars#anatomy)
-                    placement: "top",
-                    render: () => {
-                        return <Box bg="rgba(0,0,0,0.7)" p="4" rounded="xl" mx={2} mt={20} shadow={2}>
-                                {message}
-                            </Box>;
-                    }
-                });
-            }
+        if (results?.fullText) {
+            setOpenInitialEventForm(true);
         }
     }, [results]);
-
-    useEffect(() => {
-        if (openInitialEventForm) {
-            setTimeout(() => {setOpenInitialEventForm(false)}, 5000);            
-        }
-    }, [openInitialEventForm])
 
     // DEV TEST 
     // if (hasPermission === null) {
@@ -234,12 +207,14 @@ export default function TranslateScreen({ navigation }: Navigation) {
                 })
                 .then(response => response.json())
                 .then(data => {
+                    console.log(data);
                     Alert.alert(`The result was saved in Search as [${data?.title}]`);
+                    setResults(data);
                     handleOpenSaveForm();   
 					// auth?.handleUpdate();
                 })
                 .catch(function (error) {
-                    console.log(error)
+                    console.log('error',error);
                     if(error.response.status==401) {
                         //redirect to login
                         Alert.alert("The session has expired. Please log in again.");
@@ -303,14 +278,27 @@ export default function TranslateScreen({ navigation }: Navigation) {
                             <Modal isOpen={openInitialEventForm} animationPreset="slide">
                                 <Modal.Content maxWidth="400">
                                 <Modal.Header>
-                                    <Text fontSize="lg" fontWeight={600} textAlign="center">{results?.event_num} Events Extracted</Text>
+                                    <VStack space={2}>
+                                        {results?.event_num ? (
+                                            <Text fontSize="lg" fontWeight={600} textAlign="center">We found {results.event_num} events for you</Text>
+                                        ) : (
+                                            <Text fontSize="lg" fontWeight={600} textAlign="center">{i18n.t('eventNotFound')}</Text>
+                                        )}
+                                    </VStack>
                                 </Modal.Header>
                                 <Modal.Body maxHeight={200}>
-                                    {results?.events?.map((item, index) => 
-                                        <HStack key={'re_'+index} space={2} my={1}>
-                                            <Text fontWeight={600}>{item.date}&nbsp;</Text>
-                                            <Text>{item.title}</Text>
-                                        </HStack>
+                                    {results?.events?.length ? (
+                                        results.events.map((item, index) => 
+                                            <HStack key={'re_'+index} space={4} my={2} alignItems="center">
+                                                <SimpleLineIcons name="magic-wand" size={28} />
+                                                <VStack>
+                                                    <Text fontSize="xs">{item.date}</Text>
+                                                    <Text fontWeight={600}>{item.title}</Text>
+                                                </VStack>
+                                            </HStack>
+                                        )
+                                    ) : (
+                                        <Image source={require("../assets/images/empty.png")} style={styles.imageStyle} />
                                     )}
                                 </Modal.Body>
                                 <Divider />
@@ -416,5 +404,11 @@ const styles = StyleSheet.create({
     backdrop: {
         flex: 1, 
         backgroundColor: 'rgba(0,0,0, 0.60)'
+    },
+    imageStyle: {
+        width: 80,
+        height: 80,
+        margin: 20,
+        alignSelf: 'center'
     }
 }); 

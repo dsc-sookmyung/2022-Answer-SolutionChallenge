@@ -65,5 +65,7 @@ export default {
     retake: '다시 촬영',
     join: '가입',
     searchResult: "검색 결과",
-    noEvent: "오늘은 이벤트가 없어요!"
+    noEvent: "오늘은 이벤트가 없어요!",
+    saveFirst: "저장 버튼을 눌러서 결과 저장을 먼저 해주세요!",
+    eventNotFound: "이벤트를 찾지 못했어요"
 }

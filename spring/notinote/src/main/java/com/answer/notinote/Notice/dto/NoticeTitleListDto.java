@@ -12,11 +12,11 @@ public class NoticeTitleListDto {
     private String uploadfile;
     private String title;
     private LocalDate date;
-    private List<NoticeEventDto> fullText = new ArrayList<>();
+    private List<NoticeSentenceDto> fullText = new ArrayList<>();
     private String korean;
     private String trans_full;
 
-    public NoticeTitleListDto(Notice entity, List<NoticeEventDto> sentences){
+    public NoticeTitleListDto(Notice entity, List<NoticeSentenceDto> sentences){
         this.uploadfile = entity.getNimageurl() + "/" + entity.getNimagename();
         this.title = entity.getTitle();
         this.date = entity.getNdate();
