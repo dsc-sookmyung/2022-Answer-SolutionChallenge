@@ -31,31 +31,15 @@ export default function SearchScreen({ navigation }: Navigation) {
             {
                 date: "2022-02-19",
                 saved: [
-                    {
-                        cid: 1,
-                        titles: [
-                            "17th Graduation Ceremony",
-                            "School Day",
-                        ]
-                    },
-                    {
-                        cid: 2,
-                        titles: [
-                            "Opening Ceremony",
-                        ]
-                    }
+                    { nid: 1, cid: 1, title: "17th Graduation Ceremony" },
+                    { nid: 3, cid: 2, title: "School Day and school day and school day" },
                 ]
             },
             {
                 date: "2022-02-15",
                 saved: [
-                    {
-                        cid: 1,
-                        titles: [
-                            "17th Graduation Ceremony",
-                            "School Day",
-                        ]
-                    }
+                    { nid: 4, cid: 1, title: "17th Graduation Ceremony" },
+                    { nid: 2, cid: 1, title: "Opening Ceremony" },
                 ]
             },
         ]
@@ -65,31 +49,15 @@ export default function SearchScreen({ navigation }: Navigation) {
             {
                 date: "2022-02-19",
                 saved: [
-                    {
-                        cid: 1,
-                        titles: [
-                            "17th Graduation Ceremony",
-                            "School Day",
-                        ]
-                    },
-                    {
-                        cid: 2,
-                        titles: [
-                            "Opening Ceremony",
-                        ]
-                    }
+                    { nid: 1, cid: 1, title: "17th Graduation Ceremony" },
+                    { nid: 2, cid: 1, title: "School Day" },
+                    { nid: 3, cid: 2, title: "Opening Ceremony" },
                 ]
             },
             {
                 date: "2022-02-15",
                 saved: [
-                    {
-                        cid: 1,
-                        titles: [
-                            "17th Graduation Ceremony",
-                            "School Day",
-                        ]
-                    }
+                    { nid: 1, cid: 1, title: "17th Graduation Ceremony" }
                 ]
             },
     ])
@@ -158,7 +126,7 @@ export default function SearchScreen({ navigation }: Navigation) {
             const newData = notices?.filter((notice) => {
                 let flag = false;
                 notice?.saved?.filter((item) => {
-                    const noticeData = item.titles?.join().toUpperCase();
+                    const noticeData = item.title?.toUpperCase();
                     const textData = text.toUpperCase();
                     if (noticeData.indexOf(textData) > -1) {
                         flag = true;
@@ -211,7 +179,6 @@ export default function SearchScreen({ navigation }: Navigation) {
                     onClear={() => searchFilter('')}
                     placeholder="Search"
                     value={search}
-                    inputStyle={{ borderBottomColor: "#dddddd", borderBottomWidth: 1 }}
                 />
                 <View>
                     <TouchableOpacity onPress={showDatePicker}>
@@ -282,7 +249,21 @@ const styles = StyleSheet.create({
     },
     searchWrapper: {
         alignItems: 'center',
-        paddingRight: 12
+        height: 40,
+        paddingRight: 12,
+        marginHorizontal: 12,
+        marginBottom: 16,
+        backgroundColor: "#fff",
+        borderRadius: 16,
+        borderColor: theme.colors.gray,
+        borderWidth: 1,
+        shadowColor: "#acacac",
+        shadowOpacity: 0.2,
+        shadowRadius: 8,
+        shadowOffset: {
+          height: 0,
+          width: 0,
+        }
     },
     searchResults: {
         width: '100%',

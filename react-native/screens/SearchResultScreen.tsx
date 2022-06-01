@@ -14,7 +14,7 @@ interface SearchResultScreenProps {
         name: string,
         params: {
             date: string,
-            cid: number
+            nid: number
         },
         path: string | undefined,
     }
@@ -38,16 +38,16 @@ export default function SearchResultScreen(props: SearchResultScreenProps) {
                 id: 1,
                 imageUri: '',
                 fullText: [
-                    {id: 1, content: "1. Schedule of the closing ceremony and diploma presentation ceremony: Friday, January 4, 2019 at 9 o'clock for students to go to school.\n1) ", date: "", highlight: false, registered: false},
-                    {id: 2, content: "Closing ceremony", date: "2022-01-04", highlight: true, registered: false}
+                    {id: 1, eid: 1, content: "1. Schedule of the closing ceremony and diploma presentation ceremony: Friday, January 4, 2019 at 9 o'clock for students to go to school.\n1) ", date: "", highlight: false, registered: false},
+                    {id: 2, eid: -1, content: "Closing ceremony", date: "2022-01-04", highlight: true, registered: false}
                 ],
                 korean: "희망찬 새해를 맞이하여 학부모님의 가정에 건강과 행복이 함께 하시기를 기원합니다."
             }, {
                 id: 2,
                 imageUri: '',
                 fullText: [
-                    {id: 1, content: "1. Schedule of the closing ceremony and diploma presentation ceremony: Friday, January 4, 2019 at 9 o'clock for students to go to school.\n1) ", date: "", highlight: false, registered: false},
-                    {id: 2, content: "Closing ceremony", date: "2022-01-04", highlight: true, registered: false}
+                    {id: 1, eid: -1, content: "1. Schedule of the closing ceremony and diploma presentation ceremony: Friday, January 4, 2019 at 9 o'clock for students to go to school.\n1) ", date: "", highlight: false, registered: false},
+                    {id: 2, eid: 2, content: "Closing ceremony", date: "2022-01-04", highlight: true, registered: false}
                 ],
                 korean: "개학일은 3월 2일이며, 개학식에 참여하고자 하는 학부모님께서는 10시까지 강당으로 오시기 바랍니다.",
                 trans_full: ""
@@ -55,7 +55,7 @@ export default function SearchResultScreen(props: SearchResultScreenProps) {
         })
 
         if (auth?.authData?.access_token) {
-            fetch(`http://localhost:8080/search/detail?date=${props.route.params.date}&cid=${props.route.params.cid}`, {
+            fetch(`http://localhost:8080/search/detail?nid=${props.route.params.nid}`, {
                 method: 'GET',
                 headers: {
                     'ACCESS-TOKEN': auth.authData.access_token
