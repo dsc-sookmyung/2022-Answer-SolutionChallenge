@@ -42,7 +42,7 @@ function BottomDrawer(props: BottomDrawerProps) {
         if (currentEvent && eventForm?.cid) {
             let obj = props?.results?.fullText;
             let event = obj.find(function(item, index) {
-                if (item.id===currentEvent) {
+                if (item.eid===currentEvent) {
                     return true;
                 }
             });
@@ -60,7 +60,12 @@ function BottomDrawer(props: BottomDrawerProps) {
 	}, [props?.openSaveForm])
 
     const openPopup = (resultId: number) => () => {
-        setCurrentEvent(resultId);
+        if (resultId === -1) {
+            Alert.alert("saveFirst");
+        }
+        else {
+            setCurrentEvent(resultId);
+        }
     }
 
     const closePopup = () => {
@@ -81,7 +86,7 @@ function BottomDrawer(props: BottomDrawerProps) {
     const addEvent = () => {
         if (auth?.authData?.access_token && eventForm) {
             console.log(eventForm, currentEvent);
-            fetch(`http://localhost:8080/event/register?id=${currentEvent}`, {
+            fetch(`http://localhost:8080/event/register?eid=${currentEvent}`, {
                 method: 'PUT',
                 headers: {
                     'ACCESS-TOKEN': auth.authData.access_token,
@@ -143,8 +148,8 @@ function BottomDrawer(props: BottomDrawerProps) {
                             item.highlight ? (
                                 <Popover 
                                     key={item.id} 
-                                    isOpen={item.id===currentEvent}
-                                    onOpen={openPopup(item.id)}                                 
+                                    isOpen={item.eid===currentEvent}
+                                    onOpen={openPopup(item.eid)}                                 
                                     onClose={closePopup}
                                     trigger={triggerProps => {
                                         return <Text {...triggerProps}>
