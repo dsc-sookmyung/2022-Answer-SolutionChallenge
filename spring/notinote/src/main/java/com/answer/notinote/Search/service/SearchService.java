@@ -24,6 +24,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -73,6 +74,9 @@ public class SearchService {
                     savedLists.add(searchSavedListDto);
                 }
             }
+            Comparator<SearchSavedListDto> comparingCid = Comparator.comparing(SearchSavedListDto::getCid, Comparator.naturalOrder()); //cid별 오름차순 정렬
+            savedLists = savedLists.stream().sorted(comparingCid).collect(Collectors.toList());
+
             SearchListDto searchListDto = SearchListDto.builder()
                     .date(dateList.get(i))
                     .saved(savedLists)
