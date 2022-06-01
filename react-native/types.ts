@@ -93,7 +93,7 @@ interface Notice {
 
 interface Notices {
     date: string,
-	saved: { cid: number, titles: string[] }[]
+	saved: { nid: number, cid: number, title: string }[]
 }
 
 interface BottomDrawerProps {

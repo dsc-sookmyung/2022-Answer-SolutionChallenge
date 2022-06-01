@@ -48,9 +48,9 @@ export default function SearchedNotice(props: Notices) {
     return (
         <View style={styles.container}>         
             <View style={styles.headerContainer}>
-                <Text fontWeight={700} color="white">Saved on {props?.date.replaceAll("-", ". ")}</Text>
+                <Text fontWeight={500} color="white">Saved on {props?.date.replaceAll("-", ". ")}</Text>
             </View>
-            <VStack space={4}>
+            <VStack space={3}>
                 {props?.saved?.map((child, index) =>
                     <TouchableOpacity 
                         key={'sc_'+index} 
@@ -59,17 +59,16 @@ export default function SearchedNotice(props: Notices) {
                     >
                         <View style={{ justifyContent: "space-between" }}>
                             <HStack style={styles.noticeHeader}>
-                                <Text fontWeight={500}>{i18n.t('title')}</Text>
                                 {user.uchildren &&
                                     <HStack style={ styles.cprofile }>
-                                        <Text fontWeight={500}>{user.uchildren.filter(uchild => uchild.cid === child.cid)[0]?.cname}</Text>                    
-                                        <Image style={styles.cprofileImageLg} source={cProfileImgSource[user.uchildren.filter(uchild => uchild.cid === child.cid)[0]?.cprofileImg-1]} />    
+                                        <Image style={styles.cprofileImage} source={cProfileImgSource[user.uchildren.filter(uchild => uchild.cid === child.cid)[0]?.cprofileImg-1]} />    
+                                        <VStack>
+                                            <Text fontSize="xs">{user.uchildren.filter(uchild => uchild.cid === child.cid)[0]?.cname}</Text>          
+                                            <Text fontWeight={500} style={styles.notices}>{child?.title}</Text>
+                                        </VStack>
                                     </HStack>
                                 }
-                            </HStack>
-                            {child?.titles?.map((title, tIndex) => 
-                                <Text key={'sct_'+tIndex} style={styles.notices}>{(tIndex + 1) + ". " + title}</Text>
-                            )}
+                            </HStack> 
                         </View>
                     </TouchableOpacity>
                 )}
@@ -83,8 +82,7 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.primary,
         width: '100%',
         marginVertical: 8,
-        paddingVertical: 20,
-        paddingHorizontal: 28,
+        padding: 20,
         borderRadius: 16,
         shadowColor: "#acacac",
         shadowOpacity: 0.2,
@@ -96,7 +94,9 @@ const styles = StyleSheet.create({
     },
     headerContainer: {
         flexDirection: "row",
-        paddingBottom: 20,
+        paddingBottom: 12,
+        justifyContent: "flex-end",
+        width: "100%"
     },
     date: {
         fontFamily: 'Lora_700Bold',
@@ -109,26 +109,25 @@ const styles = StyleSheet.create({
     childNotice: {
         backgroundColor: "#fff",
         borderRadius: 16,
-        padding: 16,
+        padding: 12,
         shadowColor: "#acacac",
         shadowOpacity: 0.4,
         shadowRadius: 8,
         shadowOffset: {
-          height: 0,
-          width: 0,
+          height: 2,
+          width: 2,
         }
     },
     cprofile: {
-        alignItems: "center",
+        alignItems: "flex-start",
+        width: "90%"
     },
-    cprofileImageLg: {
-        width: 32,
-        height: 32,
-        marginLeft: 8
+    cprofileImage: {
+        width: 28,
+        height: 28,
+        marginRight: 10
     },
     noticeHeader: { 
-        alignItems: "center", 
-        justifyContent: "space-between", 
         paddingBottom: 6 
     }
 })
