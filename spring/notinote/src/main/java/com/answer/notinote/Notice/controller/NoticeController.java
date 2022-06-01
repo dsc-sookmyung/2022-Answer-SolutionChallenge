@@ -7,7 +7,11 @@ import com.answer.notinote.Notice.dto.*;
 import com.answer.notinote.Notice.service.NoticeService;
 import com.answer.notinote.User.domain.entity.User;
 import com.answer.notinote.User.service.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -49,8 +53,11 @@ public class NoticeController {
     @RequestMapping(value = "/notice/save", method = RequestMethod.POST)
     public NoticeTitleListDto saveNotice(
             @RequestPart(value = "uploadfile") MultipartFile uploadfile,
-            @RequestPart(value = "noticeRequestDto") NoticeRequestDto noticeRequestDto,
-            HttpServletRequest request) throws IOException {
+            @RequestPart(value = "noticeRequestDto") String noticeRequestDto,
+            HttpServletRequest request) throws IOException, ParseException {
+        ObjectMapper mapper = new ObjectMapper();
+        NoticeRequestDto requestDto = mapper.readValue(noticeRequestDto, NoticeRequestDto.class);
+
         /*
         LocalDate date = LocalDate.parse(stringdate);
         NoticeRequestDto noticeRequestDto = NoticeRequestDto.builder()
@@ -61,7 +68,7 @@ public class NoticeController {
                 .build();
 
          */
-        NoticeTitleListDto notice_title = noticeService.saveNotice(uploadfile, noticeRequestDto, request); //notice 저장
+        NoticeTitleListDto notice_title = noticeService.saveNotice(uploadfile, requestDto, request); //notice 저장
         return notice_title;
     }
 /*
