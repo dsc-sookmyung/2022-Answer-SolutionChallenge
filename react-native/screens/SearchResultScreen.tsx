@@ -14,7 +14,7 @@ interface SearchResultScreenProps {
         name: string,
         params: {
             date: string,
-            cid: number
+            nid: number
         },
         path: string | undefined,
     }
@@ -55,7 +55,7 @@ export default function SearchResultScreen(props: SearchResultScreenProps) {
         })
 
         if (auth?.authData?.access_token) {
-            fetch(`http://localhost:8080/search/detail?date=${props.route.params.date}&cid=${props.route.params.cid}`, {
+            fetch(`http://localhost:8080/search/detail?nid=${props.route.params.nid}`, {
                 method: 'GET',
                 headers: {
                     'ACCESS-TOKEN': auth.authData.access_token
