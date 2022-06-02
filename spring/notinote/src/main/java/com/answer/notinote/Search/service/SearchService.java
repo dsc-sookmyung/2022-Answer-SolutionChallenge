@@ -86,9 +86,6 @@ public class SearchService {
 
     public SearchResultDetailDto searchDetailList(Long nid, HttpServletRequest request) {
 
-        String token = jwtTokenProvider.resolveToken(request);
-        String useremail = jwtTokenProvider.getUserEmail(token);
-
         Notice notice = noticeRepository.findByNid(nid);
         List<Event> events = eventService.findAllByNotice(notice);
         List<NoticeSentenceDto> fullText = noticeService.extractSentenceFromEvent(notice.getTrans_full(), events);
@@ -134,13 +131,15 @@ public class SearchService {
                 }
             }
 
-            SearchListDto searchListDto = SearchListDto.builder()
-                    .date(dateList.get(i))
-                    .saved(savedLists)
-                    .build();
-
-            saved.add(searchListDto);
+            //리스트가 널이면 날짜값도 보이지 않게 함
+            if (!savedLists.isEmpty()){
+                SearchListDto searchListDto = SearchListDto.builder()
+                        .date(dateList.get(i))
+                        .saved(savedLists)
+                        .build();
+                saved.add(searchListDto);
             }
+        }
         return saved ;
     }
 }
