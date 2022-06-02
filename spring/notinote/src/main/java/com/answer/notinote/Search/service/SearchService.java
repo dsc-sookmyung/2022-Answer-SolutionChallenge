@@ -10,7 +10,6 @@ import com.answer.notinote.Notice.domain.repository.NoticeRepository;
 import com.answer.notinote.Notice.dto.NoticeSentenceDto;
 import com.answer.notinote.Notice.service.NoticeService;
 import com.answer.notinote.Search.dto.SearchSavedListDto;
-import com.answer.notinote.Search.dto.SearchDetailDto;
 import com.answer.notinote.Search.dto.SearchListDto;
 import com.answer.notinote.Search.dto.SearchResultDetailDto;
 import com.answer.notinote.User.domain.entity.User;
@@ -85,39 +84,22 @@ public class SearchService {
         return saved;
     }
 
-    public SearchDetailDto searchDetailList(String date, HttpServletRequest request) {
+    public SearchResultDetailDto searchDetailList(Long nid, HttpServletRequest request) {
 
         String token = jwtTokenProvider.resolveToken(request);
         String useremail = jwtTokenProvider.getUserEmail(token);
-        User user = userRepository.findByUemail(useremail).orElseThrow(IllegalArgumentException::new);
-        LocalDate trans_date = LocalDate.parse(date, DateTimeFormatter.ISO_DATE);
-        List<Notice> notices = noticeRepository.findByNdate(trans_date);
 
-        System.out.println(notices);
-        List<List<Object>> resultLists = new ArrayList<>();
-        List<Object> test = new ArrayList<>();
+        Notice notice = noticeRepository.findByNid(nid);
+        List<Event> events = eventService.findAllByNotice(notice);
+        List<NoticeSentenceDto> fullText = noticeService.extractSentenceFromEvent(notice.getTrans_full(), events);
 
-        for (int i = 0; i < notices.size(); i++) {
-            Notice notice = notices.get(i);
-
-            List<Event> events = eventService.findAllByNotice(notice);
-            List<NoticeSentenceDto> fullText = noticeService.extractSentenceFromEvent(notice.getTrans_full(), events);
-
-            SearchResultDetailDto searchResultDetailDto = SearchResultDetailDto.builder()
-                    .imageUri(notice.getNimageurl() + "/" + notice.getNimagename())
-                    .id(notice.getNid())
-                    .korean(notice.getOrigin_full())
-                    .fullText(fullText)
-                    .build();
-
-            test.add(searchResultDetailDto);
-        }
-        System.out.println(test);
-
-        return SearchDetailDto.builder()
-                .date(trans_date)
-                .results(test)
+        SearchResultDetailDto searchResultDetailDto = SearchResultDetailDto.builder()
+                .imageUri(notice.getNimageurl()+ "/" + notice.getNimagename())
+                .fullText(fullText)
+                .korean(notice.getOrigin_full())
                 .build();
+
+        return searchResultDetailDto;
 
     }
 
