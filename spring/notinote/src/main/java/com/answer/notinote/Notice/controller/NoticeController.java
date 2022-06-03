@@ -8,6 +8,7 @@ import com.answer.notinote.Notice.service.NoticeService;
 import com.answer.notinote.User.domain.entity.User;
 import com.answer.notinote.User.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -43,7 +44,9 @@ public class NoticeController {
         String korean = noticeService.detectText(uploadfile); //원문 추출
         String trans_full = noticeService.transText(korean, targetLanguage); //번역문 추출
         String en_full = noticeService.englishText(korean); // 영어 추출
-        List<EventRequestDto> eventWords = noticeService.detectEvent(korean, trans_full, targetLanguage, en_full); //이벤트 추출
+        NoticeResponseBody responseBody = noticeService.detectEvent(korean, trans_full, targetLanguage, en_full); //이벤트 추출
+        String title = responseBody.getTitle();
+        List<EventRequestDto> eventWords = responseBody.getEvents();
         List<NoticeSentenceDto> fullText = noticeService.extractSentenceFromEventRequestDto(trans_full, eventWords);
         List<NoticeEventListDto> events = noticeService.extractEventList(fullText);
         Integer event_num = events.size();
@@ -53,11 +56,8 @@ public class NoticeController {
     @RequestMapping(value = "/notice/save", method = RequestMethod.POST)
     public NoticeTitleListDto saveNotice(
             @RequestPart(value = "uploadfile") MultipartFile uploadfile,
-            @RequestPart(value = "noticeRequestDto") String noticeRequestDto,
-            HttpServletRequest request) throws IOException, ParseException {
-        ObjectMapper mapper = new ObjectMapper();
-        NoticeRequestDto requestDto = mapper.readValue(noticeRequestDto, NoticeRequestDto.class);
-
+            @RequestPart(value = "noticeRequestDto") NoticeRequestDto noticeRequestDto,
+            HttpServletRequest request) throws IOException {
         /*
         LocalDate date = LocalDate.parse(stringdate);
         NoticeRequestDto noticeRequestDto = NoticeRequestDto.builder()
@@ -68,7 +68,7 @@ public class NoticeController {
                 .build();
 
          */
-        NoticeTitleListDto notice_title = noticeService.saveNotice(uploadfile, requestDto, request); //notice 저장
+        NoticeTitleListDto notice_title = noticeService.saveNotice(uploadfile, noticeRequestDto, request); //notice 저장
         return notice_title;
     }
 /*

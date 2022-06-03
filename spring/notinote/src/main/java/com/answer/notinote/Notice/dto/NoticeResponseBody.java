@@ -12,6 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 @Getter @Setter
 public class NoticeResponseBody {
-    int status;
-    List<EventRequestDto> body;
+    String title;
+    List<EventRequestDto> events;
 }
