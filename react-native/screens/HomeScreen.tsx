@@ -73,9 +73,9 @@ export default function HomeScreen({ navigation }: Navigation) {
   const auth = useAuth();
 
   useEffect(() => {
-    // if (auth?.userData) {
-    //     setUser(auth?.userData);
-    // }
+    if (auth?.userData) {
+        setUser(auth?.userData);
+    }
 
     navigation.setOptions({
       headerRight: () => <HomeMenu />,
@@ -176,11 +176,12 @@ export default function HomeScreen({ navigation }: Navigation) {
               fontStyle="normal"
               fontSize="xl"
               lineHeight={60}
-            >
-              {i18n.t("eventCount_1") +
+            >{ 
+                events.event_num === 0 ? i18n.t("noEvent") : 
+                i18n.t("eventCount_1") +
                 events.event_num +
-                i18n.t("eventCount_2")}
-            </Text>
+                i18n.t("eventCount_2")
+            }</Text>
             <View style={styles.childButtonWrapper}>
               <TouchableOpacity
                 key={"n_all"}
