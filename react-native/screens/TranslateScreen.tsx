@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, TouchableOpacity, ImageBackground, Dimensions, Alert, Image } from 'react-native';
-import { useToast, Box, Button, HStack, Text, Divider, Modal, VStack } from 'native-base';
+import { useToast, Button, HStack, Text, Divider, Modal, VStack } from 'native-base';
 import { Camera } from 'expo-camera';
-import { Ionicons, SimpleLineIcons, FontAwesome } from '@expo/vector-icons';
+import { Ionicons, SimpleLineIcons } from '@expo/vector-icons';
 import { theme } from '../core/theme';
 import type { Navigation, Result, ResultsForm } from '../types';
 import SwipeUpDown from 'react-native-swipe-up-down';
@@ -19,7 +19,7 @@ import '../locales/i18n';
 /* TODO:
     - 스크롤 내려가게 하기 (지금은 ScrollView의 스크롤이 안 먹음)
     - low highlight 주기 (지금은 텍스트 높이만큼 background에 색 줘서 highlight)
-*/ 
+*/
 
 const date = new Date();
 
@@ -27,13 +27,13 @@ export default function TranslateScreen({ navigation }: Navigation) {
     const [hasPermission, setHasPermission] = useState<boolean>(false);
     const [type, setType] = useState(Camera.Constants.Type.back);
     const [camera, setCamera] = useState<any>(null);
-    const [imageUri, setImageUri] = useState<string>(''); 
+    const [imageUri, setImageUri] = useState<string>('');
     const [results, setResults] = useState<Result>();
     const [showKorean, setShowKorean] = useState<boolean>(false);
     const [isFullDrawer, setFullDrawer] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [openSaveForm, setOpenSaveForm] = useState<boolean>(false);
-    const [openInitialEventForm, setOpenInitialEventForm] = useState<boolean>(false); 
+    const [openInitialEventForm, setOpenInitialEventForm] = useState<boolean>(false);
 
     const toast = useToast();
     const auth = useAuth();
@@ -57,7 +57,7 @@ export default function TranslateScreen({ navigation }: Navigation) {
         }
     }, [results]);
 
-    // DEV TEST 
+    // DEV TEST
     // if (hasPermission === null) {
     //  return <View />;
     // }
@@ -80,11 +80,11 @@ export default function TranslateScreen({ navigation }: Navigation) {
           aspect: [4, 3],
           quality: 1,
         });
-        
+
         if (!result.cancelled) {
           setImageUri(result.uri);
         }
-    };  
+    };
 
     const extractText = async(): Promise<any> => {
         if (imageUri) {
@@ -111,7 +111,7 @@ export default function TranslateScreen({ navigation }: Navigation) {
                     redirect: 'follow'
                 })
                 .then(response => response.json())
-                .then(data => { 
+                .then(data => {
                     console.log(data);
                     setResults(data);
                     setLoading(false);
@@ -132,14 +132,14 @@ export default function TranslateScreen({ navigation }: Navigation) {
         // TEST: mockup data
         // setResults({
         //     fullText: [
-        //         {id: 1, content: "1. Schedule of the closing ceremony and diploma presentation ceremony: Friday, January 4, 2019 at 9 o'clock for students to go to school.\n1) ", date: "", highlight: false, registered: false},
-        //         {id: 2, content: "Closing ceremony", date: "2022-01-04", highlight: true, registered: false},
-        //         {id: 3, content: ": 1st and 2nd graders, each classroom, 9:00-10:50 (no meals)\n2) ", date: "", highlight: false, registered: false},
-        //         {id: 4, content: "Diploma representation ceremony", date: "2022-01-04", highlight: true, registered: true},
-        //         {id: 5, content: ": 3rd grade, multi-purpose auditorium (2nd floor), 10:30-12:20\n2. School opening and entrance ceremony for new students: March 4th (Mon), 2019 at 9 o'clock for students to go to school.", date: "", highlight: false, registered: false},
+        //         {id: 1, eid: -1, content: "1. Schedule of the closing ceremony and diploma presentation ceremony: Friday, January 4, 2019 at 9 o'clock for students to go to school.\n1) ", date: "", highlight: false, registered: false},
+        //         {id: 2, eid: -1, content: "Closing ceremony", date: "2022-01-04", highlight: true, registered: false},
+        //         {id: 3, eid: -1, content: ": 1st and 2nd graders, each classroom, 9:00-10:50 (no meals)\n2) ", date: "", highlight: false, registered: false},
+        //         {id: 4, eid: -1, content: "Diploma representation ceremony", date: "2022-01-04", highlight: true, registered: true},
+        //         {id: 5, eid: -1, content: ": 3rd grade, multi-purpose auditorium (2nd floor), 10:30-12:20\n2. School opening and entrance ceremony for new students: March 4th (Mon), 2019 at 9 o'clock for students to go to school.", date: "", highlight: false, registered: false},
         //     ],
         //     korean: "가정통신문\n예당중학교\n8053-8388\n꿈은 크게. 마음은 넘게·\n행동은 바르게\n학부모님께\n희망찬 새해를 맞이하며 학부모님 가정에 건강과 행운이 함께 하시기를 기원 드립니다.\n드릴 말씀은, 2018학년도 종업식 및 졸업장 수여식과 2019학년도 개학 및 신입생 입학식을 다음과 같이 안내드리오니, 이후 3월 개학 때까지 학생들이 자기주도 학습 능력을 배양하고 다양한 체험 활동을 통하여 심신이 건강해지며 각종 유해 환경에 노출되지 않고 안전하고 줄거운 시간이 되도록 지도해 주시기 바랍니다.\n",
-        //     trans_full: "",
+        //     trans_full: "hello",
         //     event_num: 2,
         //     events: [
         //         {
@@ -150,10 +150,11 @@ export default function TranslateScreen({ navigation }: Navigation) {
         //             title: "closing ceremony",
         //             date: "2022-03-24"
         //         }
-        //     ]
+        //     ],
+        //     title: "closing ceremony"
         // });
     }
-    
+
     const handleKorean = (): void => {
         setShowKorean(!showKorean);
     }
@@ -243,7 +244,7 @@ export default function TranslateScreen({ navigation }: Navigation) {
                         <View style={styles.backdrop}>
                             <SwipeUpDown
                                 itemMini={
-                                    <BottomDrawer 
+                                    <BottomDrawer
                                         results={results}
                                         showKorean={showKorean}
                                         isFullDrawer={isFullDrawer}
@@ -256,7 +257,7 @@ export default function TranslateScreen({ navigation }: Navigation) {
                                     />
                                 }
                                 itemFull={
-                                    <BottomDrawer 
+                                    <BottomDrawer
                                         results={results}
                                         showKorean={showKorean}
                                         isFullDrawer={isFullDrawer}
@@ -288,7 +289,7 @@ export default function TranslateScreen({ navigation }: Navigation) {
                                 </Modal.Header>
                                 <Modal.Body maxHeight={200}>
                                     {results?.events?.length ? (
-                                        results.events.map((item, index) => 
+                                        results.events.map((item, index) =>
                                             <HStack key={'re_'+index} space={4} my={2} alignItems="center">
                                                 <SimpleLineIcons name="magic-wand" size={28} />
                                                 <VStack>
@@ -350,7 +351,6 @@ export default function TranslateScreen({ navigation }: Navigation) {
                         <Ionicons name="camera-reverse-outline" size={32} color="white" />
                     </TouchableOpacity>
                 </View>
-                
                 </>
             )}
         </View>
@@ -402,7 +402,7 @@ const styles = StyleSheet.create({
         borderWidth: 2
     },
     backdrop: {
-        flex: 1, 
+        flex: 1,
         backgroundColor: 'rgba(0,0,0, 0.60)'
     },
     imageStyle: {
@@ -411,4 +411,4 @@ const styles = StyleSheet.create({
         margin: 20,
         alignSelf: 'center'
     }
-}); 
+});
