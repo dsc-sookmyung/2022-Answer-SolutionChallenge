@@ -73,22 +73,19 @@ interface Event {
     registered: boolean
 }
 
-interface Result {
-    id?: number,
+interface Notice {
     imageUri?: string,
     fullText: Event[],
     korean: string,
     trans_full?: string,
+}
+interface Result extends Notice {
+    id?: number,
 	
 	title?: string,
 
 	event_num?: number,
 	events?: { title: string, date: string }[]
-}
-
-interface Notice {
-    date: string,
-    results: Result[]
 }
 
 interface Notices {
