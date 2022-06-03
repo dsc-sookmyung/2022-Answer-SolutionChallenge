@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, SafeAreaView, TouchableOpacity, ImageBackground, Alert, Image } from 'react-native';
+import { StyleSheet, View, SafeAreaView, TouchableOpacity, ImageBackground, Alert, Image, ScrollView } from 'react-native';
 import { Text } from 'native-base'
 import { theme } from '../core/theme';
 import type { Navigation, UserData } from '../types';
@@ -15,7 +15,7 @@ export default function HomeScreen({ navigation }: Navigation) {
     const cProfileImgSource = [require(`../assets/images/cprofile-images/profile-1.png`), require(`../assets/images/cprofile-images/profile-2.png`), require(`../assets/images/cprofile-images/profile-3.png`),
 	require(`../assets/images/cprofile-images/profile-4.png`), require(`../assets/images/cprofile-images/profile-5.png`), require(`../assets/images/cprofile-images/profile-6.png`), require(`../assets/images/cprofile-images/profile-7.png`), require(`../assets/images/cprofile-images/profile-8.png`), require(`../assets/images/cprofile-images/profile-9.png`)];
     const [events, setEvents] = useState<{event_num: number, children: { cid: number, cname: string, cprofileImg: number, events: string[] }[]}>(
-        {event_num: 4,
+        {event_num: 2,
             children: [
                 {
                     cid: 1,
@@ -40,12 +40,12 @@ export default function HomeScreen({ navigation }: Navigation) {
         uid: 1,
         username: "Soo",
         uemail: "kaithape@gmail.com",
-        uprofileImg: 1,
+        uprofileImg: 0,
         ulanguage: "english",
         uchildren:[{ cid: 1, cname:"Soo", cprofileImg: 1 }, { cid: 2, cname:"Hee", cprofileImg: 4 }]
     });
     const auth = useAuth();
-    
+
 
     useEffect(()=> {
         if (auth?.userData) {
@@ -83,12 +83,6 @@ export default function HomeScreen({ navigation }: Navigation) {
         }
     }, [auth]);
 
-    useEffect(() => {
-        if (events && events?.children?.length > 0) {
-            setNowSelectedChildId(events.children[0].cid);
-        }
-    }, [events]);
-
     const handleNowSelectedChildId = (cid: number) => {
         setNowSelectedChildId(cid);
     }
@@ -119,7 +113,7 @@ export default function HomeScreen({ navigation }: Navigation) {
                 </ImageBackground>
                 <View style={styles.noticeWrapper}>
                     <Text style={styles.smallTitle} fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="2xl" lineHeight={60}>{i18n.t('todayEvent')}</Text>
-                    <View style={styles.childButtonWrapper}>
+                    <ScrollView horizontal={true} style={styles.childButtonWrapper}>
                         <TouchableOpacity key={'n_all'} style={[styles.childButton, {
                             backgroundColor: nowSelectedChildId === SHOW_ALL ? theme.colors.primary : "#ffffff",
                         }]} onPress={() => handleNowSelectedChildId(-1)}>
@@ -137,11 +131,11 @@ export default function HomeScreen({ navigation }: Navigation) {
                                 }]}>{child.cname}</Text>
                             </TouchableOpacity>
                         )}
-                    </View>
+                    </ScrollView>
                     <View style={styles.todayNoticeWrapper}>
                         {nowSelectedChildId === SHOW_ALL ? (
-                            events.children.reduce((prevValue, child) => prevValue + child.events.length, 0) > 0 ? (
-                                events.children.map((notice, index) =>
+                            events?.children.reduce((prevValue, child) => prevValue + child.events.length, 0) > 0 ? (
+                                events?.children.map((notice, index) =>
                                 <View key={'n_'+index}>
                                     {notice.events.map((event, index) => {
                                         return (
@@ -150,7 +144,7 @@ export default function HomeScreen({ navigation }: Navigation) {
                                     })}
                                 </View>))
                             : <NoEventBox/>
-                        ) : events.children.filter(child => child.cid === nowSelectedChildId)[0].events?.length ? (
+                        ) : events.children.filter(child => child.cid === nowSelectedChildId)[0]?.events?.length ? (
                             events.children?.filter(child => child.cid === nowSelectedChildId)[0].events?.map((item, index) => 
                                 <View key={'e_'+index} style={{flexDirection: "row"}}>
                                     <Text fontSize="md" lineHeight={28}>{index+1 + '. ' + item}</Text>
@@ -203,7 +197,7 @@ const styles = StyleSheet.create({
     },
     childButtonWrapper: {
         flexDirection: "row",
-        flexWrap: "wrap",
+        maxHeight: 40
     },
     childButton: {
         borderWidth: 1,
@@ -219,7 +213,7 @@ const styles = StyleSheet.create({
     },
     todayNoticeWrapper: {
         alignSelf: "flex-start",
-        paddingTop: 18,
+        paddingTop: 8,
         paddingHorizontal: 12,
         overflow: "scroll",
         flex: 1,
