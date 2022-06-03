@@ -141,8 +141,8 @@ public class NoticeService {
         return textlist.get(0);
     }
 
-    public List<EventRequestDto> detectEvent(String korean, String translation, String language, String English) throws JsonProcessingException {
-        String url = "https://notinote.herokuapp.com/event-dict";
+    public NoticeResponseBody detectEvent(String korean, String translation, String language, String english) throws JsonProcessingException {
+        String url = "https://notinote.herokuapp.com/event";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -151,18 +151,16 @@ public class NoticeService {
         body.put("language", language);
         body.put("kr_text", korean);
         body.put("translated_text", translation);
-        body.put("en_text", English);
+        body.put("en_text", english);
         HttpEntity<String> request = new HttpEntity<>(body.toString(), headers);
 
         String response = new RestTemplate().postForObject(url, request, String.class);
+        System.out.println(response);
         JsonNode root = new ObjectMapper().readTree(response);
 
         boolean noEvents = root.path("message") != null && root.path("message").asText().equals("no events");
         if (noEvents) return null;
-
-        NoticeResponseBody responseBody = new ObjectMapper().treeToValue(root, NoticeResponseBody.class);
-
-        return responseBody.getBody();
+        return new ObjectMapper().treeToValue(root.path("body"), NoticeResponseBody.class);
     }
 
     public NoticeTitleListDto saveNotice(MultipartFile uploadfile, NoticeRequestDto noticeRequestDto, HttpServletRequest request) throws IOException{
@@ -194,7 +192,11 @@ public class NoticeService {
         noticeRepository.save(notice);
 
         String en_full = englishText(noticeRequestDto.getKorean());
-        List<EventRequestDto> eventWords = detectEvent(notice.getOrigin_full(), notice.getTrans_full(), user.getUlanguage(), en_full);
+
+        NoticeResponseBody responseBody = detectEvent(notice.getOrigin_full(), notice.getTrans_full(), user.getUlanguage(), en_full);
+        String title = responseBody.getTitle();
+
+        List<EventRequestDto> eventWords = responseBody.getEvents();
         List<Event> events = new ArrayList<>();
         for (EventRequestDto dto : eventWords) events.add(eventService.create(dto, notice));
 
