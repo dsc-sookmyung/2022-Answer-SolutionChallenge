@@ -46,7 +46,7 @@ export default function HomeScreen({ navigation }: Navigation) {
         cid: 1,
         cname: "Soo",
         cprofileImg: 2,
-        events: ["the 17th Graduate Seremony", "Do-Dream Festival"],
+        events: ["the 17th Graduate Seremony", "Do-Dream Festival", "asdfasf"],
       },
       {
         cid: 2,
@@ -123,7 +123,7 @@ export default function HomeScreen({ navigation }: Navigation) {
           <ImageBackground
             source={require("../assets/images/home-button-background.png")}
             style={[styles.functionButtonImageBackground]}
-            imageStyle={{}}
+            imageStyle={{marginTop: -40}}
           >
             <View style={styles.functionButtonWrapper}>
               <TouchableOpacity
@@ -174,11 +174,12 @@ export default function HomeScreen({ navigation }: Navigation) {
               fontFamily="heading"
               fontWeight={700}
               fontStyle="normal"
-              fontSize="2xl"
+              fontSize="xl"
               lineHeight={60}
             >
               {i18n.t("eventCount_1") +
-                events.event_num + i18n.t("eventCount_2")}
+                events.event_num +
+                i18n.t("eventCount_2")}
             </Text>
             <View style={styles.childButtonWrapper}>
               <TouchableOpacity
@@ -248,23 +249,29 @@ export default function HomeScreen({ navigation }: Navigation) {
                   (prevValue, child) => prevValue + child.events.length,
                   0
                 ) > 0 ? (
-                  events.children.map((notice, index) => (
-                    <View key={"n_" + index}>
-                      {notice.events.map((event, index) => {
-                        return (
+                  events.children.map((notice, index) =>
+                    notice.events.map((event, index) => {
+                      return (
+                        <View key={"n_" + index} style={[styles.pinkButton, { flexDirection: "row" }]}>
+                          <MaterialIcons
+                            name="event"
+                            size={20}
+                            color="#333"
+                            style={{ marginRight: 8, marginTop: 4 }}
+                          />
                           <Text
                             key={"t_" + index}
                             fontWeight={400}
                             fontStyle="normal"
-                            fontSize="md"
+                            fontSize="sm"
                             lineHeight={28}
                           >
                             {`[${notice.cname}] ` + event}
                           </Text>
-                        );
-                      })}
-                    </View>
-                  ))
+                        </View>
+                      );
+                    })
+                  )
                 ) : (
                   <NoEventBox />
                 )
@@ -274,9 +281,23 @@ export default function HomeScreen({ navigation }: Navigation) {
                 events.children
                   ?.filter((child) => child.cid === nowSelectedChildId)[0]
                   .events?.map((item, index) => (
-                    <View key={"e_" + index} style={{ flexDirection: "row" }}>
-                      <Text fontSize="md" lineHeight={28}>
-                        {index + 1 + ". " + item}
+                    <View
+                      key={"e_" + index}
+                      style={[styles.pinkButton, { flexDirection: "row" }]}
+                    >
+                      <MaterialIcons
+                        name="event"
+                        size={20}
+                        color="#333"
+                        style={{ marginRight: 8, marginTop: 4 }}
+                      />
+                      <Text
+                        fontWeight={400}
+                        fontStyle="normal"
+                        fontSize="sm"
+                        lineHeight={28}
+                      >
+                        {item}
                       </Text>
                     </View>
                   ))
@@ -324,12 +345,24 @@ const styles = StyleSheet.create({
   },
   noticeWrapper: {
     width: "88%",
-    flex: 1,
+    flex: 1.2,
     marginBottom: 18,
+    paddingVertical: 16,
+    paddingHorizontal: 14,
+    borderRadius: 12,
+    backgroundColor: "#ffffff",
+    shadowColor: "#5a5555",
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    shadowOffset: {
+      height: 0,
+      width: 0,
+    }
   },
   childButtonWrapper: {
     flexDirection: "row",
     flexWrap: "wrap",
+    marginLeft: 8,
   },
   childButton: {
     borderWidth: 1,
@@ -345,11 +378,12 @@ const styles = StyleSheet.create({
   },
   todayNoticeWrapper: {
     alignSelf: "flex-start",
-    paddingTop: 18,
+    paddingTop: 12,
     paddingHorizontal: 12,
     overflow: "scroll",
     flex: 1,
     width: "100%",
+    height: "100%",
   },
   profileImage: {
     width: 60,
@@ -359,18 +393,17 @@ const styles = StyleSheet.create({
     paddingRight: 30,
   },
   functionButtonImageBackground: {
-    flex: 1.16,
+    flex: 1.14,
     flexDirection: "row",
     alignItems: "center",
   },
   functionButtonWrapper: {
     flex: 1,
-    paddingBottom: 30,
     marginHorizontal: 20,
-    marginTop: -28,
   },
   smallTitle: {
     marginBottom: 0,
+    marginLeft: 8,
   },
   buttonName: {
     fontSize: 24,
@@ -402,5 +435,12 @@ const styles = StyleSheet.create({
     width: 20,
     height: 20,
     marginRight: 12,
+  },
+  pinkButton: {
+    backgroundColor: theme.colors.secondary,
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 12,
+    width: "100%",
   },
 });
