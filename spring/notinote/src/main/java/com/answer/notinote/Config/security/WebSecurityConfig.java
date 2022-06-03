@@ -21,7 +21,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @RequiredArgsConstructor
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-
     private final JwtTokenProvider jwtTokenProvider;
 
     @Override
@@ -35,7 +34,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 // 모두 접근 가능한 URL
                     .authorizeRequests()
-                    .antMatchers("/","/login/oauth2","/login", "/join",
+                    .antMatchers("/","/login/oauth2","/login", "/join", "/refresh",
                             "/swagger-ui.html", "/swagger/**", "/swagger-resources/**", "/webjars/**", "/v2/api-docs").permitAll()
                 .and()
                 // USER만 접근 가능한 URL

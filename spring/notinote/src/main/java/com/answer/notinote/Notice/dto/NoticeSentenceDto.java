@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Builder
 public class NoticeSentenceDto {
     int id;
-    long eid = -1;
+    long eid;
     String content;
     LocalDate date;
     boolean highlight;

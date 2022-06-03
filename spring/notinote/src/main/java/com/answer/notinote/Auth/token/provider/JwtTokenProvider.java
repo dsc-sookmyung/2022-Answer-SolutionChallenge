@@ -1,7 +1,7 @@
 package com.answer.notinote.Auth.token.provider;
 
-import com.answer.notinote.Auth.data.RoleType;
 import com.answer.notinote.Auth.repository.RefreshTokenRepository;
+import com.answer.notinote.Auth.token.RefreshToken;
 import com.answer.notinote.Exception.CustomException;
 import com.answer.notinote.Exception.ErrorCode;
 import com.answer.notinote.User.domain.entity.User;
@@ -33,14 +33,12 @@ public class JwtTokenProvider {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    @Value("${jwt.refresh}")
-    private String refreshKey;
+    private long accessTokenValidTime = 60 * 60 * 1000L;
+    private long refreshTokenValidTime = 300 * 60 * 1000L;
 
-    private long tokenValidTime = 60 * 60 * 1000L;
-    private long refreshValidTime = 300 * 60 * 1000L;
+    private String accessTokenHeader = "Access-Token";
 
-    private String tokenHeader = "JWT_TOKEN";
-    private String refreshHeader = "REFRESH_TOKEN";
+    private String refreshTokenHeader = "Refresh-Token";
 
     private final UserDetailsService userDetailsService;
     private final RefreshTokenRepository refreshTokenRepository;
@@ -51,15 +49,17 @@ public class JwtTokenProvider {
     @PostConstruct
     protected void init() {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
-        refreshKey = Base64.getEncoder().encodeToString(refreshKey.getBytes());
     }
 
-    public String createToken(String email) {
-        return convertToToken(email, tokenValidTime, secretKey);
+    public String createToken(User user) {
+        return convertToToken(user.getUemail(), accessTokenValidTime, secretKey);
     }
 
-    public String createRefreshToken(String email) {
-        return convertToToken(email, refreshValidTime, refreshKey);
+    public String createRefreshToken(User user) {
+        String refreshToken = convertToToken(user.getUemail(), refreshTokenValidTime, secretKey);
+        refreshTokenRepository.save(new RefreshToken(user, refreshToken));
+
+        return refreshToken;
     }
 
     // 토큰에서 인증 정보 조회
@@ -68,25 +68,24 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
-    // 토큰에서 회원 정보 추출
     public String getUserEmail(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     }
 
-    public String resolveToken(HttpServletRequest request) {
-        return request.getHeader(tokenHeader);
+    public String resolveAccessToken(HttpServletRequest request) {
+        return request.getHeader(accessTokenHeader);
+    }
+
+    public void setAccessToken(HttpServletResponse response, String token) {
+        response.setHeader(accessTokenHeader, token);
     }
 
     public String resolveRefreshToken(HttpServletRequest request) {
-        return request.getHeader(refreshHeader);
+        return request.getHeader(refreshTokenHeader);
     }
 
-    public void setHeaderToken(HttpServletResponse response, String token) {
-        response.setHeader(tokenHeader, token);
-    }
-
-    public void setHeaderRefreshToken(HttpServletResponse response, String token) {
-        response.setHeader(refreshHeader, token);
+    public void setRefreshToken(HttpServletResponse response, String token) {
+        response.setHeader(refreshTokenHeader, token);
     }
 
     // 토큰의 유효성 & 만료일자 확인
@@ -106,6 +105,17 @@ public class JwtTokenProvider {
             LOG.error("JWT claims string is empty");
         }
         return false;
+    }
+
+    public boolean validateTokenExpired(String token) {
+        try {
+            Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            return claims.getBody().getExpiration().before(new Date());
+        } catch(ExpiredJwtException e) {
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     private String convertToToken(String email, Long validTime, String key) {

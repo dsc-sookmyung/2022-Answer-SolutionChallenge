@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet, Dimensions, View, TouchableOpacity, TouchableHighlight, ScrollView, Alert, Linking } from 'react-native';
-import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 import { Popover, Button, Text, Modal, FormControl, Input, VStack, Select, CheckIcon, AlertDialog } from 'native-base';
 import { theme } from '../core/theme';
 import type { BottomDrawerProps, EventForm, ResultsForm, UserData } from '../types';
@@ -11,7 +11,7 @@ import '../locales/i18n';
 
 
 const highlight = (text: string, registered: boolean) =>
-    <Text fontFamily="body" fontWeight={700} fontStyle="normal" fontSize='md' pt={24} style={!registered ? styles.highlighted : styles.grayBackground}>{text}</Text>
+    <Text color="#fff" fontFamily="body" fontWeight={500} fontStyle="normal" fontSize='md' pt={24} style={!registered ? styles.highlighted : styles.grayBackground}>{text}</Text>
 
 function BottomDrawer(props: BottomDrawerProps) {
     const [currentEvent, setCurrentEvent] = useState<number>(0);
@@ -42,7 +42,7 @@ function BottomDrawer(props: BottomDrawerProps) {
         if (currentEvent && eventForm?.cid) {
             let obj = props?.results?.fullText;
             let event = obj.find(function(item, index) {
-                if (item.id===currentEvent) {
+                if (item.eid===currentEvent) {
                     return true;
                 }
             });
@@ -60,7 +60,12 @@ function BottomDrawer(props: BottomDrawerProps) {
 	}, [props?.openSaveForm])
 
     const openPopup = (resultId: number) => () => {
-        setCurrentEvent(resultId);
+        if (resultId === -1) {
+            Alert.alert("saveFirst");
+        }
+        else {
+            setCurrentEvent(resultId);
+        }
     }
 
     const closePopup = () => {
@@ -79,12 +84,12 @@ function BottomDrawer(props: BottomDrawerProps) {
     }
 
     const addEvent = () => {
-        if (auth?.authData?.jwt_token && eventForm) {
+        if (auth?.authData?.access_token && eventForm) {
             console.log(eventForm, currentEvent);
-            fetch(`http://localhost:8080/event/register?id=${currentEvent}`, {
+            fetch(`http://localhost:8080/event/register?eid=${currentEvent}`, {
                 method: 'PUT',
                 headers: {
-                    'JWT_TOKEN': auth.authData.jwt_token,
+                    'ACCESS-TOKEN': auth.authData.access_token,
                     'Content-Type': 'application/json;charset=UTF-8'
                 },
                 body: JSON.stringify(eventForm),
@@ -128,63 +133,11 @@ function BottomDrawer(props: BottomDrawerProps) {
             <View style={{ flex: 1 }}>
                 <View style={styles.horizontalLine} />
                 <View style={[styles.spaceBetween, { paddingBottom: 24 }]}>
-                <Text fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize='2xl' color="primary.500">{props.showKorean ? i18n.t('korean') : i18n.t('results')}</Text>
+                <Text fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize='2xl' color="primary.500">{props.showKorean ? i18n.t('korean') : i18n.t('translation')}</Text>
                     <View style={styles.alignRow}>
-                        <TouchableOpacity style={styles.rightSpace} onPress={props.handleKorean}>
+                        <TouchableOpacity onPress={props.handleKorean}>
                             <MaterialIcons name="translate" size={32} color="#000"/>
                         </TouchableOpacity>
-                        {props.isTranslateScreen && props.handleOpenSaveForm && 
-                        <>
-                            <TouchableOpacity onPress={props.handleOpenSaveForm}>
-                                <FontAwesome name="save" size={32} color='#000' />
-                            </TouchableOpacity>
-                            <Modal isOpen={props.openSaveForm} onClose={props.handleOpenSaveForm}>
-                                <Modal.Content maxWidth="400px">
-                                <Modal.CloseButton />
-                                <Modal.Header>{i18n.t('saveResults')}</Modal.Header>
-                                <Modal.Body>
-                                    <VStack space={2}>
-                                        <FormControl>
-                                            <FormControl.Label>{i18n.t('child')}</FormControl.Label>
-                                                <Select selectedValue={resultsForm?.cid.toString()} accessibilityLabel="Child" onValueChange={itemValue => {
-                                                    setResultsForm({...resultsForm, ['cid']: Number(itemValue)})
-                                                }} _selectedItem={{
-                                                    bg: "skyblue.500",
-                                                    endIcon: <CheckIcon size={3} />
-                                                }}>
-                                                    {/* Country code 3 digit ISO */}
-                                                    {user?.uchildren?.map((child, index) => 
-                                                        child?.cname && child?.cid &&
-                                                            <Select.Item key={'cs_'+index} label={child?.cname} value={child?.cid.toString()} />
-                                                    )}
-                                                </Select>
-                                        </FormControl>
-                                        <FormControl>
-                                            <FormControl.Label>Title</FormControl.Label>
-                                            <Input 
-                                                value={resultsForm['title']}
-                                                onChangeText={(text) => setResultsForm({...resultsForm, ['title']: text})}
-                                            />
-                                            <FormControl.HelperText>
-                                                {i18n.t('helpertext')}
-                                            </FormControl.HelperText>
-                                        </FormControl>
-                                    </VStack>
-                                </Modal.Body>
-                                <Modal.Footer>
-                                    <Button.Group space={2}>
-                                    <Button variant="ghost" colorScheme="blueGray" onPress={props.handleOpenSaveForm}>
-                                        {i18n.t('cancel')}
-                                    </Button>
-                                    <Button onPress={() => props?.saveResults && props.saveResults(resultsForm)}>
-                                        {i18n.t('save')}
-                                    </Button>
-                                    </Button.Group>
-                                </Modal.Footer>
-                                </Modal.Content>
-                            </Modal>
-                        </>
-                        }
                     </View>
                 </View>
                 
@@ -195,8 +148,8 @@ function BottomDrawer(props: BottomDrawerProps) {
                             item.highlight ? (
                                 <Popover 
                                     key={item.id} 
-                                    isOpen={item.id===currentEvent}
-                                    onOpen={openPopup(item.id)}                                 
+                                    isOpen={item.eid===currentEvent}
+                                    onOpen={openPopup(item.eid)}                                 
                                     onClose={closePopup}
                                     trigger={triggerProps => {
                                         return <Text {...triggerProps}>
@@ -331,13 +284,62 @@ function BottomDrawer(props: BottomDrawerProps) {
             </View>
             {props.isTranslateScreen && 
                 <View style={[styles.spaceBetween, props.isFullDrawer && styles.full ]}>
-                    <TouchableHighlight style={[styles.regularButton, styles.grayBackground]} onPress={props.closeResults}>
-                        <Text color="white">{i18n.t('close')}</Text>
+                    <TouchableHighlight style={[styles.regularButton, styles.grayBackground]} onPress={props.retakePicture}>
+                        <Text color="white" fontWeight={500}>{i18n.t('retake')}</Text>
                     </TouchableHighlight>
                     <View style={styles.gap} />
-                    <TouchableHighlight style={[styles.regularButton, styles.primaryBackground]} onPress={props.retakePicture}>
-                        <Text color="white">{i18n.t('tryAgain')}</Text>
-                    </TouchableHighlight>
+                    {props.handleOpenSaveForm && 
+                        <>
+                        <TouchableHighlight style={[styles.regularButton, styles.primaryBackground]} onPress={props.handleOpenSaveForm}>
+                            <Text color="white" fontWeight={500}>{i18n.t('save')}</Text>
+                        </TouchableHighlight>
+                        <Modal isOpen={props.openSaveForm} onClose={props.handleOpenSaveForm}>
+                            <Modal.Content maxWidth="400px">
+                            <Modal.CloseButton />
+                            <Modal.Header>{i18n.t('saveResults')}</Modal.Header>
+                            <Modal.Body>
+                                <VStack space={2}>
+                                    <FormControl>
+                                        <FormControl.Label>{i18n.t('child')}</FormControl.Label>
+                                            <Select selectedValue={resultsForm?.cid.toString()} accessibilityLabel="Child" onValueChange={itemValue => {
+                                                setResultsForm({...resultsForm, ['cid']: Number(itemValue)})
+                                            }} _selectedItem={{
+                                                bg: "skyblue.500",
+                                                endIcon: <CheckIcon size={3} />
+                                            }}>
+                                                {/* Country code 3 digit ISO */}
+                                                {user?.uchildren?.map((child, index) => 
+                                                    child?.cname && child?.cid &&
+                                                        <Select.Item key={'cs_'+index} label={child?.cname} value={child?.cid.toString()} />
+                                                )}
+                                            </Select>
+                                    </FormControl>
+                                    <FormControl>
+                                        <FormControl.Label>Title</FormControl.Label>
+                                        <Input 
+                                            value={resultsForm['title']}
+                                            onChangeText={(text) => setResultsForm({...resultsForm, ['title']: text})}
+                                        />
+                                        <FormControl.HelperText>
+                                            {i18n.t('helpertext')}
+                                        </FormControl.HelperText>
+                                    </FormControl>
+                                </VStack>
+                            </Modal.Body>
+                            <Modal.Footer>
+                                <Button.Group space={2}>
+                                <Button variant="ghost" colorScheme="blueGray" onPress={props.handleOpenSaveForm}>
+                                    {i18n.t('cancel')}
+                                </Button>
+                                <Button onPress={() => props?.saveResults && props.saveResults(resultsForm)}>
+                                    {i18n.t('save')}
+                                </Button>
+                                </Button.Group>
+                            </Modal.Footer>
+                            </Modal.Content>
+                        </Modal>
+                        </>
+                    }
                 </View>
             }
         </View>
@@ -390,10 +392,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     highlighted: {
-        backgroundColor: theme.colors.skyblue
-    },
-    rightSpace: {
-        paddingRight: 8
+        backgroundColor: theme.colors.primary,
     },
     full: {
         paddingBottom: 96

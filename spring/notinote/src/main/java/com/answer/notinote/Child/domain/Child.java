@@ -32,7 +32,10 @@ public class Child extends Timestamped {
     @Column(length = 20)
     String cname;
 
-    @Column()
+    @Column
+    private Long cprofileImg;
+
+    @Column
     Long color;
 
     @OneToMany(mappedBy = "child", cascade = CascadeType.ALL)
@@ -41,6 +44,7 @@ public class Child extends Timestamped {
     public Child (ChildDto requestDto) {
         this.cname = requestDto.getCname();
         this.color = requestDto.getColor();
+        this.cprofileImg = requestDto.getCprofileImg();
     }
 
     public void setUser(User user) {

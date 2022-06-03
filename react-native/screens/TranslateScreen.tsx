@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, TouchableOpacity, ImageBackground, Dimensions, Alert } from 'react-native';
+import { StyleSheet, View, TouchableOpacity, ImageBackground, Dimensions, Alert, Image } from 'react-native';
+import { useToast, Box, Button, HStack, Text, Divider, Modal, VStack } from 'native-base';
 import { Camera } from 'expo-camera';
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons, SimpleLineIcons, FontAwesome } from '@expo/vector-icons';
 import { theme } from '../core/theme';
 import type { Navigation, Result, ResultsForm } from '../types';
-import AppLoading from 'expo-app-loading';
-import useFonts from '../hooks/useFonts'
 import SwipeUpDown from 'react-native-swipe-up-down';
 import BottomDrawer from '../components/BottomDrawer';
-import { useToast, Box } from 'native-base';
 import mime from "mime";
 import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../contexts/Auth';
@@ -27,22 +25,18 @@ const date = new Date();
 
 export default function TranslateScreen({ navigation }: Navigation) {
     const [hasPermission, setHasPermission] = useState<boolean>(false);
-    const [fontsLoaded, SetFontsLoaded] = useState<boolean>(false);
     const [type, setType] = useState(Camera.Constants.Type.back);
     const [camera, setCamera] = useState<any>(null);
     const [imageUri, setImageUri] = useState<string>(''); 
-    const [results, setResults] = useState<Result>({fullText: [], korean: '', trans_full: ''});
+    const [results, setResults] = useState<Result>();
     const [showKorean, setShowKorean] = useState<boolean>(false);
     const [isFullDrawer, setFullDrawer] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [openSaveForm, setOpenSaveForm] = useState<boolean>(false);
+    const [openInitialEventForm, setOpenInitialEventForm] = useState<boolean>(false); 
 
     const toast = useToast();
     const auth = useAuth();
-
-    const LoadFontsAndRestoreToken = async () => {
-        await useFonts();
-    };
 
     useEffect(() => {
         (async () => {
@@ -55,20 +49,13 @@ export default function TranslateScreen({ navigation }: Navigation) {
         if (imageUri) {
             extractText
         }
-    }, [imageUri])
+    }, [imageUri]);
 
     useEffect(() => {
-        if (results?.fullText && results.fullText.filter(item => item.highlight === true).length > 0) {
-            const message = i18n.t('translateMessage_1')
-            toast.show({    // Design according to mui toast guidelines (https://material.io/components/snackbars#anatomy)
-                render: () => {
-                    return <Box bg="rgba(0,0,0,0.8)" px="3" py="2" rounded="xl" mx={2} mb={12} shadow={2}>
-                            {message}
-                        </Box>;
-                }
-            });
+        if (results?.fullText) {
+            setOpenInitialEventForm(true);
         }
-    }, [results])
+    }, [results]);
 
     // DEV TEST 
     // if (hasPermission === null) {
@@ -77,16 +64,6 @@ export default function TranslateScreen({ navigation }: Navigation) {
     // else if (hasPermission === false) {
     //  return <Text>No access to camera!</Text>
     // }
-
-    if (!fontsLoaded) {
-        return (
-        <AppLoading
-            startAsync={LoadFontsAndRestoreToken}
-            onFinish={() => SetFontsLoaded(true)}
-            onError={() => {}}
-        />
-        );
-    }
 
     const takePicture = async () => {
         if (camera) {
@@ -111,6 +88,7 @@ export default function TranslateScreen({ navigation }: Navigation) {
 
     const extractText = async(): Promise<any> => {
         if (imageUri) {
+            // console.log(imageUri);
             let FormData = require('form-data');
             const formdata = new FormData();
             formdata.append("uploadfile", {
@@ -119,22 +97,24 @@ export default function TranslateScreen({ navigation }: Navigation) {
                 name: imageUri.split("/").pop()
             });
 
+            console.log('ocr',formdata);
+
             setLoading(true);
 
-            if (auth?.authData?.jwt_token) {
+            if (auth?.authData?.access_token) {
                 await fetch("http://localhost:8080/notice/ocr", {
                     method: 'POST',
                     headers: {
-                        'JWT_TOKEN': auth.authData.jwt_token
+                        'ACCESS-TOKEN': auth.authData.access_token
                     },
                     body: formdata,
                     redirect: 'follow'
                 })
                 .then(response => response.json())
                 .then(data => { 
-                    console.log(data)
-                    setResults(data)
-                    setLoading(false)
+                    console.log(data);
+                    setResults(data);
+                    setLoading(false);
                 })
                 .catch(function (error) {
                     console.log(error?.response?.status) // 401
@@ -147,26 +127,31 @@ export default function TranslateScreen({ navigation }: Navigation) {
                     }
                 });
             }
-            // TEST: mockup data
-//             setResults({
-//                 fullText: [
-//                     {id: 1, content: "1. Schedule of the closing ceremony and diploma presentation ceremony: Friday, January 4, 2019 at 9 o'clock for students to go to school.\n1) ", date: "", highlight: false, registered: false},
-//                     {id: 2, content: "Closing ceremony", date: "2022-01-04", highlight: true, registered: false},
-//                     {id: 3, content: ": 1st and 2nd graders, each classroom, 9:00-10:50 (no meals)\n2) ", date: "", highlight: false, registered: false},
-//                     {id: 4, content: "Diploma representation ceremony", date: "2022-01-04", highlight: true, registered: true},
-//                     {id: 5, content: ": 3rd grade, multi-purpose auditorium (2nd floor), 10:30-12:20\n2. School opening and entrance ceremony for new students: March 4th (Mon), 2019 at 9 o'clock for students to go to school.", date: "", highlight: false, registered: false},
-//                 ],
-//                 korean: "가정통신문\n예당중학교\n8053-8388\n꿈은 크게. 마음은 넘게·\n행동은 바르게\n학부모님께\n희망찬 새해를 맞이하며 학부모님 가정에 건강과 행운이 함께 하시기를 기원 드립니다.\n드릴 말씀은, 2018학년도 종업식 및 졸업장 수여식과 2019학년도 개학 및 신입생 입학식을 다음과 같이 안내드리오니, 이후 3월 개학 때까지 학생들이 자기주도 학습 능력을 배양하고 다양한 체험 활동을 통하여 심신이 건강해지며 각종 유해 환경에 노출되지 않고 안전하고 줄거운 시간이 되도록 지도해 주시기 바랍니다.\n\
-// 1. 종업식 및 졸업장 수여식 일정 : 2019년 1월 4일(금), 학생 등교 9시\n\
-// 1) 종업식 : 1· 2학년, 각 교실, 9:00-10:50 (급식 없음)\n\
-// 2) 졸업장 수여식 : 3학년, 다목적 강당(2층), 10:30~12:20\n\
-// 2. 개학 및 신입생 입학식 : 2019년 3월 4일(월), 학생 등교 9시\n\
-// 1) 3월 4일 일정 : 월요일 정상수업 (급식 실시)\n\
-// (준비물: 교과서, 노트, 필기도구. 학생용 실내화(흰색) 등)\n\
-// 2) 신입생 입학식 : 다목적 강당(2층) 10시 30분, 신입생 등교 9시(신반 교실로 입장)\n",
-//                 trans_full: ''
-//             })
         }
+
+        // TEST: mockup data
+        // setResults({
+        //     fullText: [
+        //         {id: 1, content: "1. Schedule of the closing ceremony and diploma presentation ceremony: Friday, January 4, 2019 at 9 o'clock for students to go to school.\n1) ", date: "", highlight: false, registered: false},
+        //         {id: 2, content: "Closing ceremony", date: "2022-01-04", highlight: true, registered: false},
+        //         {id: 3, content: ": 1st and 2nd graders, each classroom, 9:00-10:50 (no meals)\n2) ", date: "", highlight: false, registered: false},
+        //         {id: 4, content: "Diploma representation ceremony", date: "2022-01-04", highlight: true, registered: true},
+        //         {id: 5, content: ": 3rd grade, multi-purpose auditorium (2nd floor), 10:30-12:20\n2. School opening and entrance ceremony for new students: March 4th (Mon), 2019 at 9 o'clock for students to go to school.", date: "", highlight: false, registered: false},
+        //     ],
+        //     korean: "가정통신문\n예당중학교\n8053-8388\n꿈은 크게. 마음은 넘게·\n행동은 바르게\n학부모님께\n희망찬 새해를 맞이하며 학부모님 가정에 건강과 행운이 함께 하시기를 기원 드립니다.\n드릴 말씀은, 2018학년도 종업식 및 졸업장 수여식과 2019학년도 개학 및 신입생 입학식을 다음과 같이 안내드리오니, 이후 3월 개학 때까지 학생들이 자기주도 학습 능력을 배양하고 다양한 체험 활동을 통하여 심신이 건강해지며 각종 유해 환경에 노출되지 않고 안전하고 줄거운 시간이 되도록 지도해 주시기 바랍니다.\n",
+        //     trans_full: "",
+        //     event_num: 2,
+        //     events: [
+        //         {
+        //             title: "opening ceremony",
+        //             date: "2022-03-24"
+        //         },
+        //         {
+        //             title: "closing ceremony",
+        //             date: "2022-03-24"
+        //         }
+        //     ]
+        // });
     }
     
     const handleKorean = (): void => {
@@ -193,32 +178,43 @@ export default function TranslateScreen({ navigation }: Navigation) {
                  type: mime.getType(imageUri),
                  name: imageUri.split("/").pop()
             });
-            // formdata.append('noticeRequestDTO',  new Blob([JSON.stringify(data)], {type: 'application/json'}));
-            formdata.append('cid', form?.cid);
-            formdata.append('title', form?.title);
-            formdata.append('date', new Date().toISOString().slice(0, 10));
-            formdata.append('korean', results?.korean);
-            formdata.append('trans_full', results?.trans_full);
+            let data = {
+                cid: form?.cid,
+                title: form?.title,
+                date: new Date().toISOString().slice(0, 10),
+                korean: results?.korean,
+                fullText: results?.trans_full
+            }
+            formdata.append("noticeRequestDto", JSON.stringify(data));
+            // formdata.append('noticeRequestDto', new Blob([JSON.stringify(data)], {type: 'application/json'}));
             
-            console.log(formdata);
+            // formdata.append('cid', form?.cid);
+            // formdata.append('title', form?.title);
+            // formdata.append('date', new Date().toISOString().slice(0, 10));
+            // formdata.append('korean', results?.korean);
+            // formdata.append('trans_full', results?.trans_full);
             
-            if (auth?.authData?.jwt_token) {
+            // console.log(formdata);
+            
+            if (auth?.authData?.access_token) {
                 fetch('http://localhost:8080/notice/save', {
                     method: 'POST',
                     headers: {
-                        'JWT_TOKEN': auth.authData.jwt_token,
+                        'ACCESS-TOKEN': auth.authData.access_token,
                     },
                     body: formdata,
                     redirect: 'follow'
                 })
                 .then(response => response.json())
                 .then(data => {
+                    console.log(data);
                     Alert.alert(`The result was saved in Search as [${data?.title}]`);
+                    setResults(data);
                     handleOpenSaveForm();   
 					// auth?.handleUpdate();
                 })
                 .catch(function (error) {
-                    console.log(error)
+                    console.log('error',error);
                     if(error.response.status==401) {
                         //redirect to login
                         Alert.alert("The session has expired. Please log in again.");
@@ -228,10 +224,6 @@ export default function TranslateScreen({ navigation }: Navigation) {
                 });
             }
         }
-    }
-
-    const closeResults = (): void => {
-        navigation.navigate('Home');
     }
 
     const retakePicture = (): void => {
@@ -247,43 +239,77 @@ export default function TranslateScreen({ navigation }: Navigation) {
             {imageUri ? (
                 /* After taking a picture and press the check button */
                 results?.fullText && results?.korean ? (
-                    <ImageBackground style={styles.container} resizeMode="cover" imageStyle={{ opacity: 0.5 }} source={{ uri: imageUri }}>
-                        <SwipeUpDown
-                            itemMini={
-                                <BottomDrawer 
-                                    results={results}
-                                    showKorean={showKorean}
-                                    isFullDrawer={isFullDrawer}
-                                    isTranslateScreen={true}
-                                    openSaveForm={openSaveForm}
-                                    handleKorean={handleKorean}
-                                    saveResults={saveResults}
-                                    closeResults={closeResults}
-                                    retakePicture={retakePicture}
-                                    handleOpenSaveForm={handleOpenSaveForm}
-                                />
-                            }
-                            itemFull={
-                                <BottomDrawer 
-                                    results={results}
-                                    showKorean={showKorean}
-                                    isFullDrawer={isFullDrawer}
-                                    isTranslateScreen={true}
-                                    openSaveForm={openSaveForm}
-                                    handleKorean={handleKorean}
-                                    saveResults={saveResults}
-                                    closeResults={closeResults}
-                                    retakePicture={retakePicture}
-                                    handleOpenSaveForm={handleOpenSaveForm}
-                                />
-                            }
-                            onShowMini={() => setFullDrawer(false)}
-                            onShowFull={() => setFullDrawer(true)}
-                            animation="easeInEaseOut"
-                            disableSwipeIcon
-                            extraMarginTop={10}
-                            swipeHeight={Dimensions.get('window').height*0.5}
-                        />
+                    <ImageBackground style={styles.container} resizeMode="cover" source={{ uri: imageUri }}>
+                        <View style={styles.backdrop}>
+                            <SwipeUpDown
+                                itemMini={
+                                    <BottomDrawer 
+                                        results={results}
+                                        showKorean={showKorean}
+                                        isFullDrawer={isFullDrawer}
+                                        isTranslateScreen={true}
+                                        openSaveForm={openSaveForm}
+                                        handleKorean={handleKorean}
+                                        saveResults={saveResults}
+                                        retakePicture={retakePicture}
+                                        handleOpenSaveForm={handleOpenSaveForm}
+                                    />
+                                }
+                                itemFull={
+                                    <BottomDrawer 
+                                        results={results}
+                                        showKorean={showKorean}
+                                        isFullDrawer={isFullDrawer}
+                                        isTranslateScreen={true}
+                                        openSaveForm={openSaveForm}
+                                        handleKorean={handleKorean}
+                                        saveResults={saveResults}
+                                        retakePicture={retakePicture}
+                                        handleOpenSaveForm={handleOpenSaveForm}
+                                    />
+                                }
+                                onShowMini={() => setFullDrawer(false)}
+                                onShowFull={() => setFullDrawer(true)}
+                                animation="easeInEaseOut"
+                                disableSwipeIcon
+                                extraMarginTop={10}
+                                swipeHeight={Dimensions.get('window').height*0.65}
+                            />
+                            <Modal isOpen={openInitialEventForm} animationPreset="slide">
+                                <Modal.Content maxWidth="400">
+                                <Modal.Header>
+                                    <VStack space={2}>
+                                        {results?.event_num ? (
+                                            <Text fontSize="lg" fontWeight={600} textAlign="center">We found {results.event_num} events for you</Text>
+                                        ) : (
+                                            <Text fontSize="lg" fontWeight={600} textAlign="center">{i18n.t('eventNotFound')}</Text>
+                                        )}
+                                    </VStack>
+                                </Modal.Header>
+                                <Modal.Body maxHeight={200}>
+                                    {results?.events?.length ? (
+                                        results.events.map((item, index) => 
+                                            <HStack key={'re_'+index} space={4} my={2} alignItems="center">
+                                                <SimpleLineIcons name="magic-wand" size={28} />
+                                                <VStack>
+                                                    <Text fontSize="xs">{item.date}</Text>
+                                                    <Text fontWeight={600}>{item.title}</Text>
+                                                </VStack>
+                                            </HStack>
+                                        )
+                                    ) : (
+                                        <Image source={require("../assets/images/empty.png")} style={styles.imageStyle} />
+                                    )}
+                                </Modal.Body>
+                                <Divider />
+                                <Modal.Footer alignSelf="center" bgColor="muted.50" p={2}>
+                                    <Button variant="unstyled" onPress={() => setOpenInitialEventForm(false)}>
+                                        OK
+                                    </Button>
+                                </Modal.Footer>
+                                </Modal.Content>
+                            </Modal>
+                        </View>
                     </ImageBackground>
                 ) : (
                     /* After taking a picture, before OCR(pressing the check button) */
@@ -324,6 +350,7 @@ export default function TranslateScreen({ navigation }: Navigation) {
                         <Ionicons name="camera-reverse-outline" size={32} color="white" />
                     </TouchableOpacity>
                 </View>
+                
                 </>
             )}
         </View>
@@ -373,5 +400,15 @@ const styles = StyleSheet.create({
         height: 56,
         width: 56,
         borderWidth: 2
+    },
+    backdrop: {
+        flex: 1, 
+        backgroundColor: 'rgba(0,0,0, 0.60)'
+    },
+    imageStyle: {
+        width: 80,
+        height: 80,
+        margin: 20,
+        alignSelf: 'center'
     }
 }); 

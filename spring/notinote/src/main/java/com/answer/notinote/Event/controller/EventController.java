@@ -44,12 +44,7 @@ public class EventController {
     }
 
     @PutMapping("/event/register")
-    public ResponseEntity<?> registerEvent(@RequestParam(value = "id") Long id, @RequestBody EventRegisterDto registerDto) throws GeneralSecurityException, IOException {
-        return ResponseEntity.ok(eventService.registerEvent(id, registerDto));
-    }
-
-    @PostMapping("/event/register")
-    public ResponseEntity<?> registerEventWithoutId(@RequestBody EventRegisterDto registerDto) throws GeneralSecurityException, IOException {
-        return ResponseEntity.ok(eventService.registerEvent(registerDto));
+    public ResponseEntity<?> registerEvent(@RequestParam(value = "eid") Long eid, @RequestBody EventRegisterDto registerDto) throws GeneralSecurityException, IOException {
+        return ResponseEntity.ok(eventService.registerEvent(eid, registerDto));
     }
 }

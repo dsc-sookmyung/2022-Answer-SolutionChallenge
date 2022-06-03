@@ -1,56 +1,81 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, SafeAreaView, TouchableOpacity, Image, ImageBackground, Alert } from 'react-native';
-import { Text, Box } from 'native-base'
-import { Ionicons } from '@expo/vector-icons';
+import { StyleSheet, View, SafeAreaView, TouchableOpacity, ImageBackground, Alert, Image } from 'react-native';
+import { Text } from 'native-base'
 import { theme } from '../core/theme';
 import type { Navigation, UserData } from '../types';
 import { useAuth } from '../contexts/Auth';
 import { StackActions } from '@react-navigation/native';
-
+import { MaterialIcons } from '@expo/vector-icons';
+import HomeMenu from '../components/Home/HomeMenu';
+import NoEventBox from '../components/Home/NoEventBox';
+import i18n from 'i18n-js'
+import '../locales/i18n';
 
 export default function HomeScreen({ navigation }: Navigation) {
-    const [events, setEvents] = useState<{event_num: number, children: { cid: number, cname: string, events: string[] }[]}>(
+    const cProfileImgSource = [require(`../assets/images/cprofile-images/profile-1.png`), require(`../assets/images/cprofile-images/profile-2.png`), require(`../assets/images/cprofile-images/profile-3.png`),
+	require(`../assets/images/cprofile-images/profile-4.png`), require(`../assets/images/cprofile-images/profile-5.png`), require(`../assets/images/cprofile-images/profile-6.png`), require(`../assets/images/cprofile-images/profile-7.png`), require(`../assets/images/cprofile-images/profile-8.png`), require(`../assets/images/cprofile-images/profile-9.png`)];
+    const [events, setEvents] = useState<{event_num: number, children: { cid: number, cname: string, cprofileImg: number, events: string[] }[]}>(
         {event_num: 4,
             children: [
                 {
                     cid: 1,
                     cname: "Soo",
+                    cprofileImg: 2,
                     events: [
                         "the 17th Graduate Seremony",
                         "Do-Dream Festival"
-                    ]
+                    ],
                 }, {
                     cid: 2,
                     cname: "Hee",
-                    events: []
+                    events: [],
+                    cprofileImg: 1,
                 }
             ]
         }
     );
-    const [nowSelectedChildId, setNowSelectedChildId] = useState<number>(1);
-    const [user, setUser] = useState<UserData>();
+    const SHOW_ALL = -1;
+    const [nowSelectedChildId, setNowSelectedChildId] = useState<number>(SHOW_ALL);
+    const [user, setUser] = useState<UserData>({
+        uid: 1,
+        username: "Soo",
+        uemail: "kaithape@gmail.com",
+        uprofileImg: 1,
+        ulanguage: "english",
+        uchildren:[{ cid: 1, cname:"Soo", cprofileImg: 1 }, { cid: 2, cname:"Hee", cprofileImg: 4 }]
+    });
     const auth = useAuth();
+    
 
     useEffect(()=> {
-        setUser(auth?.userData);
+        if (auth?.userData) {
+            setUser(auth?.userData);
+        }
 
-        if (auth?.authData?.jwt_token) {
+        navigation.setOptions({
+            headerRight: () => (
+                <HomeMenu/>
+            )
+        });
+
+        if (auth?.authData?.access_token) {
             fetch('http://localhost:8080/user/children', {
                 method: 'GET',
                 headers: {
-                    'JWT_TOKEN': auth.authData.jwt_token
+                    'ACCESS-TOKEN': auth.authData.access_token
                 },
                 redirect: 'follow'
             })
             .then(response => response.json())
             .then(data => {
                 setEvents(data);
-            }) // console.log(data)
+                // console.log(data);
+            }) 
             .catch((error) => {
                 console.log(error)
-                if(error?.response?.status==401) {
+                if (error?.response?.status==401) {
                     //redirect to login
-                    Alert.alert("The session has expired. Please log in again.");
+                    Alert.alert(i18n.t('sessionExpired'));
                     auth.signOut();
                     navigation.dispatch(StackActions.popToTop())
                 }
@@ -72,64 +97,68 @@ export default function HomeScreen({ navigation }: Navigation) {
         <>{
             user && events && events.children?.length > 0 && (
             <SafeAreaView style={styles.container}>
-                <View style={styles.profile}>
-                    <ImageBackground style={styles.backgroundImage} source={require("../assets/images/pink-background-cropped.png")} resizeMode="cover" imageStyle={{ borderRadius: 12 }}>
-                        <Image style={styles.profileImage} source={require(`../assets/images/profile-images/profile-1.png`)} />
-                        <View style={styles.profielTextWrapper}>
-                            <Text fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="xl">{"Hi, " + user.username + "!"}</Text>
-                            <Text fontFamily="mono" fontWeight={400} fontStyle="normal" fontSize="sm">You've got {events.event_num} events today.</Text>
-                        </View>
-                    </ImageBackground>
-                </View>
+                <ImageBackground source={require("../assets/images/home-button-background.png")} style={[styles.functionButtonImageBackground]} imageStyle={{}}>
+                    <View style={styles.functionButtonWrapper}>
+                        <TouchableOpacity onPress={() => navigation.navigate('Translate')}>
+                            <ImageBackground source={require("../assets/images/pink-background-cropped.png")} style={[styles.bigButton]} imageStyle={{ borderRadius: 12 }}>
+                                <View style={[styles.bigButtonContentWrapper]}>
+                                    <Text style={[styles.buttonName, styles.deepBlue]} fontWeight={700} fontSize="xl" pb={2}>{i18n.t('translate')}</Text>
+                                    <MaterialIcons name="g-translate" size={32} color="#333"/>
+                                </View>
+                            </ImageBackground>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => navigation.navigate('Search')}>
+                            <ImageBackground source={require("../assets/images/pink-background-cropped.png")} style={[styles.bigButton]} imageStyle={{ borderRadius: 12 }}>
+                                <View style={[styles.bigButtonContentWrapper]}>
+                                    <Text style={[styles.buttonName, styles.deepBlue]} fontWeight={700} fontSize="xl" pb={2}>{i18n.t('search')}</Text>
+                                    <MaterialIcons name="search" size={32} color="#333"/>
+                                </View>
+                            </ImageBackground>
+                        </TouchableOpacity>
+                    </View>
+                </ImageBackground>
                 <View style={styles.noticeWrapper}>
-                    <Text style={styles.smallTitle} fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="xl">Today's Events</Text>
+                    <Text style={styles.smallTitle} fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="2xl" lineHeight={60}>{i18n.t('todayEvent')}</Text>
                     <View style={styles.childButtonWrapper}>
-                        {events.children?.map((notice, index) => 
+                        <TouchableOpacity key={'n_all'} style={[styles.childButton, {
+                            backgroundColor: nowSelectedChildId === SHOW_ALL ? theme.colors.primary : "#ffffff",
+                        }]} onPress={() => handleNowSelectedChildId(-1)}>
+                            <Text fontWeight={500} style={[{
+                                color: nowSelectedChildId !== SHOW_ALL ? theme.colors.primary : "#ffffff",
+                            }]}>All</Text>
+                            </TouchableOpacity>
+                        {events.children?.map((child, index) =>
                             <TouchableOpacity key={'n_'+index} style={[styles.childButton, {
-                                backgroundColor: nowSelectedChildId === notice.cid ? theme.colors.primary : "#ffffff",
-                            }]} onPress={() => handleNowSelectedChildId(notice.cid)}>
+                                backgroundColor: nowSelectedChildId === child.cid ? theme.colors.primary : "#ffffff",
+                            }]} onPress={() => handleNowSelectedChildId(child.cid)}>
+                                <Image style={styles.cprofileImage} source={cProfileImgSource[child.cprofileImg]} />
                                 <Text fontWeight={500} style={[{
-                                    color: nowSelectedChildId !== notice.cid ? theme.colors.primary : "#ffffff",
-                                }]}>{notice.cname}</Text>
+                                    color: nowSelectedChildId !== child.cid ? theme.colors.primary : "#ffffff",
+                                }]}>{child.cname}</Text>
                             </TouchableOpacity>
                         )}
                     </View>
                     <View style={styles.todayNoticeWrapper}>
-                        {events.children.filter(child => child.cid === nowSelectedChildId).length > 0 && events.children.filter(child => child.cid === nowSelectedChildId)[0].events?.length ? (
-                                events.children?.filter(child => child.cid === nowSelectedChildId)[0].events?.map((item, index) => 
-                                    <View key={'e_'+index} style={{flexDirection: "row"}}>
-                                        {/* <Text fontWeight={500} fontSize="md" lineHeight={28} pr={4} style={{color: theme.colors.primary}}>{item.time}</Text> */}
-                                        <Text fontSize="md" lineHeight={28}>{index+1 + '. ' + item}</Text>
-                                    </View>
-                                )
-                            ) : (
-                                <Box style={styles.emptyBox}>
-                                    <Ionicons name="musical-note" size={64} />
-                                    <Text fontSize="md" pt={2}>There is no event today!</Text>
-                                </Box>
+                        {nowSelectedChildId === SHOW_ALL ? (
+                            events.children.reduce((prevValue, child) => prevValue + child.events.length, 0) > 0 ? (
+                                events.children.map((notice, index) =>
+                                <View key={'n_'+index}>
+                                    {notice.events.map((event, index) => {
+                                        return (
+                                            <Text key={'t_'+index} fontWeight={400} fontStyle="normal" fontSize="md" lineHeight={28}>{`[${notice.cname}] ` + event}</Text>
+                                        )
+                                    })}
+                                </View>))
+                            : <NoEventBox/>
+                        ) : events.children.filter(child => child.cid === nowSelectedChildId)[0].events?.length ? (
+                            events.children?.filter(child => child.cid === nowSelectedChildId)[0].events?.map((item, index) => 
+                                <View key={'e_'+index} style={{flexDirection: "row"}}>
+                                    <Text fontSize="md" lineHeight={28}>{index+1 + '. ' + item}</Text>
+                                </View>
                             )
-                        }
+                        ) : <NoEventBox/>
+                    }
                     </View>
-                </View>
-                <View style={styles.functionButtonWrapper}>
-                    <Text style={styles.smallTitle} fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize="xl">Functions</Text>
-                    
-                    <TouchableOpacity onPress={() => navigation.navigate('Translate')}>
-                        <ImageBackground source={require("../assets/images/button-background.png")} style={[styles.bigButton]} imageStyle={{ borderRadius: 12 }}>
-                            <View>
-                                <Text style={[styles.buttonName, styles.deepBlue]} fontWeight={700} fontSize="xl" pb={2}>Translate</Text>
-                                <Text style={styles.deepBlue} fontSize="sm">Translation, summarization, and calendar registration are all possible just by taking a picture of the notice.</Text>
-                            </View>
-                        </ImageBackground>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => navigation.navigate('Search')}>
-                        <ImageBackground source={require("../assets/images/button-background.png")} style={[styles.bigButton]} imageStyle={{ borderRadius: 12 }}>
-                            <View>
-                                <Text style={[styles.buttonName, styles.deepBlue]} fontWeight={700} fontSize="xl" pb={2}>Search</Text>
-                                <Text style={styles.deepBlue} fontSize="sm">You can find notices you have translated.</Text>
-                            </View>
-                        </ImageBackground>
-                    </TouchableOpacity>
                 </View>
             </SafeAreaView> )}
         </>
@@ -179,13 +208,14 @@ const styles = StyleSheet.create({
     childButton: {
         borderWidth: 1,
         borderColor: theme.colors.primary,
-        height: 30,
-        borderRadius: 16,
-        justifyContent: "center",
+        height: 40,
+        borderRadius: 32,
+        flexDirection: "row",
+        justifyContent: "space-between",
         alignItems: "center",
         paddingHorizontal: 16,
         alignSelf: 'flex-start',
-        marginRight: 8,
+        marginRight: 12,
     },
     todayNoticeWrapper: {
         alignSelf: "flex-start",
@@ -202,31 +232,36 @@ const styles = StyleSheet.create({
     profielTextWrapper: {
         paddingRight: 30,
     },
+    functionButtonImageBackground: {
+        flex: 1.16,
+        flexDirection: "row",
+        alignItems: "center",
+    },
     functionButtonWrapper: {
-        flex: 1.5,
-        width: '88%',
+        flex: 1,
         paddingBottom: 30,
+        marginHorizontal: 20,
+        marginTop: -28
     },
     smallTitle: {
-        marginBottom: 8,
+        marginBottom: 0,
     },
     buttonName: {
         fontSize: 24,
     },
     bigButton: {
-        padding: 26,
-        marginBottom: 18,
+        padding: 34,
+        marginBottom: 20,
         borderRadius: 16,
-        shadowColor: "#999999",
-        shadowOpacity: 0.5,
-        shadowRadius: 8,
-        shadowOffset: {
-          height: 0,
-          width: 0,
-        },
+        height: 100
+    },
+    bigButtonContentWrapper: {
+        flex:1,
+        flexDirection:'row',
+        justifyContent:'space-between'
     },
     deepBlue: {
-        color: theme.colors.secondary,
+        color: "#333333",
     },
     lightPink: {
         color: theme.colors.primary,
@@ -236,5 +271,10 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    cprofileImage: {
+        width: 20,
+        height: 20,
+        marginRight: 12
     }
 })
