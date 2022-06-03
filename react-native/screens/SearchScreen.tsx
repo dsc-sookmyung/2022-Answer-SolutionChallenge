@@ -206,7 +206,7 @@ export default function SearchScreen({ navigation }: Navigation) {
                         <TouchableOpacity key={'n_'+index} style={[styles.childButton, {
                             backgroundColor: nowSelectedChildId === child.cid ? theme.colors.primary : "#ffffff",
                         }]} onPress={() => handleNowSelectedChildId(child.cid)}>
-                            <Image style={styles.cprofileImage} source={cProfileImgSource[child.cprofileImg-1]} />
+                            <Image style={styles.cprofileImage} source={cProfileImgSource[child.cprofileImg]} />
                             <Text fontWeight={500} style={[{
                                 color: nowSelectedChildId !== child.cid ? theme.colors.primary : "#ffffff",
                             }]}>{child.cname}</Text>
