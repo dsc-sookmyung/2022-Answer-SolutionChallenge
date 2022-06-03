@@ -194,9 +194,8 @@ public class NoticeService {
         String en_full = englishText(noticeRequestDto.getKorean());
 
         NoticeResponseBody responseBody = detectEvent(notice.getOrigin_full(), notice.getTrans_full(), user.getUlanguage(), en_full);
-        String title = responseBody.getTitle();
-
         List<EventRequestDto> eventWords = responseBody.getEvents();
+
         List<Event> events = new ArrayList<>();
         for (EventRequestDto dto : eventWords) events.add(eventService.create(dto, notice));
 
