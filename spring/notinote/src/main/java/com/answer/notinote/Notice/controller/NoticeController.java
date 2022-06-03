@@ -50,7 +50,7 @@ public class NoticeController {
         List<NoticeSentenceDto> fullText = noticeService.extractSentenceFromEventRequestDto(trans_full, eventWords);
         List<NoticeEventListDto> events = noticeService.extractEventList(fullText);
         Integer event_num = events.size();
-        return new NoticeOCRDto(korean, trans_full, fullText, event_num, events);
+        return new NoticeOCRDto(title, korean, trans_full, fullText, event_num, events);
     }
 
     @RequestMapping(value = "/notice/save", method = RequestMethod.POST)
