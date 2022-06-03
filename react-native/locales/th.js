@@ -68,5 +68,7 @@ export default {
     searchResult: "ผลการค้นหา",
     noEvent: "วันนี้ไม่มีกิจกรรม!",
     saveFirst: "คลิกปุ่มบันทึกเพื่อบันทึกผลลัพธ์ก่อน!",
-    eventNotFound: "ไม่พบกิจกรรม"
+    eventNotFound: "ไม่พบกิจกรรม",
+    noResults: "ยังไม่มีผลลัพธ",
+    translateFirst: "แปลและบันทึกผลลัพธ์"
 }

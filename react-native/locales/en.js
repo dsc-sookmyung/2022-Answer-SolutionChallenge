@@ -74,5 +74,7 @@ export default {
     searchResult: "Search Result",
     noEvent: "There is no event today!",
     saveFirst: "Click the Save button to save the results first!",
-    eventNotFound: "No event found"
+    eventNotFound: "No event found",
+    noResults: "There are no results yet",
+    translateFirst: "Translate and save the results."
 }

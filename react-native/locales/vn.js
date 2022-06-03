@@ -67,5 +67,7 @@ export default {
     searchResult: "Kết quả tìm kiếm",
     noEvent: "Không có sự kiện hôm nay!",
     saveFirst: "Nhấp vào nút Lưu để lưu kết quả trước!",
-    eventNotFound: "Không tìm thấy sự kiện nào"
+    eventNotFound: "Không tìm thấy sự kiện nào",
+    noResults: "Chưa có kết quả.",
+    translateFirst: "Dịch và lưu kết quả."
 }
