@@ -16,7 +16,7 @@ export default {
     hello_2: '!',
     todayEvent: "Today's Events",
     eventCount_1: "You've got ",
-    eventCount_2: "events today.",
+    eventCount_2: " events today.",
     functions: 'Functions',
     /* Join */
     loginSuccess: 'Success',
