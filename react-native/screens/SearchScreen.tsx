@@ -10,6 +10,7 @@ import { useAuth } from '../contexts/Auth';
 import { StackActions } from '@react-navigation/native';
 import i18n from 'i18n-js'
 import '../locales/i18n';
+import { colors } from 'react-native-elements';
 
 
 export default function SearchScreen({ navigation }: Navigation) {
@@ -81,10 +82,8 @@ export default function SearchScreen({ navigation }: Navigation) {
             })
             .then(response => response.json())
             .then(data => {
-                if (data?.date && data?.saved?.length) {
-                    setNotices(data);
-                    setFilteredNotices(data);    
-                }
+                setNotices(data);
+                setFilteredNotices(data);    
             })
             .catch(function (error) {
                 console.log(error)
@@ -206,7 +205,7 @@ export default function SearchScreen({ navigation }: Navigation) {
                         <TouchableOpacity key={'n_'+index} style={[styles.childButton, {
                             backgroundColor: nowSelectedChildId === child.cid ? theme.colors.primary : "#ffffff",
                         }]} onPress={() => handleNowSelectedChildId(child.cid)}>
-                            <Image style={styles.cprofileImage} source={cProfileImgSource[child.cprofileImg-1]} />
+                            <Image style={styles.cprofileImage} source={cProfileImgSource[child.cprofileImg]} />
                             <Text fontWeight={500} style={[{
                                 color: nowSelectedChildId !== child.cid ? theme.colors.primary : "#ffffff",
                             }]}>{child.cname}</Text>
@@ -218,15 +217,21 @@ export default function SearchScreen({ navigation }: Navigation) {
             <Text style={styles.smallDescription}>{i18n.t('results_cap')}</Text>
 
             <ScrollView style={styles.searchResults}>
-                {filteredNotices && filteredNotices.length > 0 && (
+                {filteredNotices && filteredNotices.length > 0 ? (
                     filteredNotices?.map((notice, index) => 
                         <SearchedNotice key={"nt_" + index} date={notice?.date} saved={notice?.saved} />
                     )
-                )}
-                {/* TODO: empty icon
+                )
                 : (
-                    <Text>There are no results yet. Translate and save the results.</Text>
-                )} */}
+                    <View style={{ alignItems: "center" }}>
+                        <Image source={require("../assets/images/empty.png")} style={styles.imageStyle} />
+                        <Text>{i18n.t('noResults')}</Text>
+                        <Text>{i18n.t('translateFirst')}</Text>
+                        <TouchableOpacity style={styles.navigateButton} onPress={() => navigation.navigate('Translate')}>
+                            <Text fontWeight={500} color={"#fff"}>Go to {i18n.t('translate')}</Text>
+                        </TouchableOpacity>
+                    </View>
+                )} 
             </ScrollView>
         </View> 
     );
@@ -299,4 +304,16 @@ const styles = StyleSheet.create({
         height: 20,
         marginRight: 12
     },
+    imageStyle: {
+        width: 80,
+        height: 80,
+        margin: 20,
+    },
+    navigateButton: {
+        margin: 20,
+        backgroundColor: theme.colors.primary,
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderRadius: 8,
+    }
 })

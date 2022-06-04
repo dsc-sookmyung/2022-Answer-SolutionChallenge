@@ -16,7 +16,7 @@ export default {
     hello_2: '!',
     todayEvent: "Today's Events",
     eventCount_1: "You've got ",
-    eventCount_2: "events today.",
+    eventCount_2: " events today.",
     functions: 'Functions',
     /* Join */
     loginSuccess: 'Success',
@@ -74,5 +74,7 @@ export default {
     searchResult: "Search Result",
     noEvent: "There is no event today!",
     saveFirst: "Click the Save button to save the results first!",
-    eventNotFound: "No event found"
+    eventNotFound: "No event found",
+    noResults: "There are no results yet",
+    translateFirst: "Translate and save the results."
 }
