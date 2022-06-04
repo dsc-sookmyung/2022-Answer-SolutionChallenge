@@ -74,7 +74,7 @@ export default function HomeScreen({ navigation }: Navigation) {
 
   useEffect(() => {
     if (auth?.userData) {
-        setUser(auth?.userData);
+      setUser(auth?.userData);
     }
 
     navigation.setOptions({
@@ -123,7 +123,7 @@ export default function HomeScreen({ navigation }: Navigation) {
           <ImageBackground
             source={require("../assets/images/home-button-background.png")}
             style={[styles.functionButtonImageBackground]}
-            imageStyle={{marginTop: -40}}
+            imageStyle={{ marginTop: -40 }}
           >
             <View style={styles.functionButtonWrapper}>
               <TouchableOpacity
@@ -176,12 +176,13 @@ export default function HomeScreen({ navigation }: Navigation) {
               fontStyle="normal"
               fontSize="xl"
               lineHeight={60}
-            >{ 
-                events.event_num === 0 ? i18n.t("noEvent") : 
-                i18n.t("eventCount_1") +
-                events.event_num +
-                i18n.t("eventCount_2")
-            }</Text>
+            >
+              {events.event_num === 0
+                ? i18n.t("noEvent")
+                : i18n.t("eventCount_1") +
+                  events.event_num +
+                  i18n.t("eventCount_2")}
+            </Text>
             <View style={styles.childButtonWrapper}>
               <TouchableOpacity
                 key={"n_all"}
@@ -253,7 +254,10 @@ export default function HomeScreen({ navigation }: Navigation) {
                   events.children.map((notice, index) =>
                     notice.events.map((event, index) => {
                       return (
-                        <View key={"n_" + index} style={[styles.pinkButton, { flexDirection: "row" }]}>
+                        <View
+                          key={"n_" + index}
+                          style={[styles.pinkButton, { flexDirection: "row" }]}
+                        >
                           <MaterialIcons
                             name="event"
                             size={20}
@@ -358,7 +362,7 @@ const styles = StyleSheet.create({
     shadowOffset: {
       height: 0,
       width: 0,
-    }
+    },
   },
   childButtonWrapper: {
     flexDirection: "row",
