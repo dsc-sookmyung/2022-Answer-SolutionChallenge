@@ -54,7 +54,7 @@ public class Event extends Timestamped implements Comparable<Event>  {
     public Event(EventRequestDto requestDto) {
         this.index_start = requestDto.getS_index();
         this.index_end = requestDto.getE_index();
-        this.title = requestDto.getContent();
+        this.title = requestDto.getEvent();
         this.date = LocalDate.parse(requestDto.getDate());
     }
 

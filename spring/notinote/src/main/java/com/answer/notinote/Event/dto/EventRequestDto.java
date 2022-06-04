@@ -10,7 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class EventRequestDto implements Comparable<EventRequestDto>{
-    String content;
+    String event;
     String date;
     int s_index;
     int e_index;
