@@ -50,7 +50,8 @@ public class NoticeController {
     }
 
     @RequestMapping(value = "/notice/image", method = RequestMethod.POST)
-    public ResponseEntity<?> saveImage(@RequestPart(value = "uploadfile") MultipartFile uploadfile) throws IOException {
+    public ResponseEntity<?> saveImage(@RequestPart MultipartFile uploadfile) throws IOException {
+        System.out.println("/notice/image");
         String imageUrl = noticeService.saveImage(uploadfile); //notice 저장
         return ResponseEntity.ok(new ImageUrlResponseDto(imageUrl));
     }
