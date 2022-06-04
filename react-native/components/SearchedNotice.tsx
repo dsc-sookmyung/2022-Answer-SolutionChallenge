@@ -54,14 +54,14 @@ export default function SearchedNotice(props: Notices) {
                 {props?.saved?.map((child, index) =>
                     <TouchableOpacity 
                         key={'sc_'+index} 
-                        onPress={() => navigation.navigate('SearchResult', {date: props?.date, cid: child?.cid})}
+                        onPress={() => navigation.navigate('SearchResult', {date: props?.date, nid: child?.nid})}
                         style={ styles.childNotice }
                     >
                         <View style={{ justifyContent: "space-between" }}>
                             <HStack style={styles.noticeHeader}>
                                 {user.uchildren &&
                                     <HStack style={ styles.cprofile }>
-                                        <Image style={styles.cprofileImage} source={cProfileImgSource[user.uchildren.filter(uchild => uchild.cid === child.cid)[0]?.cprofileImg-1]} />    
+                                        <Image style={styles.cprofileImage} source={cProfileImgSource[user.uchildren.filter(uchild => uchild.cid === child.cid)[0]?.cprofileImg]} />    
                                         <VStack>
                                             <Text fontSize="xs">{user.uchildren.filter(uchild => uchild.cid === child.cid)[0]?.cname}</Text>          
                                             <Text fontWeight={500} style={styles.notices}>{child?.title}</Text>
