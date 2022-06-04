@@ -57,6 +57,11 @@ public class NoticeController {
         NoticeTitleListDto notice_title = noticeService.saveNotice(uploadfile, noticeRequestDto, request); //notice 저장
         return notice_title;
     }
+
+    @RequestMapping(value = "/notice/upload", method = RequestMethod.POST)
+    public String uploadObject(String objectName, String filePath) throws IOException{
+        return noticeService.uploadObjectimage(objectName, filePath);
+    }
 /*
     @PostMapping("/notice/test")
     public List<NoticeSentenceDto> test(@RequestBody NoticeOCRDto dto, @RequestParam String lan) throws JsonProcessingException {
