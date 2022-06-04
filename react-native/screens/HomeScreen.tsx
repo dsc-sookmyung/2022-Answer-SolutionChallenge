@@ -7,6 +7,7 @@ import {
   ImageBackground,
   Alert,
   Image,
+  ScrollView
 } from "react-native";
 import { Text } from "native-base";
 import { theme } from "../core/theme";
@@ -40,7 +41,7 @@ export default function HomeScreen({ navigation }: Navigation) {
       events: string[];
     }[];
   }>({
-    event_num: 4,
+    event_num: 2,
     children: [
       {
         cid: 1,
@@ -105,12 +106,6 @@ export default function HomeScreen({ navigation }: Navigation) {
         });
     }
   }, [auth]);
-
-  useEffect(() => {
-    if (events && events?.children?.length > 0) {
-      setNowSelectedChildId(events.children[0].cid);
-    }
-  }, [events]);
 
   const handleNowSelectedChildId = (cid: number) => {
     setNowSelectedChildId(cid);
@@ -182,7 +177,7 @@ export default function HomeScreen({ navigation }: Navigation) {
                 events.event_num +
                 i18n.t("eventCount_2")
             }</Text>
-            <View style={styles.childButtonWrapper}>
+            <ScrollView horizontal={true} style={styles.childButtonWrapper}>
               <TouchableOpacity
                 key={"n_all"}
                 style={[
@@ -243,14 +238,14 @@ export default function HomeScreen({ navigation }: Navigation) {
                   </Text>
                 </TouchableOpacity>
               ))}
-            </View>
+            </ScrollView>
             <View style={styles.todayNoticeWrapper}>
               {nowSelectedChildId === SHOW_ALL ? (
-                events.children.reduce(
+                events?.children.reduce(
                   (prevValue, child) => prevValue + child.events.length,
                   0
                 ) > 0 ? (
-                  events.children.map((notice, index) =>
+                  events?.children.map((notice, index) =>
                     notice.events.map((event, index) => {
                       return (
                         <View key={"n_" + index} style={[styles.pinkButton, { flexDirection: "row" }]}>
@@ -278,7 +273,7 @@ export default function HomeScreen({ navigation }: Navigation) {
                 )
               ) : events.children.filter(
                   (child) => child.cid === nowSelectedChildId
-                )[0].events?.length ? (
+                )[0]?.events?.length ? (
                 events.children
                   ?.filter((child) => child.cid === nowSelectedChildId)[0]
                   .events?.map((item, index) => (
@@ -362,8 +357,9 @@ const styles = StyleSheet.create({
   },
   childButtonWrapper: {
     flexDirection: "row",
-    flexWrap: "wrap",
+    maxHeight: 40,
     marginLeft: 8,
+    marginRight: 8
   },
   childButton: {
     borderWidth: 1,
