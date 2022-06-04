@@ -6,9 +6,11 @@ import com.answer.notinote.Event.dto.EventRequestDto;
 import com.answer.notinote.Event.util.BooleanToYNConverter;
 import com.answer.notinote.Notice.domain.entity.Notice;
 import com.answer.notinote.User.domain.entity.Timestamped;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -44,6 +46,7 @@ public class Event extends Timestamped implements Comparable<Event>  {
     @Column(length = 100)
     private String description;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column
     private LocalDate date;
 
@@ -54,7 +57,7 @@ public class Event extends Timestamped implements Comparable<Event>  {
     public Event(EventRequestDto requestDto) {
         this.index_start = requestDto.getS_index();
         this.index_end = requestDto.getE_index();
-        this.title = requestDto.getContent();
+        this.title = requestDto.getEvent();
         this.date = LocalDate.parse(requestDto.getDate());
     }
 

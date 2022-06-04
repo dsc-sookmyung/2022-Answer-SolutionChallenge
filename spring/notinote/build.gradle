@@ -28,9 +28,7 @@ dependencies {
 	implementation 'com.google.oauth-client:google-oauth-client-jetty:1.32.1'
 	implementation 'com.google.apis:google-api-services-calendar:v3-rev20211026-1.32.1'
 
-	// jwt
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
-
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -70,6 +68,7 @@ dependencies {
 
 	//Json Format
 	implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
 }
 
 tasks.named('test') {
