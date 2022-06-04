@@ -55,7 +55,7 @@ function BottomDrawer(props: BottomDrawerProps) {
 
 	useEffect(() => {
         if (props.openSaveForm && firstCid) {
-            setResultsForm({ cid: firstCid, title: 'title' });
+            setResultsForm({ cid: firstCid, title: props?.results?.title ? props.results.title : 'title' });
         }
 	}, [props?.openSaveForm])
 

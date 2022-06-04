@@ -25,35 +25,18 @@ export default function SearchResultScreen(props: SearchResultScreenProps) {
     const auth = useAuth();
     const navigation = useNavigation();
 
-	const [notices, setNotices] = useState<Notice>({date: "", results: []});
+	const [notice, setNotice] = useState<Notice>({
+        imageUri: '',
+        fullText: [
+            {id: 1, eid: 1, content: "1. Schedule of the closing ceremony and diploma presentation ceremony: Friday, January 4, 2019 at 9 o'clock for students to go to school.\n1) ", date: "", highlight: false, registered: false},
+            {id: 2, eid: -1, content: "Closing ceremony", date: "2022-01-04", highlight: true, registered: false}
+        ],
+        korean: "희망찬 새해를 맞이하여 학부모님의 가정에 건강과 행복이 함께 하시기를 기원합니다."
+    });
 	const [showKorean, setShowKorean] = useState<boolean>(false);
 	const [isFullDrawer, setFullDrawer] = useState<boolean>(false);
 
     useEffect(() => {
-        // TODO: Fetch API   
-        // mockup data
-        setNotices({
-            date: "2022-02-10",
-            results: [{
-                id: 1,
-                imageUri: '',
-                fullText: [
-                    {id: 1, eid: 1, content: "1. Schedule of the closing ceremony and diploma presentation ceremony: Friday, January 4, 2019 at 9 o'clock for students to go to school.\n1) ", date: "", highlight: false, registered: false},
-                    {id: 2, eid: -1, content: "Closing ceremony", date: "2022-01-04", highlight: true, registered: false}
-                ],
-                korean: "희망찬 새해를 맞이하여 학부모님의 가정에 건강과 행복이 함께 하시기를 기원합니다."
-            }, {
-                id: 2,
-                imageUri: '',
-                fullText: [
-                    {id: 1, eid: -1, content: "1. Schedule of the closing ceremony and diploma presentation ceremony: Friday, January 4, 2019 at 9 o'clock for students to go to school.\n1) ", date: "", highlight: false, registered: false},
-                    {id: 2, eid: 2, content: "Closing ceremony", date: "2022-01-04", highlight: true, registered: false}
-                ],
-                korean: "개학일은 3월 2일이며, 개학식에 참여하고자 하는 학부모님께서는 10시까지 강당으로 오시기 바랍니다.",
-                trans_full: ""
-            }]
-        })
-
         if (auth?.authData?.access_token) {
             fetch(`http://localhost:8080/search/detail?nid=${props.route.params.nid}`, {
                 method: 'GET',
@@ -65,7 +48,7 @@ export default function SearchResultScreen(props: SearchResultScreenProps) {
             .then(response => response.json())
             .then(data => {
                 if (data?.date && data?.results.length) {
-                    setNotices(data);
+                    setNotice(data);
                 }
             })
             .catch(function (error) {
@@ -86,38 +69,34 @@ export default function SearchResultScreen(props: SearchResultScreenProps) {
 
     return (
         <View style={styles.container}>
-            <Swiper>
-                {notices?.results && notices.results.length > 0 && notices.results.map((notice, index) =>
-					<ImageBackground style={styles.container} resizeMode="cover" imageStyle={{ opacity: 0.5 }} source={{ uri: notice?.imageUri }} key={"ib_" + index}>
-						<SwipeUpDown
-							itemMini={
-								<BottomDrawer 
-									results={notice}
-									showKorean={showKorean}
-									isFullDrawer={isFullDrawer}
-									isTranslateScreen={false}
-									handleKorean={handleKorean}
-								/>
-							}
-							itemFull={
-								<BottomDrawer 
-									results={notice}
-									showKorean={showKorean}
-									isFullDrawer={isFullDrawer}
-									isTranslateScreen={false}
-									handleKorean={handleKorean}
-								/>
-							}
-							onShowMini={() => setFullDrawer(false)}
-							onShowFull={() => setFullDrawer(true)}
-							animation="easeInEaseOut"
-							disableSwipeIcon
-							extraMarginTop={10}
-							swipeHeight={Dimensions.get('window').height*0.5}
-						/>
-					</ImageBackground>
-				)}
-            </Swiper>
+            <ImageBackground style={styles.container} resizeMode="cover" imageStyle={{ opacity: 0.5 }} source={{ uri: notice?.imageUri }}>
+                <SwipeUpDown
+                    itemMini={
+                        <BottomDrawer 
+                            results={notice}
+                            showKorean={showKorean}
+                            isFullDrawer={isFullDrawer}
+                            isTranslateScreen={false}
+                            handleKorean={handleKorean}
+                        />
+                    }
+                    itemFull={
+                        <BottomDrawer 
+                            results={notice}
+                            showKorean={showKorean}
+                            isFullDrawer={isFullDrawer}
+                            isTranslateScreen={false}
+                            handleKorean={handleKorean}
+                        />
+                    }
+                    onShowMini={() => setFullDrawer(false)}
+                    onShowFull={() => setFullDrawer(true)}
+                    animation="easeInEaseOut"
+                    disableSwipeIcon
+                    extraMarginTop={10}
+                    swipeHeight={Dimensions.get('window').height*0.5}
+                />
+            </ImageBackground>
         </View>   
     );
 }

@@ -67,5 +67,7 @@ export default {
     searchResult: "검색 결과",
     noEvent: "오늘은 이벤트가 없어요!",
     saveFirst: "저장 버튼을 눌러서 결과 저장을 먼저 해주세요!",
-    eventNotFound: "이벤트를 찾지 못했어요"
+    eventNotFound: "이벤트를 찾지 못했어요",
+    noResults: "아직 결과가 없습니다.",
+    translateFirst: "번역을 한 후에 결과를 저장해주세요."
 }
