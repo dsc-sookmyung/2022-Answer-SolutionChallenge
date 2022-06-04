@@ -167,7 +167,7 @@ public class NoticeService {
         //요청한 사용자 확인
         String token = jwtTokenProvider.resolveAccessToken(request);
         String useremail = jwtTokenProvider.getUserEmail(token);
-        User user = userRepository.findByUemail(useremail).orElseThrow(IllegalArgumentException::new);
+        User user = userRepository.findByUemail(useremail).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         //이미지 파일 저장
         String nimageoriginal = uploadfile.getOriginalFilename();

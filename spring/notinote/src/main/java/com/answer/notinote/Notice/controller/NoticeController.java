@@ -52,22 +52,8 @@ public class NoticeController {
     @RequestMapping(value = "/notice/save", method = RequestMethod.POST)
     public NoticeTitleListDto saveNotice(
             @RequestPart(value = "uploadfile") MultipartFile uploadfile,
-            @RequestPart(value = "title") String title,
-            @RequestPart(value = "date") String date,
-            @RequestPart(value = "korean") String korean,
-            @RequestPart(value = "fullText") String fullText,
-            @RequestPart(value = "cid") String cid,
+            @RequestPart(value = "noticeRequestDto") NoticeRequestDto noticeRequestDto,
             HttpServletRequest request) throws IOException {
-        request.setCharacterEncoding("utf-8");
-
-        NoticeRequestDto noticeRequestDto = NoticeRequestDto.builder()
-                .title(title)
-                .date(LocalDate.parse(date))
-                .korean(korean)
-                .fullText(fullText)
-                .cid(Long.parseLong(cid))
-                .build();
-
         NoticeTitleListDto notice_title = noticeService.saveNotice(uploadfile, noticeRequestDto, request); //notice 저장
         return notice_title;
     }
