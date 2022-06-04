@@ -93,7 +93,7 @@ public class SearchService {
         List<NoticeSentenceDto> fullText = noticeService.extractSentenceFromEvent(notice.getTrans_full(), events);
 
         SearchResultDetailDto searchResultDetailDto = SearchResultDetailDto.builder()
-                .imageUri(notice.getNimageurl()+ "/" + notice.getNimagename())
+                .imageUri(notice.getNimageurl())
                 .fullText(fullText)
                 .korean(notice.getOrigin_full())
                 .build();

@@ -25,7 +25,6 @@ public class Notice {
 
     @Column
     private String nimagename;
-    private String nimageoriginal;
     private String nimageurl;
 
     @Column(length = 5000)
@@ -53,9 +52,7 @@ public class Notice {
 
 
     @Builder
-    public Notice(String nimagename, String nimageoriginal, String nimageurl, String origin_full, String trans_full, LocalDate ndate, String title, User user, Child child) {
-        this.nimagename = nimagename;
-        this.nimageoriginal = nimageoriginal;
+    public Notice(String nimageurl, String origin_full, String trans_full, LocalDate ndate, String title, User user, Child child) {
         this.nimageurl = nimageurl;
         this.origin_full = origin_full;
         this.trans_full = trans_full;
@@ -63,20 +60,6 @@ public class Notice {
         this.title = title;
         this.user = user;
         this.child = child;
-    }
-
-
-    public void update_origin_full(String origin_full) {
-        this.origin_full = origin_full;
-    }
-
-    public void update_trans_full(String trans_full) {
-        this.trans_full = trans_full;
-    }
-
-    public void update_title_ndate(String title, LocalDate ndate) {
-        this.title = title;
-        this.ndate = ndate;
     }
 
     public void setEvent(Event event) {

@@ -20,7 +20,7 @@ public class NoticeTitleListDto {
     private String trans_full;
 
     public NoticeTitleListDto(Notice entity, List<NoticeSentenceDto> sentences){
-        this.uploadfile = entity.getNimageurl() + "/" + entity.getNimagename();
+        this.uploadfile = entity.getNimageurl();
         this.title = entity.getTitle();
         this.date = entity.getNdate();
         this.korean = entity.getOrigin_full();

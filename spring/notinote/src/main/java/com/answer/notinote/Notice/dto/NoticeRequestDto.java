@@ -11,15 +11,17 @@ import java.time.LocalDate;
 public class NoticeRequestDto {
     private String title;
     private LocalDate date;
+    private String imageUrl;
     private String korean;
     private String fullText;
     private Long cid;
 
 
     @Builder
-    public NoticeRequestDto (String title, LocalDate date, String korean, String fullText, Long cid){
+    public NoticeRequestDto (String title, LocalDate date, String imageUrl, String korean, String fullText, Long cid){
         this.title = title;
         this.date = date;
+        this.imageUrl = imageUrl;
         this.korean = korean;
         this.fullText= fullText;
         this.cid = cid;

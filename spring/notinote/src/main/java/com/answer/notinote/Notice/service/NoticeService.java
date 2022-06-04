@@ -169,13 +169,7 @@ public class NoticeService {
         return new ObjectMapper().treeToValue(root.path("body"), NoticeResponseBody.class);
     }
 
-    public NoticeTitleListDto saveNotice(MultipartFile uploadfile, NoticeRequestDto noticeRequestDto, HttpServletRequest request) throws IOException{
-        //요청한 사용자 확인
-        String token = jwtTokenProvider.resolveAccessToken(request);
-        String useremail = jwtTokenProvider.getUserEmail(token);
-        User user = userRepository.findByUemail(useremail).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-        //이미지 파일 저장
+    public String saveImage(MultipartFile uploadfile) throws IOException {
         String nimageoriginal = uploadfile.getOriginalFilename();
         String uuid = UUID.randomUUID().toString();
         String nimagename = uuid + nimageoriginal;
@@ -184,10 +178,17 @@ public class NoticeService {
         File saveFile = new File(nimageurl, nimagename);
         uploadfile.transferTo(saveFile);
 
+        return nimageurl+"/"+ nimagename;
+    }
+
+    public NoticeTitleListDto saveNotice(NoticeRequestDto noticeRequestDto, HttpServletRequest request) throws IOException{
+        //요청한 사용자 확인
+        String token = jwtTokenProvider.resolveAccessToken(request);
+        String useremail = jwtTokenProvider.getUserEmail(token);
+        User user = userRepository.findByUemail(useremail).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
         Notice notice = Notice.builder()
-                .nimagename(nimagename)
-                .nimageoriginal(nimageoriginal)
-                .nimageurl(nimageurl)
+                .nimageurl(noticeRequestDto.getImageUrl())
                 .title(noticeRequestDto.getTitle())
                 .ndate(noticeRequestDto.getDate())
                 .origin_full(noticeRequestDto.getKorean())
