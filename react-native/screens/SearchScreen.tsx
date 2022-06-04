@@ -145,7 +145,11 @@ export default function SearchScreen({ navigation }: Navigation) {
     const handleNowSelectedChildId = (cid: number) => {
         setNowSelectedChildId(cid);
         if (auth?.authData?.access_token) {
-            fetch(`http://localhost:8080/search/child?cid=${cid}`, {
+            let API_URL = "http://localhost:8080/search";
+            if (cid != -1) {
+                API_URL = `http://localhost:8080/search/child?cid=${cid}`
+            }
+            fetch(API_URL, {
                 method: 'GET',
                 headers: {
                     'ACCESS-TOKEN': auth.authData.access_token

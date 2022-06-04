@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, ImageBackground, Dimensions, Alert } from 'react-native';
-import Swiper from 'react-native-swiper';
 import SwipeUpDown from 'react-native-swipe-up-down';
 import BottomDrawer from '../components/BottomDrawer';
 import type { Navigation, Notice } from '../types';
@@ -47,7 +46,8 @@ export default function SearchResultScreen(props: SearchResultScreenProps) {
             })
             .then(response => response.json())
             .then(data => {
-                if (data?.date && data?.results.length) {
+                console.log('data', data);
+                if (data?.fullText.length) {
                     setNotice(data);
                 }
             })
