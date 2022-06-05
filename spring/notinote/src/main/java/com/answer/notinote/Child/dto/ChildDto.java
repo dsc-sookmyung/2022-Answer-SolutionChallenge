@@ -33,8 +33,17 @@ public class ChildDto {
         this.cprofileImg = child.getCprofileImg();
 
         for(Event event : child.getEvents()) {
-                if (event.isRegistered() && event.getDate().isEqual(LocalDate.now()))
-                    this.events.add(event.getTitle());
+                if (event.isRegistered() && event.getDate().isEqual(LocalDate.now())) {
+                    String title = event.getTitle();
+
+                    // [이름] 제거
+                    if (title.charAt(0) == '[') {
+                        while(title.charAt(0) != ']' || title.length() <= 1)
+                            title = title.substring(1);
+                        title = title.substring(1);
+                    }
+                    this.events.add(title);
+                }
         }
     }
 }
