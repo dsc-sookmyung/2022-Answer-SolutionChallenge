@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, TouchableOpacity, ImageBackground, Dimensions, Alert, Image } from 'react-native';
 import { useToast, Button, HStack, Text, Divider, Modal, VStack } from 'native-base';
+import axios, { AxiosRequestConfig } from "axios";
 import { Camera } from 'expo-camera';
 import { Ionicons, SimpleLineIcons } from '@expo/vector-icons';
 import { theme } from '../core/theme';
@@ -10,7 +11,6 @@ import BottomDrawer from '../components/BottomDrawer';
 import mime from "mime";
 import * as ImagePicker from 'expo-image-picker';
 import { useAuth } from '../contexts/Auth';
-import { StackActions } from '@react-navigation/native';
 import Loading from '../components/Loading';
 import i18n from 'i18n-js';
 import '../locales/i18n';
@@ -18,10 +18,10 @@ import '../locales/i18n';
 
 /* TODO:
     - 스크롤 내려가게 하기 (지금은 ScrollView의 스크롤이 안 먹음)
-    - low highlight 주기 (지금은 텍스트 높이만큼 background에 색 줘서 highlight)
 */
 
 const date = new Date();
+
 
 export default function TranslateScreen({ navigation }: Navigation) {
     const [hasPermission, setHasPermission] = useState<boolean>(false);
@@ -33,7 +33,7 @@ export default function TranslateScreen({ navigation }: Navigation) {
     const [isFullDrawer, setFullDrawer] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [openSaveForm, setOpenSaveForm] = useState<boolean>(false);
-    const [openInitialEventForm, setOpenInitialEventForm] = useState<boolean>(false);
+    const [openInitialEventForm, setOpenInitialEventForm] = useState<boolean>(true);
 
     const toast = useToast();
     const auth = useAuth();
@@ -50,12 +50,6 @@ export default function TranslateScreen({ navigation }: Navigation) {
             extractText
         }
     }, [imageUri]);
-
-    useEffect(() => {
-        if (results?.fullText) {
-            setOpenInitialEventForm(true);
-        }
-    }, [results]);
 
     // DEV TEST
     // if (hasPermission === null) {
@@ -102,30 +96,45 @@ export default function TranslateScreen({ navigation }: Navigation) {
             setLoading(true);
 
             if (auth?.authData?.access_token) {
-                await fetch("http://localhost:8080/notice/ocr", {
-                    method: 'POST',
+                const axiosInstance = axios.create({
+                    baseURL: 'http://localhost:8080', 
+                    timeout: 30000,
                     headers: {
+                        "X-Platform": 'iOS',
+                        "X-App-Build-Number": '1.0.0',
                         'ACCESS-TOKEN': auth.authData.access_token
                     },
-                    body: formdata,
-                    redirect: 'follow'
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data);
-                    setResults(data);
-                    setLoading(false);
-                })
-                .catch(function (error) {
-                    console.log(error?.response?.status) // 401
-                    console.log(error?.response?.data?.error) //Please Authenticate or whatever returned from server
-                    if(error?.response?.status==401) {
-                        //redirect to login
-                        Alert.alert(i18n.t('sessionExpired'));
-                        auth.signOut();
-                        navigation.dispatch(StackActions.popToTop())
-                    }
                 });
+    
+                const formData = new FormData();
+                formData.append("uploadfile", {
+                    uri : imageUri,
+                    type: mime.getType(imageUri),
+                    name: imageUri.split("/").pop()
+                });
+                
+                const config: AxiosRequestConfig = {
+                    method: "post",
+                    url: "/notice/ocr",
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                    transformRequest: (data, headers) => {
+                        return formData;
+                    },
+                    onUploadProgress: (progressEvent) => {
+                    },
+                    data: formData,
+                };
+    
+                // send post request and get response
+                const response = await axiosInstance.request(config);
+    
+                // console.log('response',response.data);
+                if (response.data) {
+                    setResults(response.data);
+                    setLoading(false);
+                }
             }
         }
 
@@ -163,7 +172,7 @@ export default function TranslateScreen({ navigation }: Navigation) {
         setOpenSaveForm(!openSaveForm);
     }
 
-    const saveResults = (form: ResultsForm): void => {
+    const saveResults = async(form: ResultsForm): Promise<any> => {
         // data 보내고, success 라면, 서버에 저장된 제목 받아와서 보여주기!
         if (!form?.title) {
             Alert.alert("You must enter at least one character for the title.");
@@ -171,7 +180,6 @@ export default function TranslateScreen({ navigation }: Navigation) {
         }
         
         if (imageUri) {
-            
             let FormData = require('form-data');
             const formdata = new FormData();
             formdata.append('uploadfile', {
@@ -179,49 +187,63 @@ export default function TranslateScreen({ navigation }: Navigation) {
                  type: mime.getType(imageUri),
                  name: imageUri.split("/").pop()
             });
-            let data = {
-                cid: form?.cid,
-                title: form?.title,
-                date: new Date().toISOString().slice(0, 10),
-                korean: results?.korean,
-                fullText: results?.trans_full
-            }
-            formdata.append("noticeRequestDto", JSON.stringify(data));
-            // formdata.append('noticeRequestDto', new Blob([JSON.stringify(data)], {type: 'application/json'}));
-            
-            // formdata.append('cid', form?.cid);
-            // formdata.append('title', form?.title);
-            // formdata.append('date', new Date().toISOString().slice(0, 10));
-            // formdata.append('korean', results?.korean);
-            // formdata.append('trans_full', results?.trans_full);
-            
-            // console.log(formdata);
             
             if (auth?.authData?.access_token) {
-                fetch('http://localhost:8080/notice/save', {
-                    method: 'POST',
+                const axiosInstance = axios.create({
+                    baseURL: 'http://localhost:8080', 
+                    timeout: 30000,
                     headers: {
-                        'ACCESS-TOKEN': auth.authData.access_token,
+                        "X-Platform": 'iOS',
+                        "X-App-Build-Number": '1.0.0',
+                        'ACCESS-TOKEN': auth.authData.access_token
                     },
-                    body: formdata,
-                    redirect: 'follow'
+                });
+
+                axiosInstance({
+                    method: "post",
+                    url: "/notice/image",
+                    transformRequest: (data, headers) => {
+                        return formdata;
+                    },
+                    onUploadProgress: (progressEvent) => {
+                    },
+                    data: formdata,
                 })
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data);
-                    Alert.alert(`The result was saved in Search as [${data?.title}]`);
-                    setResults(data);
-                    handleOpenSaveForm();   
-					// auth?.handleUpdate();
+                .then(function (response) {
+                    console.log('image response',response.data);
+                    if (response.data && auth?.authData?.access_token) {
+                        const imageUrl = response.data.imageUrl;
+
+                        let data = {
+                            imageUrl: imageUrl,
+                            cid: form?.cid,
+                            title: form?.title,
+                            date: new Date().toISOString().slice(0, 10),
+                            korean: results?.korean,
+                            fullText: results?.trans_full
+                        }
+
+                        axios({
+                            method: "post",
+                            url: 'http://localhost:8080/notice/save',
+                            headers: {'ACCESS-TOKEN': auth.authData.access_token },
+                            data: data
+                        })
+                        .then(response => {
+                            if (response.data) {
+                                console.log('success', response.data);
+                                Alert.alert(`The result was saved in Search as [${response.data?.title}]`);
+                                setResults(response.data);
+                                handleOpenSaveForm();   
+                            }
+                        })
+                        .catch(err => {
+                            console.log('save err', err);
+                        })
+                    }
                 })
                 .catch(function (error) {
-                    console.log('error',error);
-                    if(error.response.status==401) {
-                        //redirect to login
-                        Alert.alert("The session has expired. Please log in again.");
-                        auth.signOut();
-                        navigation.dispatch(StackActions.popToTop())
-                    }
+                    console.log('error',error.response);
                 });
             }
         }
