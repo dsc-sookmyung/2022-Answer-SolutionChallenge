@@ -10,14 +10,9 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class EventResponseDto {
-    private Long eid;
     private String title;
-    private String description;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-    private LocalDate date;
 
     public EventResponseDto(Event event) {
-        this.eid = event.getEid();
         this.title = event.getTitle();
 
         // [이름] 제거
@@ -26,8 +21,5 @@ public class EventResponseDto {
                 this.title = this.title.substring(1);
             this.title = this.title.substring(1);
         }
-
-        this.description = event.getDescription();
-        this.date = event.getDate();
     }
 }
