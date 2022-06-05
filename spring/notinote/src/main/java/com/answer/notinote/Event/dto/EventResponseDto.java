@@ -1,6 +1,7 @@
 package com.answer.notinote.Event.dto;
 
 import com.answer.notinote.Event.domain.Event;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,6 +13,7 @@ public class EventResponseDto {
     private Long eid;
     private String title;
     private String description;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate date;
 
     public EventResponseDto(Event event) {

@@ -12,7 +12,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 public class SearchListDto {
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate date;
     private List<SearchSavedListDto> saved;
 
