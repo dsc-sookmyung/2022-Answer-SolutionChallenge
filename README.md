@@ -24,7 +24,7 @@ With Notinote, parents of multicultural families can read school newsletters in 
 
 ## 💻 Demo
 
-[![notitnote](https://img.youtube.com/vi/2mjKChhn37s/0.jpg)](https://www.youtube.com/watch?v=2mjKChhn37s&t=2s)
+[![notitnote](https://img.youtube.com/vi/2mjKChhn37s/0.jpg)](https://youtu.be/1F9g3U792G8)
 
 
 
