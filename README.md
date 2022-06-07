@@ -20,7 +20,7 @@ With Notinote, parents of multicultural families can read school newsletters in 
 <img src="https://i.ibb.co/k8zHYLQ/Slide-16-9-4.jpg" alt="Slide-16-9-4" border="0" width="800px">
 
 ## 🛠 Project Architecture
-<img src="https://i.ibb.co/H7DvP3X/architecture.jpg" alt="Slide-16-9-4" border="0" width="800px">
+<img src="https://cdn.discordapp.com/attachments/957220588143935539/983626024564711454/notinote-structure.png" alt="Slide-16-9-4" border="0" width="800px">
 
 ## 💻 Demo
 
