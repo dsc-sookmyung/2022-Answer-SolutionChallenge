@@ -1,4 +1,4 @@
-<img src="https://i.ibb.co/8m6Yt7W/notinote-banner.jpg" alt="notinote-banner" border="0" width="1000px">
+<img src="https://user-images.githubusercontent.com/53266682/177073689-6e53171c-e4b2-4e36-b15d-f886283a5e30.png" alt="notinote-banner" border="0" width="1000px" />
 
 # 2022 Solution Challenge: NotiNote 📘
 
