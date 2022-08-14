@@ -15,6 +15,10 @@ import com.answer.notinote.User.domain.repository.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.cloud.storage.BlobId;
+import com.google.cloud.storage.BlobInfo;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.translate.v3.*;
 import com.google.cloud.translate.v3.LocationName;
 import com.google.cloud.translate.v3.Translation;
@@ -31,6 +35,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -163,13 +169,7 @@ public class NoticeService {
         return new ObjectMapper().treeToValue(root.path("body"), NoticeResponseBody.class);
     }
 
-    public NoticeTitleListDto saveNotice(MultipartFile uploadfile, NoticeRequestDto noticeRequestDto, HttpServletRequest request) throws IOException{
-        //요청한 사용자 확인
-        String token = jwtTokenProvider.resolveAccessToken(request);
-        String useremail = jwtTokenProvider.getUserEmail(token);
-        User user = userRepository.findByUemail(useremail).orElseThrow(IllegalArgumentException::new);
-
-        //이미지 파일 저장
+    public String saveImage(MultipartFile uploadfile) throws IOException {
         String nimageoriginal = uploadfile.getOriginalFilename();
         String uuid = UUID.randomUUID().toString();
         String nimagename = uuid + nimageoriginal;
@@ -178,10 +178,17 @@ public class NoticeService {
         File saveFile = new File(nimageurl, nimagename);
         uploadfile.transferTo(saveFile);
 
+        return nimageurl+"/"+ nimagename;
+    }
+
+    public NoticeTitleListDto saveNotice(NoticeRequestDto noticeRequestDto, HttpServletRequest request) throws IOException{
+        //요청한 사용자 확인
+        String token = jwtTokenProvider.resolveAccessToken(request);
+        String useremail = jwtTokenProvider.getUserEmail(token);
+        User user = userRepository.findByUemail(useremail).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
         Notice notice = Notice.builder()
-                .nimagename(nimagename)
-                .nimageoriginal(nimageoriginal)
-                .nimageurl(nimageurl)
+                .nimageurl(noticeRequestDto.getImageUrl())
                 .title(noticeRequestDto.getTitle())
                 .ndate(noticeRequestDto.getDate())
                 .origin_full(noticeRequestDto.getKorean())
@@ -295,6 +302,30 @@ public class NoticeService {
                 () -> new CustomException(ErrorCode.NOT_FOUND)
         );
     }
+
+    public String uploadObjectimage(String objectName, String filePath) throws IOException{
+
+        String projectId = "solution-challenge-342914";
+        String bucketName = "notinote_bucket";
+
+        // The ID of your GCS object
+        //String objectName = "ex_notice.png";
+
+        // The path to your file to upload
+        //String filePath = "D:/ex_notice.png";
+
+        Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+        BlobId blobId = BlobId.of(bucketName, objectName);
+        BlobInfo blobInfo = BlobInfo.newBuilder(blobId).build();
+        storage.create(blobInfo, Files.readAllBytes(Paths.get(filePath)));
+
+        System.out.println(
+                "File " + filePath + " uploaded to bucket " + bucketName + " as " + objectName);
+
+        return "https://storage.googleapis.com/notinote_bucket/"+objectName;
+    }
+
+
 
     /*public String dateDetect(Long nid) throws IOException {
         Notice notice = noticeRepository.findByNid(nid);

@@ -5,6 +5,8 @@ import com.answer.notinote.Child.domain.Child;
 import com.answer.notinote.Child.domain.repository.ChildRepository;
 import com.answer.notinote.Event.domain.Event;
 import com.answer.notinote.Event.service.EventService;
+import com.answer.notinote.Exception.CustomException;
+import com.answer.notinote.Exception.ErrorCode;
 import com.answer.notinote.Notice.domain.entity.Notice;
 import com.answer.notinote.Notice.domain.repository.NoticeRepository;
 import com.answer.notinote.Notice.dto.NoticeSentenceDto;
@@ -44,8 +46,8 @@ public class SearchService {
     public List<SearchListDto> searchList(HttpServletRequest request) {
 
         String token = jwtTokenProvider.resolveAccessToken(request);
-        String useremail = jwtTokenProvider.getUserEmail(token);
-        User user = userRepository.findByUemail(useremail).orElseThrow(IllegalArgumentException::new);
+        String userEmail = jwtTokenProvider.getUserEmail(token);
+        User user = userRepository.findByUemail(userEmail).orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         List<Notice> notices = noticeRepository.findByUser(user);
 
@@ -91,7 +93,7 @@ public class SearchService {
         List<NoticeSentenceDto> fullText = noticeService.extractSentenceFromEvent(notice.getTrans_full(), events);
 
         SearchResultDetailDto searchResultDetailDto = SearchResultDetailDto.builder()
-                .imageUri(notice.getNimageurl()+ "/" + notice.getNimagename())
+                .imageUri(notice.getNimageurl())
                 .fullText(fullText)
                 .korean(notice.getOrigin_full())
                 .build();

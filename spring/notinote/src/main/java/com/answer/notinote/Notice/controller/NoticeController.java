@@ -8,13 +8,13 @@ import com.answer.notinote.Notice.service.NoticeService;
 import com.answer.notinote.User.domain.entity.User;
 import com.answer.notinote.User.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
 
 
@@ -49,27 +49,25 @@ public class NoticeController {
         return new NoticeOCRDto(title, korean, trans_full, fullText, event_num, events);
     }
 
+    @RequestMapping(value = "/notice/image", method = RequestMethod.POST)
+    public ResponseEntity<?> saveImage(@RequestPart MultipartFile uploadfile) throws IOException {
+        System.out.println("/notice/image");
+        String imageUrl = noticeService.saveImage(uploadfile); //notice 저장
+        return ResponseEntity.ok(new ImageUrlResponseDto(imageUrl));
+    }
+
     @RequestMapping(value = "/notice/save", method = RequestMethod.POST)
     public NoticeTitleListDto saveNotice(
-            @RequestPart(value = "uploadfile") MultipartFile uploadfile,
-            @RequestPart(value = "title") String title,
-            @RequestPart(value = "date") String date,
-            @RequestPart(value = "korean") String korean,
-            @RequestPart(value = "fullText") String fullText,
-            @RequestPart(value = "cid") String cid,
-            HttpServletRequest request) throws IOException {
-        request.setCharacterEncoding("utf-8");
-
-        NoticeRequestDto noticeRequestDto = NoticeRequestDto.builder()
-                .title(title)
-                .date(LocalDate.parse(date))
-                .korean(korean)
-                .fullText(fullText)
-                .cid(Long.parseLong(cid))
-                .build();
-
-        NoticeTitleListDto notice_title = noticeService.saveNotice(uploadfile, noticeRequestDto, request); //notice 저장
+            @RequestBody NoticeRequestDto noticeRequestDto,
+            HttpServletRequest request
+    ) throws IOException {
+        NoticeTitleListDto notice_title = noticeService.saveNotice(noticeRequestDto, request); //notice 저장
         return notice_title;
+    }
+
+    @RequestMapping(value = "/notice/upload", method = RequestMethod.POST)
+    public String uploadObject(String objectName, String filePath) throws IOException{
+        return noticeService.uploadObjectimage(objectName, filePath);
     }
 /*
     @PostMapping("/notice/test")

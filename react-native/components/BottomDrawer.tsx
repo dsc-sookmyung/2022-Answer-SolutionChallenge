@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Dimensions, View, TouchableOpacity, TouchableHighlight, ScrollView, Alert, Linking } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Popover, Button, Text, Modal, FormControl, Input, VStack, Select, CheckIcon, AlertDialog } from 'native-base';
+import { Popover, Button, Text, Modal, FormControl, Input, VStack, CheckIcon, AlertDialog } from 'native-base';
 import { theme } from '../core/theme';
 import type { BottomDrawerProps, EventForm, ResultsForm, UserData } from '../types';
 import { useAuth } from '../contexts/Auth';
 import { useNavigation, StackActions } from '@react-navigation/native';
 import i18n from 'i18n-js';
 import '../locales/i18n';
+import { Dropdown } from 'react-native-element-dropdown';
+import useFonts from '../hooks/useFonts';
+import AppLoading from 'expo-app-loading';
 
 
 const highlight = (text: string, registered: boolean) =>
@@ -25,6 +28,12 @@ function BottomDrawer(props: BottomDrawerProps) {
     const auth = useAuth();
     const navigation = useNavigation();
     const cancelRef = React.useRef(null);
+    const [data, setData] = useState();
+
+    const [fontsLoaded, SetFontsLoaded] = useState<boolean>(false);
+    const LoadFontsAndRestoreToken = async () => {
+        await useFonts();
+    };
 
     useEffect(()=> {
         if (auth?.userData) {
@@ -61,7 +70,7 @@ function BottomDrawer(props: BottomDrawerProps) {
 
     const openPopup = (resultId: number) => () => {
         if (resultId === -1) {
-            Alert.alert("saveFirst");
+            Alert.alert(i18n.t("saveFirst"));
         }
         else {
             setCurrentEvent(resultId);
@@ -128,6 +137,16 @@ function BottomDrawer(props: BottomDrawerProps) {
         }
     }
 
+    if (!fontsLoaded) {
+        return (
+          <AppLoading
+            startAsync={LoadFontsAndRestoreToken}
+            onFinish={() => SetFontsLoaded(true)}
+            onError={() => {}}
+          />
+        );
+    } 
+
     return (
         <View style={styles.bottomDrawer}>
             <View style={{ flex: 1 }}>
@@ -179,18 +198,23 @@ function BottomDrawer(props: BottomDrawerProps) {
                                                             <VStack space={2}>
                                                                 <FormControl>
                                                                     <FormControl.Label>{i18n.t('child')}</FormControl.Label>
-                                                                        <Select selectedValue={eventForm?.cid.toString()} accessibilityLabel="Child" onValueChange={itemValue => {
+                                                                    <Dropdown
+                                                                        style={styles.dropdown}
+                                                                        placeholderStyle={styles.placeholderStyle}
+                                                                        selectedTextStyle={styles.selectedTextStyle}
+                                                                        data={user?.uchildren?.length ? user?.uchildren?.map(child => 
+                                                                            ({ label: child?.cname, value: child?.cid.toString()})
+                                                                        ) : []}
+                                                                        maxHeight={236}
+                                                                        labelField="label"
+                                                                        valueField="value"
+                                                                        placeholder={i18n.t('selectLang')}
+                                                                        searchPlaceholder="Search..."
+                                                                        value={eventForm?.cid.toString()}
+                                                                        onChange={itemValue => {
                                                                             setEventForm({ ...eventForm, ['cid']: Number(itemValue) })
-                                                                        }} _selectedItem={{
-                                                                            bg: "skyblue.500",
-                                                                            endIcon: <CheckIcon size={3} />
-                                                                        }}>
-                                                                            {/* Country code 3 digit ISO */}
-                                                                            {user?.uchildren?.map((child, index) => 
-                                                                                child?.cname && child?.cid &&
-                                                                                    <Select.Item key={'cs_'+index} label={child?.cname} value={child?.cid.toString()} />
-                                                                            )}
-                                                                        </Select>
+                                                                        }}
+                                                                    />
                                                                 </FormControl>
                                                                 <FormControl>
                                                                     <FormControl.Label>{i18n.t('title')}</FormControl.Label>
@@ -301,18 +325,22 @@ function BottomDrawer(props: BottomDrawerProps) {
                                 <VStack space={2}>
                                     <FormControl>
                                         <FormControl.Label>{i18n.t('child')}</FormControl.Label>
-                                            <Select selectedValue={resultsForm?.cid.toString()} accessibilityLabel="Child" onValueChange={itemValue => {
-                                                setResultsForm({...resultsForm, ['cid']: Number(itemValue)})
-                                            }} _selectedItem={{
-                                                bg: "skyblue.500",
-                                                endIcon: <CheckIcon size={3} />
-                                            }}>
-                                                {/* Country code 3 digit ISO */}
-                                                {user?.uchildren?.map((child, index) => 
-                                                    child?.cname && child?.cid &&
-                                                        <Select.Item key={'cs_'+index} label={child?.cname} value={child?.cid.toString()} />
-                                                )}
-                                            </Select>
+                                        <Dropdown
+                                            style={styles.dropdown}
+                                            placeholderStyle={styles.placeholderStyle}
+                                            selectedTextStyle={styles.selectedTextStyle}
+                                            data={user?.uchildren?.length ? user?.uchildren?.map(child => 
+                                                ({ label: child?.cname, value: child?.cid.toString()})
+                                            ) : []}
+                                            maxHeight={220}
+                                            labelField="label"
+                                            valueField="value"
+                                            placeholder={i18n.t('child')}
+                                            value={eventForm?.cid.toString()}
+                                            onChange={itemValue => {
+                                                setResultsForm({...resultsForm, ['cid']: Number(itemValue) })
+                                            }}
+                                        />
                                     </FormControl>
                                     <FormControl>
                                         <FormControl.Label>Title</FormControl.Label>
@@ -397,4 +425,21 @@ const styles = StyleSheet.create({
     full: {
         paddingBottom: 96
     },
+    dropdown: {
+		height: 32,
+		borderColor: '#e5e5e5',
+		borderWidth: 0.6,
+		borderRadius: 5,
+		paddingHorizontal: 8,
+		marginTop: 1
+	},
+    placeholderStyle: {
+		fontSize: 13,
+		fontFamily: 'Lora_400Regular',
+		color: '#a3a3a3'
+	},
+	selectedTextStyle: {
+		fontSize: 13,
+		fontFamily: 'Lora_400Regular',
+	}
 })
