@@ -100,6 +100,7 @@ interface BottomDrawerProps {
     isTranslateScreen?: boolean,
     openSaveForm?: boolean,
     handleKorean?: () => void,
+    copyToClipboard?: () => void,
     saveResults?: (form: ResultsForm) => void,
     closeResults?: () => void,
     retakePicture?: () => void,

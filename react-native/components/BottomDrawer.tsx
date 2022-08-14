@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Dimensions, View, TouchableOpacity, TouchableHighlight, ScrollView, Alert, Linking } from 'react-native';
+import { StyleSheet, Dimensions, View, TouchableOpacity, TouchableHighlight, ScrollView, Alert, Linking, TouchableWithoutFeedback } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Popover, Button, Text, Modal, FormControl, Input, VStack, CheckIcon, AlertDialog } from 'native-base';
+import { Popover, Button, Text, Modal, FormControl, Input, VStack, HStack, AlertDialog } from 'native-base';
 import { theme } from '../core/theme';
 import type { BottomDrawerProps, EventForm, ResultsForm, UserData } from '../types';
 import { useAuth } from '../contexts/Auth';
@@ -152,15 +152,20 @@ function BottomDrawer(props: BottomDrawerProps) {
             <View style={{ flex: 1 }}>
                 <View style={styles.horizontalLine} />
                 <View style={[styles.spaceBetween, { paddingBottom: 24 }]}>
-                <Text fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize='2xl' color="primary.500">{props.showKorean ? i18n.t('korean') : i18n.t('translation')}</Text>
-                    <View style={styles.alignRow}>
+                    <Text fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize='2xl' color="primary.500">{props.showKorean ? i18n.t('korean') : i18n.t('translation')}</Text>
+                    <HStack space={2}>
                         <TouchableOpacity onPress={props.handleKorean}>
                             <MaterialIcons name="translate" size={32} color="#000"/>
                         </TouchableOpacity>
-                    </View>
+                        <TouchableOpacity onPress={props.copyToClipboard}>
+                            <MaterialIcons name="content-copy" size={32} color="black" />
+                        </TouchableOpacity>
+                    </HStack>
                 </View>
                 
-                <ScrollView style={{ flex: 1 }}>
+                {/* <View style={{paddingBottom: 10, marginBottom: 10, flex: 1}}> */}
+                <ScrollView  style={{ flex: 1 }}>
+                    <TouchableWithoutFeedback>
                     <Text fontFamily="body" fontWeight={500} fontStyle="normal" fontSize='md' lineHeight='xl'>
                     {!props.showKorean ? (
                         props.results?.fullText?.map((item, index) => 
@@ -304,7 +309,9 @@ function BottomDrawer(props: BottomDrawerProps) {
                         <Text>{props.results?.korean}</Text>
                     )}
                     </Text>
+                    </TouchableWithoutFeedback>
                 </ScrollView>
+                {/* </View> */}
             </View>
             {props.isTranslateScreen && 
                 <View style={[styles.spaceBetween, props.isFullDrawer && styles.full ]}>
