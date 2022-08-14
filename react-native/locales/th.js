@@ -70,5 +70,6 @@ export default {
     saveFirst: "คลิกปุ่มบันทึกเพื่อบันทึกผลลัพธ์ก่อน!",
     eventNotFound: "ไม่พบกิจกรรม",
     noResults: "ยังไม่มีผลลัพธ",
-    translateFirst: "แปลและบันทึกผลลัพธ์"
+    translateFirst: "แปลและบันทึกผลลัพธ์",
+    copiedToClipboard: "คัดลอกไปยังคลิปบอร์ดแล้ว",
 }

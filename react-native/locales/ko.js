@@ -69,5 +69,6 @@ export default {
     saveFirst: "저장 버튼을 눌러서 결과 저장을 먼저 해주세요!",
     eventNotFound: "이벤트를 찾지 못했어요",
     noResults: "아직 결과가 없습니다.",
-    translateFirst: "번역을 한 후에 결과를 저장해주세요."
+    translateFirst: "번역을 한 후에 결과를 저장해주세요.",
+    copiedToClipboard: "클립보드에 복사되었습니다",
 }

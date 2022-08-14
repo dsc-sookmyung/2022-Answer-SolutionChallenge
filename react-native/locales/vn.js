@@ -69,5 +69,6 @@ export default {
     saveFirst: "Nhấp vào nút Lưu để lưu kết quả trước!",
     eventNotFound: "Không tìm thấy sự kiện nào",
     noResults: "Chưa có kết quả.",
-    translateFirst: "Dịch và lưu kết quả."
+    translateFirst: "Dịch và lưu kết quả.",
+    copiedToClipboard: "Sao chép vào clipboard",
 }

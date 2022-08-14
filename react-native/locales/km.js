@@ -70,5 +70,6 @@ export default {
     saveFirst: "ចុចប៊ូតុង Save ដើម្បីរក្សាទុកលទ្ធផលជាមុន!",
     eventNotFound: "រកមិនឃើញព្រឹត្តិការណ៍ទេ។",
     noResults: "មិនទាន់មានលទ្ធផលនៅឡើយទេ។",
-    translateFirst: "បកប្រែ និងរក្សាទុកលទ្ធផល។"
+    translateFirst: "បកប្រែ និងរក្សាទុកលទ្ធផល។",
+    copiedToClipboard: "បានចម្លងទៅក្ដារតម្បៀតខ្ទាស់",
 }

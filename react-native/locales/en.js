@@ -41,6 +41,7 @@ export default {
     translateMessage_1: "You can add a schedule to the calendar by clicking the highlighted text.",
     translateMessage_2: "You must enter at least one character for the title.",
     saveAlarm: 'Results have been saved',
+    copiedToClipboard: "Copied to Clipboard",
     /* BottomDrawer */
     sessionExpired: "The session has expired. Please log in again.",
     helpertext: "Give your results a title.",
