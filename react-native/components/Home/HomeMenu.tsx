@@ -24,6 +24,7 @@ export default function HomeMenu() {
   return (
     <Menu
       visible={isMenuVisible}
+      style={{ marginTop: 32 }}
       anchor={
         <TouchableOpacity onPress={showMenu}>
           <Image
