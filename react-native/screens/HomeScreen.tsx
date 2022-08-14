@@ -47,7 +47,7 @@ export default function HomeScreen({ navigation }: Navigation) {
         cid: 1,
         cname: "Soo",
         cprofileImg: 2,
-        events: ["the 17th Graduate Seremony", "Do-Dream Festival", "asdfasf"],
+        events: ["the 17th Graduate Seremony", "Do-Dream Festival", "asdfasf", "소풍"],
       },
       {
         cid: 2,
@@ -75,7 +75,7 @@ export default function HomeScreen({ navigation }: Navigation) {
 
   useEffect(() => {
     if (auth?.userData) {
-        setUser(auth?.userData);
+      setUser(auth?.userData);
     }
 
     navigation.setOptions({
@@ -118,7 +118,7 @@ export default function HomeScreen({ navigation }: Navigation) {
           <ImageBackground
             source={require("../assets/images/home-button-background.png")}
             style={[styles.functionButtonImageBackground]}
-            imageStyle={{marginTop: -40}}
+            imageStyle={{ marginTop: -40 }}
           >
             <View style={styles.functionButtonWrapper}>
               <TouchableOpacity
@@ -239,7 +239,7 @@ export default function HomeScreen({ navigation }: Navigation) {
                 </TouchableOpacity>
               ))}
             </ScrollView>
-            <View style={styles.todayNoticeWrapper}>
+            <ScrollView style={styles.todayNoticeWrapper}>
               {nowSelectedChildId === SHOW_ALL ? (
                 events?.children.reduce(
                   (prevValue, child) => prevValue + child.events.length,
@@ -248,7 +248,10 @@ export default function HomeScreen({ navigation }: Navigation) {
                   events?.children.map((notice, index) =>
                     notice.events.map((event, index) => {
                       return (
-                        <View key={"n_" + index} style={[styles.pinkButton, { flexDirection: "row" }]}>
+                        <View
+                          key={"n_" + index}
+                          style={[styles.pinkButton, { flexDirection: "row" }]}
+                        >
                           <MaterialIcons
                             name="event"
                             size={20}
@@ -300,7 +303,7 @@ export default function HomeScreen({ navigation }: Navigation) {
               ) : (
                 <NoEventBox />
               )}
-            </View>
+            </ScrollView>
           </View>
         </SafeAreaView>
       )}
@@ -353,7 +356,7 @@ const styles = StyleSheet.create({
     shadowOffset: {
       height: 0,
       width: 0,
-    }
+    },
   },
   childButtonWrapper: {
     flexDirection: "row",
@@ -436,7 +439,7 @@ const styles = StyleSheet.create({
   pinkButton: {
     backgroundColor: theme.colors.secondary,
     borderRadius: 12,
-    padding: 16,
+    padding: 12,
     marginBottom: 12,
     width: "100%",
   },
