@@ -48,7 +48,7 @@ export default function SearchedNotice(props: Notices) {
     return (
         <View style={styles.container}>         
             <View style={styles.headerContainer}>
-                <Text fontWeight={500} color="white">Saved on {props?.date.replaceAll("-", ". ")}</Text>
+                <Text fontWeight={500} color="white">Saved on {typeof(props?.date)===typeof("string") ? props?.date?.replaceAll("-", ". ") : props?.date}</Text>
             </View>
             <VStack space={3}>
                 {props?.saved?.map((child, index) =>
