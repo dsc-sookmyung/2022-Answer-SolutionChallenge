@@ -47,7 +47,7 @@ export default function HomeScreen({ navigation }: Navigation) {
         cid: 1,
         cname: "Soo",
         cprofileImg: 2,
-        events: ["the 17th Graduate Seremony", "Do-Dream Festival", "asdfasf"],
+        events: ["the 17th Graduate Seremony", "Do-Dream Festival", "asdfasf", "소풍"],
       },
       {
         cid: 2,
@@ -239,7 +239,7 @@ export default function HomeScreen({ navigation }: Navigation) {
                 </TouchableOpacity>
               ))}
             </ScrollView>
-            <View style={styles.todayNoticeWrapper}>
+            <ScrollView style={styles.todayNoticeWrapper}>
               {nowSelectedChildId === SHOW_ALL ? (
                 events?.children.reduce(
                   (prevValue, child) => prevValue + child.events.length,
@@ -303,7 +303,7 @@ export default function HomeScreen({ navigation }: Navigation) {
               ) : (
                 <NoEventBox />
               )}
-            </View>
+            </ScrollView>
           </View>
         </SafeAreaView>
       )}
@@ -439,7 +439,7 @@ const styles = StyleSheet.create({
   pinkButton: {
     backgroundColor: theme.colors.secondary,
     borderRadius: 12,
-    padding: 16,
+    padding: 12,
     marginBottom: 12,
     width: "100%",
   },
