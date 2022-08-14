@@ -301,7 +301,7 @@ function BottomDrawer(props: BottomDrawerProps) {
                                 </Popover>
                             ) : (
                                 <Text key={item.content}>
-                                    {item.content.slice(72)}
+                                    {item.content}
                                 </Text>
                             )
                         )
