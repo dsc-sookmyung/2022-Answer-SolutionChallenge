@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, KeyboardAvoidingView, Alert, Platform, ScrollView, Image, GestureResponderEvent, View, TouchableHighlight } from 'react-native';
+import { StyleSheet, KeyboardAvoidingView, Alert, Platform, ScrollView, Image, GestureResponderEvent, View, TouchableHighlight, Dimensions } from 'react-native';
 import { FormControl, Input, Button, VStack, Popover, Text, useToast, Box } from 'native-base';
 import { Dropdown } from 'react-native-element-dropdown';
 import { nameValidator } from '../core/utils';
@@ -25,7 +25,7 @@ export default function JoinScreen({ navigation }: Navigation) {
 		uprofileImg: 0,
 		username: '',
 		ulanguage: '',
-		uchildren: colors.map(color => ({ cname: '', cprofileImg: 0, color: color?.id }))
+		uchildren: colors.map(color => ({ cname: '', cprofileImg: 1, color: color?.id }))
 	})
 	const [open, setOpen] = useState(-1);
 
@@ -258,12 +258,12 @@ export default function JoinScreen({ navigation }: Navigation) {
 						</ScrollView>
 					</FormControl>
 				</VStack>
-				<TouchableHighlight style={styles.startButton} onPress={onJoinPressed}>
-					<Text fontWeight={600} style={styles.buttonStyle}>
-						{i18n.t("signUp")}
-					</Text>
-				</TouchableHighlight>
 			</ScrollView>
+			<TouchableHighlight style={styles.startButton} onPress={onJoinPressed}>
+				<Text fontWeight={600} style={styles.buttonStyle}>
+					{i18n.t("signUp")}
+				</Text>
+			</TouchableHighlight>
 		</KeyboardAvoidingView>
 	);
 }
@@ -335,7 +335,10 @@ const styles = StyleSheet.create({
 		padding: 10,
 		borderRadius: 8,
 		marginTop: 20,
-		marginBottom: 40,
+		position: "absolute",
+		bottom: Dimensions.get('window').height / Dimensions.get('window').width > 2 ? 60 : 30,
+		width: "100%",
+		alignSelf: "center"
 	},
 	buttonStyle: {
 		textAlign: "center",
