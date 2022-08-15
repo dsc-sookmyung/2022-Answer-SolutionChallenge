@@ -149,23 +149,23 @@ function BottomDrawer(props: BottomDrawerProps) {
 
     return (
         <View style={styles.bottomDrawer}>
-            <View style={{ flex: 1 }}>
-                <View style={styles.horizontalLine} />
-                <View style={[styles.spaceBetween, { paddingBottom: 24 }]}>
-                    <Text fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize='2xl' color="primary.500">{props.showKorean ? i18n.t('korean') : i18n.t('translation')}</Text>
-                    <HStack space={2}>
-                        <TouchableOpacity onPress={props.handleKorean}>
-                            <MaterialIcons name="translate" size={32} color="#000"/>
-                        </TouchableOpacity>
-                        <TouchableOpacity onPress={props.copyToClipboard}>
-                            <MaterialIcons name="content-copy" size={32} color="black" />
-                        </TouchableOpacity>
-                    </HStack>
-                </View>
-                
-                {/* <View style={{paddingBottom: 10, marginBottom: 10, flex: 1}}> */}
-                <ScrollView  style={{ flex: 1 }}>
-                    <TouchableWithoutFeedback>
+            <View style={styles.horizontalLine} />
+
+            <View style={[styles.spaceBetween, { paddingBottom: 24 }]}>
+                <Text fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize='2xl' color="primary.500">{props.showKorean ? i18n.t('korean') : i18n.t('translation')}</Text>
+                <HStack space={2}>
+                    <TouchableOpacity onPress={props.handleKorean}>
+                        <MaterialIcons name="translate" size={32} color="#000"/>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={props.copyToClipboard}>
+                        <MaterialIcons name="content-copy" size={32} color="black" />
+                    </TouchableOpacity>
+                </HStack>
+            </View>
+            
+            {/* <View style={{paddingBottom: 10, marginBottom: 10, flex: 1}}> */}
+            <ScrollView  style={{ flex: 1 }}>
+                <TouchableWithoutFeedback>
                     <Text fontFamily="body" fontWeight={500} fontStyle="normal" fontSize='md' lineHeight='xl'>
                     {!props.showKorean ? (
                         props.results?.fullText?.map((item, index) => 
@@ -309,10 +309,10 @@ function BottomDrawer(props: BottomDrawerProps) {
                         <Text>{props.results?.korean}</Text>
                     )}
                     </Text>
-                    </TouchableWithoutFeedback>
-                </ScrollView>
-                {/* </View> */}
-            </View>
+                </TouchableWithoutFeedback>
+            </ScrollView>
+            {/* </View> */}
+            
             {props.isTranslateScreen && 
                 <View style={[styles.spaceBetween, props.isFullDrawer && styles.full ]}>
                     <TouchableHighlight style={[styles.regularButton, styles.grayBackground]} onPress={props.retakePicture}>
@@ -403,9 +403,9 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.gray
     },
     regularButton: {
+        marginTop: 20,
         paddingVertical: 16,
         flex: 0.9,
-        marginTop: 16,
         alignItems: 'center',
         borderRadius: 16
     },
@@ -430,7 +430,7 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.primary,
     },
     full: {
-        paddingBottom: 96
+        paddingBottom: Dimensions.get('window').height / Dimensions.get('window').width > 2 ? 96: 40
     },
     dropdown: {
 		height: 32,
