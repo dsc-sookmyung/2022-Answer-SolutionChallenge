@@ -65,5 +65,10 @@ export default {
     retake: '重拍',
     join: '加入',
     searchResult: "搜索结果",
-    noEvent: "今天没有活动！"
+    noEvent: "今天没有活动！",
+    saveFirst: "单击保存按钮首先保存结果！",
+    eventNotFound: "未找到任何事件",
+    noResults: "目前还没有结果。",
+    translateFirst: "翻译并保存结果。",
+    copiedToClipboard: "已复制到剪贴板",
 }

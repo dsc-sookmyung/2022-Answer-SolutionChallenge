@@ -1,20 +1,19 @@
-package com.answer.notinote.Event.dto;
+package com.answer.notinote.Notice.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDate;
 
-@Getter @Setter
+@Getter
 @AllArgsConstructor
-@NoArgsConstructor
-public class EventRegisterDto {
-    Long cid;
+@Builder
+public class NoticeEventListDto {
     String title;
-    String description;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     LocalDate date;
+
 }

@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Dimensions, View, TouchableOpacity, TouchableHighlight, ScrollView, Alert, Linking } from 'react-native';
+import { StyleSheet, Dimensions, View, TouchableOpacity, TouchableHighlight, ScrollView, Alert, Linking, TouchableWithoutFeedback } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { Popover, Button, Text, Modal, FormControl, Input, VStack, Select, CheckIcon, AlertDialog } from 'native-base';
+import { Popover, Button, Text, Modal, FormControl, Input, VStack, HStack, AlertDialog } from 'native-base';
 import { theme } from '../core/theme';
 import type { BottomDrawerProps, EventForm, ResultsForm, UserData } from '../types';
 import { useAuth } from '../contexts/Auth';
 import { useNavigation, StackActions } from '@react-navigation/native';
 import i18n from 'i18n-js';
 import '../locales/i18n';
+import { Dropdown } from 'react-native-element-dropdown';
+import useFonts from '../hooks/useFonts';
+import AppLoading from 'expo-app-loading';
 
 
 const highlight = (text: string, registered: boolean) =>
-    <Text fontFamily="body" fontWeight={700} fontStyle="normal" fontSize='md' pt={24} style={!registered ? styles.highlighted : styles.grayBackground}>{text}</Text>
+    <Text color="#fff" fontFamily="body" fontWeight={500} fontStyle="normal" fontSize='md' pt={24} style={!registered ? styles.highlighted : styles.grayBackground}>{text}</Text>
 
 function BottomDrawer(props: BottomDrawerProps) {
     const [currentEvent, setCurrentEvent] = useState<number>(0);
@@ -25,6 +28,12 @@ function BottomDrawer(props: BottomDrawerProps) {
     const auth = useAuth();
     const navigation = useNavigation();
     const cancelRef = React.useRef(null);
+    const [data, setData] = useState();
+
+    const [fontsLoaded, SetFontsLoaded] = useState<boolean>(false);
+    const LoadFontsAndRestoreToken = async () => {
+        await useFonts();
+    };
 
     useEffect(()=> {
         if (auth?.userData) {
@@ -42,7 +51,7 @@ function BottomDrawer(props: BottomDrawerProps) {
         if (currentEvent && eventForm?.cid) {
             let obj = props?.results?.fullText;
             let event = obj.find(function(item, index) {
-                if (item.id===currentEvent) {
+                if (item.eid===currentEvent) {
                     return true;
                 }
             });
@@ -55,12 +64,17 @@ function BottomDrawer(props: BottomDrawerProps) {
 
 	useEffect(() => {
         if (props.openSaveForm && firstCid) {
-            setResultsForm({ cid: firstCid, title: 'title' });
+            setResultsForm({ cid: firstCid, title: props?.results?.title ? props.results.title : 'title' });
         }
 	}, [props?.openSaveForm])
 
     const openPopup = (resultId: number) => () => {
-        setCurrentEvent(resultId);
+        if (resultId === -1) {
+            Alert.alert(i18n.t("saveFirst"));
+        }
+        else {
+            setCurrentEvent(resultId);
+        }
     }
 
     const closePopup = () => {
@@ -81,7 +95,7 @@ function BottomDrawer(props: BottomDrawerProps) {
     const addEvent = () => {
         if (auth?.authData?.access_token && eventForm) {
             console.log(eventForm, currentEvent);
-            fetch(`http://localhost:8080/event/register?id=${currentEvent}`, {
+            fetch(`http://localhost:8080/event/register?eid=${currentEvent}`, {
                 method: 'PUT',
                 headers: {
                     'ACCESS-TOKEN': auth.authData.access_token,
@@ -123,28 +137,43 @@ function BottomDrawer(props: BottomDrawerProps) {
         }
     }
 
+    if (!fontsLoaded) {
+        return (
+          <AppLoading
+            startAsync={LoadFontsAndRestoreToken}
+            onFinish={() => SetFontsLoaded(true)}
+            onError={() => {}}
+          />
+        );
+    } 
+
     return (
         <View style={styles.bottomDrawer}>
-            <View style={{ flex: 1 }}>
-                <View style={styles.horizontalLine} />
-                <View style={[styles.spaceBetween, { paddingBottom: 24 }]}>
+            <View style={styles.horizontalLine} />
+
+            <View style={[styles.spaceBetween, { paddingBottom: 24 }]}>
                 <Text fontFamily="heading" fontWeight={700} fontStyle="normal" fontSize='2xl' color="primary.500">{props.showKorean ? i18n.t('korean') : i18n.t('translation')}</Text>
-                    <View style={styles.alignRow}>
-                        <TouchableOpacity onPress={props.handleKorean}>
-                            <MaterialIcons name="translate" size={32} color="#000"/>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-                
-                <ScrollView style={{ flex: 1 }}>
+                <HStack space={2}>
+                    <TouchableOpacity onPress={props.handleKorean}>
+                        <MaterialIcons name="translate" size={32} color="#000"/>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={props.copyToClipboard}>
+                        <MaterialIcons name="content-copy" size={32} color="black" />
+                    </TouchableOpacity>
+                </HStack>
+            </View>
+            
+            {/* <View style={{paddingBottom: 10, marginBottom: 10, flex: 1}}> */}
+            <ScrollView  style={{ flex: 1 }}>
+                <TouchableWithoutFeedback>
                     <Text fontFamily="body" fontWeight={500} fontStyle="normal" fontSize='md' lineHeight='xl'>
                     {!props.showKorean ? (
                         props.results?.fullText?.map((item, index) => 
                             item.highlight ? (
                                 <Popover 
                                     key={item.id} 
-                                    isOpen={item.id===currentEvent}
-                                    onOpen={openPopup(item.id)}                                 
+                                    isOpen={item.eid===currentEvent}
+                                    onOpen={openPopup(item.eid)}                                 
                                     onClose={closePopup}
                                     trigger={triggerProps => {
                                         return <Text {...triggerProps}>
@@ -174,18 +203,23 @@ function BottomDrawer(props: BottomDrawerProps) {
                                                             <VStack space={2}>
                                                                 <FormControl>
                                                                     <FormControl.Label>{i18n.t('child')}</FormControl.Label>
-                                                                        <Select selectedValue={eventForm?.cid.toString()} accessibilityLabel="Child" onValueChange={itemValue => {
+                                                                    <Dropdown
+                                                                        style={styles.dropdown}
+                                                                        placeholderStyle={styles.placeholderStyle}
+                                                                        selectedTextStyle={styles.selectedTextStyle}
+                                                                        data={user?.uchildren?.length ? user?.uchildren?.map(child => 
+                                                                            ({ label: child?.cname, value: child?.cid.toString()})
+                                                                        ) : []}
+                                                                        maxHeight={236}
+                                                                        labelField="label"
+                                                                        valueField="value"
+                                                                        placeholder={i18n.t('selectLang')}
+                                                                        searchPlaceholder="Search..."
+                                                                        value={eventForm?.cid.toString()}
+                                                                        onChange={itemValue => {
                                                                             setEventForm({ ...eventForm, ['cid']: Number(itemValue) })
-                                                                        }} _selectedItem={{
-                                                                            bg: "skyblue.500",
-                                                                            endIcon: <CheckIcon size={3} />
-                                                                        }}>
-                                                                            {/* Country code 3 digit ISO */}
-                                                                            {user?.uchildren?.map((child, index) => 
-                                                                                child?.cname && child?.cid &&
-                                                                                    <Select.Item key={'cs_'+index} label={child?.cname} value={child?.cid.toString()} />
-                                                                            )}
-                                                                        </Select>
+                                                                        }}
+                                                                    />
                                                                 </FormControl>
                                                                 <FormControl>
                                                                     <FormControl.Label>{i18n.t('title')}</FormControl.Label>
@@ -267,7 +301,7 @@ function BottomDrawer(props: BottomDrawerProps) {
                                 </Popover>
                             ) : (
                                 <Text key={item.content}>
-                                    {item.content.slice(72)}
+                                    {item.content}
                                 </Text>
                             )
                         )
@@ -275,18 +309,20 @@ function BottomDrawer(props: BottomDrawerProps) {
                         <Text>{props.results?.korean}</Text>
                     )}
                     </Text>
-                </ScrollView>
-            </View>
+                </TouchableWithoutFeedback>
+            </ScrollView>
+            {/* </View> */}
+            
             {props.isTranslateScreen && 
                 <View style={[styles.spaceBetween, props.isFullDrawer && styles.full ]}>
                     <TouchableHighlight style={[styles.regularButton, styles.grayBackground]} onPress={props.retakePicture}>
-                        <Text color="white">{i18n.t('retake')}</Text>
+                        <Text color="white" fontWeight={500}>{i18n.t('retake')}</Text>
                     </TouchableHighlight>
                     <View style={styles.gap} />
                     {props.handleOpenSaveForm && 
                         <>
                         <TouchableHighlight style={[styles.regularButton, styles.primaryBackground]} onPress={props.handleOpenSaveForm}>
-                            <Text color="white">{i18n.t('save')}</Text>
+                            <Text color="white" fontWeight={500}>{i18n.t('save')}</Text>
                         </TouchableHighlight>
                         <Modal isOpen={props.openSaveForm} onClose={props.handleOpenSaveForm}>
                             <Modal.Content maxWidth="400px">
@@ -296,18 +332,22 @@ function BottomDrawer(props: BottomDrawerProps) {
                                 <VStack space={2}>
                                     <FormControl>
                                         <FormControl.Label>{i18n.t('child')}</FormControl.Label>
-                                            <Select selectedValue={resultsForm?.cid.toString()} accessibilityLabel="Child" onValueChange={itemValue => {
-                                                setResultsForm({...resultsForm, ['cid']: Number(itemValue)})
-                                            }} _selectedItem={{
-                                                bg: "skyblue.500",
-                                                endIcon: <CheckIcon size={3} />
-                                            }}>
-                                                {/* Country code 3 digit ISO */}
-                                                {user?.uchildren?.map((child, index) => 
-                                                    child?.cname && child?.cid &&
-                                                        <Select.Item key={'cs_'+index} label={child?.cname} value={child?.cid.toString()} />
-                                                )}
-                                            </Select>
+                                        <Dropdown
+                                            style={styles.dropdown}
+                                            placeholderStyle={styles.placeholderStyle}
+                                            selectedTextStyle={styles.selectedTextStyle}
+                                            data={user?.uchildren?.length ? user?.uchildren?.map(child => 
+                                                ({ label: child?.cname, value: child?.cid.toString()})
+                                            ) : []}
+                                            maxHeight={220}
+                                            labelField="label"
+                                            valueField="value"
+                                            placeholder={i18n.t('child')}
+                                            value={eventForm?.cid.toString()}
+                                            onChange={itemValue => {
+                                                setResultsForm({...resultsForm, ['cid']: Number(itemValue) })
+                                            }}
+                                        />
                                     </FormControl>
                                     <FormControl>
                                         <FormControl.Label>Title</FormControl.Label>
@@ -363,9 +403,9 @@ const styles = StyleSheet.create({
         backgroundColor: theme.colors.gray
     },
     regularButton: {
+        marginTop: 20,
         paddingVertical: 16,
         flex: 0.9,
-        marginTop: 16,
         alignItems: 'center',
         borderRadius: 16
     },
@@ -387,9 +427,26 @@ const styles = StyleSheet.create({
         flexDirection: 'row'
     },
     highlighted: {
-        backgroundColor: theme.colors.skyblue
+        backgroundColor: theme.colors.primary,
     },
     full: {
-        paddingBottom: 96
+        paddingBottom: Dimensions.get('window').height / Dimensions.get('window').width > 2 ? 96: 40
     },
+    dropdown: {
+		height: 32,
+		borderColor: '#e5e5e5',
+		borderWidth: 0.6,
+		borderRadius: 5,
+		paddingHorizontal: 8,
+		marginTop: 1
+	},
+    placeholderStyle: {
+		fontSize: 13,
+		fontFamily: 'Lora_400Regular',
+		color: '#a3a3a3'
+	},
+	selectedTextStyle: {
+		fontSize: 13,
+		fontFamily: 'Lora_400Regular',
+	}
 })

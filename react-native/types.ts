@@ -66,28 +66,31 @@ interface AuthContextData {
 };
 interface Event {
     id: number, 
+	eid: number,
     content: string, 
     date?: string, 
     highlight: boolean, 
     registered: boolean
 }
 
-interface Result {
-    id?: number,
+interface Notice {
     imageUri?: string,
     fullText: Event[],
     korean: string,
-    trans_full?: string
+    trans_full?: string,
 }
+interface Result extends Notice {
+    id?: number,
+	
+	title?: string,
 
-interface Notice {
-    date: string,
-    results: Result[]
+	event_num?: number,
+	events?: { title: string, date: string }[]
 }
 
 interface Notices {
     date: string,
-    saved_titles: string[]
+	saved: { nid: number, cid: number, title: string }[]
 }
 
 interface BottomDrawerProps {
@@ -97,6 +100,7 @@ interface BottomDrawerProps {
     isTranslateScreen?: boolean,
     openSaveForm?: boolean,
     handleKorean?: () => void,
+    copyToClipboard?: () => void,
     saveResults?: (form: ResultsForm) => void,
     closeResults?: () => void,
     retakePicture?: () => void,

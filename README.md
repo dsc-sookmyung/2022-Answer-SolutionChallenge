@@ -1,3 +1,5 @@
+<img src="https://user-images.githubusercontent.com/53266682/177073689-6e53171c-e4b2-4e36-b15d-f886283a5e30.png" alt="notinote-banner" border="0" width="1000px" />
+
 # 2022 Solution Challenge: NotiNote 📘
 
 > GDSC Sookmyung - Team Answer
@@ -15,39 +17,27 @@ With Notinote, parents of multicultural families can read school newsletters in 
 
 
 ## 🎯 Our Goal
+<img src="https://i.ibb.co/k8zHYLQ/Slide-16-9-4.jpg" alt="Slide-16-9-4" border="0" width="800px">
 
-![notinote_sdgs](https://i.ibb.co/mzB123G/Slide-16-9-4.png)
-
-
-
-## 🛠 Tech Stacks
-
-![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
-![React Native](https://img.shields.io/badge/react_native-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
-![Expo](https://img.shields.io/badge/expo-1C1E24?style=for-the-badge&logo=expo&logoColor=#D04A37)
-![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
-![Google Cloud](https://img.shields.io/badge/GoogleCloud-%234285F4.svg?style=for-the-badge&logo=google-cloud&logoColor=white)
-![MySQL](https://img.shields.io/badge/mysql-%23000f.svg?style=for-the-badge&logo=mysql&logoColor=white)
-
-
+## 🛠 Project Architecture
+<img src="https://cdn.discordapp.com/attachments/957220588143935539/983626024564711454/notinote-structure.png" alt="Slide-16-9-4" border="0" width="800px">
 
 ## 💻 Demo
 
-[![notitnote](https://img.youtube.com/vi/2mjKChhn37s/0.jpg)](https://www.youtube.com/watch?v=2mjKChhn37s&t=2s)
-
+[![notitnote](https://img.youtube.com/vi/2mjKChhn37s/0.jpg)](https://youtu.be/1F9g3U792G8)
 
 
 ## 📸 Screenshots
 
-<a href="https://ibb.co/rQknGhL"><img src="https://i.ibb.co/CwBx5yX/1.png" alt="1" border="0"></a>
-<a href="https://ibb.co/BgsthWb"><img src="https://i.ibb.co/Q6mfWSL/2.png" alt="2" border="0"></a>
-<a href="https://ibb.co/hFDnjxs"><img src="https://i.ibb.co/9HsfLmn/3.png" alt="3" border="0"></a>
-<a href="https://ibb.co/720Zbxm"><img src="https://i.ibb.co/KF8fmcv/4.png" alt="4" border="0"></a>
-<a href="https://ibb.co/QPLCnbL"><img src="https://i.ibb.co/X713p21/5.png" alt="5" border="0"></a>
-<a href="https://ibb.co/mD2NX2V"><img src="https://i.ibb.co/j6QJWQP/6.png" alt="6" border="0"></a>
-<a href="https://ibb.co/5Lrkq4C"><img src="https://i.ibb.co/QMPksQh/7.png" alt="7" border="0"></a>
-
+<img width="1440" alt="Intro" src="https://user-images.githubusercontent.com/53266682/172180416-e26f070f-7125-41a6-b5ab-da6292662d24.png">
+<img width="1440" alt="SignIn" src="https://user-images.githubusercontent.com/53266682/172180813-148a924a-c856-47ba-96c2-d8ad04a1e0df.png">
+<img width="1440" alt="SignUp" src="https://user-images.githubusercontent.com/53266682/172180447-9524312b-4739-4f6f-979b-dc1bb6fdc5f9.png">
+<img width="1440" alt="Home" src="https://user-images.githubusercontent.com/53266682/172180973-5b430d6b-4319-4ab6-8735-13f94a8cb484.png">
+<img width="1440" alt="SelectPhoto" src="https://user-images.githubusercontent.com/53266682/172180996-c3617d29-6414-4fb3-a533-b7150207eabe.png">
+<img width="1440" alt="Translate" src="https://user-images.githubusercontent.com/53266682/172181013-4ea8d883-af35-4847-8068-3c41b682b9cd.png">
+<img width="1440" alt="AddEvent" src="https://user-images.githubusercontent.com/53266682/172181025-faf31162-56e0-4265-9637-0275d5c2e36a.png">
+<img width="1440" alt="GoogleCalendar" src="https://user-images.githubusercontent.com/53266682/172181030-97a97fee-54cd-452e-b5ee-32234b19583e.png">
+<img width="1440" alt="Search" src="https://user-images.githubusercontent.com/53266682/172181036-fdbad132-e158-494e-bd81-e9e3873effc5.png">
 
 
 ## 👩🏻‍💻 Contributors

@@ -22,7 +22,7 @@ export default function JoinScreen({ navigation }: Navigation) {
 	// 1 3 4 5 7 10
 	const [joinForm, setJoinForm] = useState<JoinData>({
 		uid: undefined,
-		uprofileImg: 1,
+		uprofileImg: 0,
 		username: '',
 		ulanguage: '',
 		uchildren: colors.map(color => ({ cname: '', cprofileImg: 1, color: color?.id }))
@@ -136,8 +136,8 @@ export default function JoinScreen({ navigation }: Navigation) {
 						<FormControl.Label>{i18n.t('profileImage')}</FormControl.Label>
 						<ScrollView horizontal={true}>
 							{Array.from(Array(Number(7)).keys()).map((num, index) =>
-								<Button key={'ub_'+index} variant="unstyled" onPress={handleProfileImg(index+1)}>
-									<Image style={[styles.uprofileImage, joinForm.uprofileImg!==index+1 && styles.disabled]} source={uProfileImgSource[index]} />
+								<Button key={'ub_'+index} variant="unstyled" onPress={handleProfileImg(index)}>
+									<Image style={[styles.uprofileImage, joinForm.uprofileImg!==index && styles.disabled]} source={uProfileImgSource[index]} />
 								</Button>
 							)}
 						</ScrollView>
@@ -228,7 +228,7 @@ export default function JoinScreen({ navigation }: Navigation) {
 										trigger={triggerProps => {
 											return <Button {...triggerProps} variant="unstyled" onPress={() => setOpen(child)}>
 												{joinForm && joinForm.uchildren &&
-													<Image style={[styles.cprofileImage]} source={cProfileImgSource[joinForm.uchildren[child]?.cprofileImg-1]} />
+													<Image style={[styles.cprofileImage]} source={cProfileImgSource[joinForm.uchildren[child]?.cprofileImg]} />
 												}
 											</Button>
 										}}
@@ -240,9 +240,9 @@ export default function JoinScreen({ navigation }: Navigation) {
 															<FormControl.Label>{i18n.t('profileImage')}</FormControl.Label>
 															<ScrollView horizontal={true}>
 																{Array.from(Array(Number(9)).keys()).map((num, i) =>
-																	<Button key={'cb_'+num} variant="unstyled" onPress={handleChildrenProfileImg(child, num+1)}>
+																	<Button key={'cb_'+num} variant="unstyled" onPress={handleChildrenProfileImg(child, num)}>
 																		{joinForm && joinForm.uchildren && 
-																			<Image style={[styles.uprofileImage, joinForm?.uchildren[child]?.cprofileImg!==num+1 && styles.disabled]} source={cProfileImgSource[num]} />
+																			<Image style={[styles.uprofileImage, joinForm?.uchildren[child]?.cprofileImg!==num && styles.disabled]} source={cProfileImgSource[num]} />
 																		}
 																	</Button>
 																)}

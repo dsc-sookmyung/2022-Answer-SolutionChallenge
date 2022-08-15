@@ -66,5 +66,10 @@ export default {
     retake: '再撮影',
     join: '参加',
     searchResult: "検索結果",
-    noEvent: "今日はイベントはありません！"
+    noEvent: "今日はイベントはありません！",
+    saveFirst: "保存ボタンを押して結果を保存してください！",
+    eventNotFound: "イベントが見つかりませんでした",
+    noResults: "まだ結果はありません。",
+    translateFirst: "結果を翻訳して保存する。",
+    copiedToClipboard: "クリップボードにコピーしました",
 }
