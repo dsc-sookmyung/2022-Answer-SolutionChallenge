@@ -90,7 +90,7 @@ export default function TranslateScreen({ navigation }: Navigation) {
 
 			console.log("ocr", formdata);
 
-			// setLoading(true);
+			setLoading(true);
 
 			if (auth?.authData?.access_token) {
 				const axiosInstance = axios.create({
