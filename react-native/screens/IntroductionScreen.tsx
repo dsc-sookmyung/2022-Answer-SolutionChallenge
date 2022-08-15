@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   TouchableHighlight,
   Alert,
+  Dimensions,
 } from "react-native";
 import { Text } from "native-base";
 import { theme } from "../core/theme";
@@ -34,6 +35,7 @@ export default function HomeScreen({ navigation }: Navigation) {
 
   // useEffect(() => {
   //     navigation.navigate("Home");
+  //     navigation.navigate("Join")
   // })
 
   useEffect(() => {
@@ -92,15 +94,15 @@ export default function HomeScreen({ navigation }: Navigation) {
         </View>
       </Swiper>
       <TouchableHighlight
-            style={styles.startButton}
-            onPress={() => {
-              promptAsync();
-            }}
-          >
-            <Text fontWeight={600} style={styles.buttonStyle}>
-              {i18n.t("start")}
-            </Text>
-        </TouchableHighlight>
+        style={styles.startButton}
+        onPress={() => {
+          promptAsync();
+        }}
+      >
+        <Text fontWeight={600} style={styles.buttonStyle}>
+          {i18n.t("start")}
+        </Text>
+      </TouchableHighlight>
     </SafeAreaView>
   );
 }
@@ -132,7 +134,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 8,
     marginTop: 20,
-    marginBottom: 32,
+    marginBottom: Dimensions.get('window').height / Dimensions.get('window').width > 2 ? 26 : 30,
   },
   buttonStyle: {
     textAlign: "center",
