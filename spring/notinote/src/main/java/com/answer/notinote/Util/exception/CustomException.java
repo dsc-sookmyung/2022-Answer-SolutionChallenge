@@ -1,4 +1,4 @@
-package com.answer.notinote.Exception;
+package com.answer.notinote.Util.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

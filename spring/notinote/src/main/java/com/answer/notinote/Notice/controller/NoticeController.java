@@ -1,8 +1,7 @@
 package com.answer.notinote.Notice.controller;
 
-import com.answer.notinote.Auth.token.provider.JwtTokenProvider;
+import com.answer.notinote.Auth.jwt.JwtTokenProvider;
 import com.answer.notinote.Event.dto.EventRequestDto;
-import com.answer.notinote.Event.service.EventService;
 import com.answer.notinote.Notice.dto.*;
 import com.answer.notinote.Notice.service.NoticeService;
 import com.answer.notinote.User.domain.entity.User;
@@ -28,8 +27,6 @@ public class NoticeController {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    private final EventService eventService;
-
     @RequestMapping(value = "/notice/ocr", method = RequestMethod.POST)
     public NoticeOCRDto executeOCR (@RequestPart MultipartFile uploadfile, HttpServletRequest request) throws IOException {
         String token = jwtTokenProvider.resolveAccessToken(request);
@@ -51,7 +48,6 @@ public class NoticeController {
 
     @RequestMapping(value = "/notice/image", method = RequestMethod.POST)
     public ResponseEntity<?> saveImage(@RequestPart MultipartFile uploadfile) throws IOException {
-        System.out.println("/notice/image");
         String imageUrl = noticeService.saveImage(uploadfile); //notice 저장
         return ResponseEntity.ok(new ImageUrlResponseDto(imageUrl));
     }
@@ -69,16 +65,4 @@ public class NoticeController {
     public String uploadObject(String objectName, String filePath) throws IOException{
         return noticeService.uploadObjectimage(objectName, filePath);
     }
-/*
-    @PostMapping("/notice/test")
-    public List<NoticeSentenceDto> test(@RequestBody NoticeOCRDto dto, @RequestParam String lan) throws JsonProcessingException {
-        Notice notice = Notice.builder()
-                .trans_full(dto.getFullText())
-                .origin_full(dto.getKorean())
-                .build();
-        List<Event> events = noticeService.detectEvent(notice, lan);
-        return noticeService.extractSentenceFromEvent(dto.getFullText(), events);
-    }
-
- */
 }

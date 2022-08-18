@@ -1,13 +1,13 @@
 package com.answer.notinote.Notice.service;
 
-import com.answer.notinote.Auth.token.provider.JwtTokenProvider;
+import com.answer.notinote.Auth.jwt.JwtTokenProvider;
 import com.answer.notinote.Child.service.ChildService;
 import com.answer.notinote.Event.domain.Event;
 import com.answer.notinote.Notice.dto.*;
 import com.answer.notinote.Event.dto.EventRequestDto;
 import com.answer.notinote.Event.service.EventService;
-import com.answer.notinote.Exception.CustomException;
-import com.answer.notinote.Exception.ErrorCode;
+import com.answer.notinote.Util.exception.CustomException;
+import com.answer.notinote.Util.exception.ErrorCode;
 import com.answer.notinote.Notice.domain.entity.Notice;
 import com.answer.notinote.Notice.domain.repository.NoticeRepository;
 import com.answer.notinote.User.domain.entity.User;

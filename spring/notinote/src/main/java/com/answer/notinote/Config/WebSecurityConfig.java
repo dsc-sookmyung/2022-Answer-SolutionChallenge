@@ -1,7 +1,7 @@
 package com.answer.notinote.Config;
 
-import com.answer.notinote.Auth.filter.JwtAuthenticationFilter;
-import com.answer.notinote.Auth.token.provider.JwtTokenProvider;
+import com.answer.notinote.Auth.jwt.JwtAuthenticationFilter;
+import com.answer.notinote.Auth.jwt.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,12 +32,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .cors().configurationSource(corsConfigurationSource())
                 .and()
                     .csrf().disable()
-                    .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    .sessionManagement()
+                    .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .and()
+                    .formLogin().disable()
+                    .httpBasic().disable()
+                    .headers().frameOptions().disable()
                 .and()
                 // 모두 접근 가능한 URL
                     .authorizeRequests()
-                    .antMatchers("/","/login/oauth2","/login", "/join", "/refresh",
-                            "/swagger-ui.html", "/swagger/**", "/swagger-resources/**", "/webjars/**", "/v2/api-docs").permitAll()
+                    .antMatchers(
+                            "/","/login/oauth2","/login", "/join", "/refresh",
+                            "/swagger-ui.html", "/swagger/**", "/swagger-resources/**", "/webjars/**", "/v2/api-docs",
+                            "/notice/**").permitAll()
                 .and()
                 // USER만 접근 가능한 URL
                     .authorizeRequests()
