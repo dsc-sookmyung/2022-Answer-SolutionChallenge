@@ -1,8 +1,6 @@
 package com.answer.notinote.User.controller;
 
-import com.answer.notinote.Auth.repository.RefreshTokenRepository;
-import com.answer.notinote.Auth.token.provider.JwtTokenProvider;
-import com.answer.notinote.User.dto.JoinRequestDto;
+import com.answer.notinote.Auth.jwt.JwtTokenProvider;
 import com.answer.notinote.User.domain.entity.User;
 import com.answer.notinote.User.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 @CrossOrigin
 @RestController

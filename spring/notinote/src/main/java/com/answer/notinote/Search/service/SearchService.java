@@ -1,12 +1,12 @@
 package com.answer.notinote.Search.service;
 
-import com.answer.notinote.Auth.token.provider.JwtTokenProvider;
+import com.answer.notinote.Auth.jwt.JwtTokenProvider;
 import com.answer.notinote.Child.domain.Child;
 import com.answer.notinote.Child.domain.repository.ChildRepository;
 import com.answer.notinote.Event.domain.Event;
 import com.answer.notinote.Event.service.EventService;
-import com.answer.notinote.Exception.CustomException;
-import com.answer.notinote.Exception.ErrorCode;
+import com.answer.notinote.Util.exception.CustomException;
+import com.answer.notinote.Util.exception.ErrorCode;
 import com.answer.notinote.Notice.domain.entity.Notice;
 import com.answer.notinote.Notice.domain.repository.NoticeRepository;
 import com.answer.notinote.Notice.dto.NoticeSentenceDto;
@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;

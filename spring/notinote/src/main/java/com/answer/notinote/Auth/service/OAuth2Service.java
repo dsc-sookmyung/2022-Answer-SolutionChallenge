@@ -1,8 +1,8 @@
 package com.answer.notinote.Auth.service;
 
 import com.answer.notinote.Auth.userdetails.GoogleUser;
-import com.answer.notinote.Exception.CustomException;
-import com.answer.notinote.Exception.ErrorCode;
+import com.answer.notinote.Util.exception.CustomException;
+import com.answer.notinote.Util.exception.ErrorCode;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

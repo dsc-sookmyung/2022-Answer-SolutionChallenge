@@ -1,4 +1,4 @@
-package com.answer.notinote.Auth.token;
+package com.answer.notinote.Auth.jwt;
 
 import com.answer.notinote.User.domain.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;

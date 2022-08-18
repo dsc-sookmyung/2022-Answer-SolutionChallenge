@@ -1,9 +1,8 @@
-package com.answer.notinote.Auth.token.provider;
+package com.answer.notinote.Auth.jwt;
 
 import com.answer.notinote.Auth.repository.RefreshTokenRepository;
-import com.answer.notinote.Auth.token.RefreshToken;
-import com.answer.notinote.Exception.CustomException;
-import com.answer.notinote.Exception.ErrorCode;
+import com.answer.notinote.Util.exception.CustomException;
+import com.answer.notinote.Util.exception.ErrorCode;
 import com.answer.notinote.User.domain.entity.User;
 import com.answer.notinote.User.domain.repository.UserRepository;
 import io.jsonwebtoken.*;

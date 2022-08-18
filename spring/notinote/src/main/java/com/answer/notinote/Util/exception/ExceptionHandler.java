@@ -1,4 +1,4 @@
-package com.answer.notinote.Exception;
+package com.answer.notinote.Util.exception;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
