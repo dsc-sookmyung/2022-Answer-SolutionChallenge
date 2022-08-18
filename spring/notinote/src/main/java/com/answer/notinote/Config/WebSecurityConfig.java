@@ -37,7 +37,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // 모두 접근 가능한 URL
                     .authorizeRequests()
                     .antMatchers("/","/login/oauth2","/login", "/join", "/refresh",
-                            "/swagger-ui.html", "/swagger/**", "/swagger-resources/**", "/webjars/**", "/v2/api-docs").permitAll()
+                            "/swagger-ui.html", "/swagger/**", "/swagger-resources/**", "/webjars/**", "/v2/api-docs",
+                            "/notice/**").permitAll()
                 .and()
                 // USER만 접근 가능한 URL
                     .authorizeRequests()
