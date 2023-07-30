@@ -45,5 +45,5 @@ With Notinote, parents of multicultural families can read school newsletters in 
 | Name          | Nam Suyeon                        | Suh Hee                           | Yoo Jiyeon                                                | Jang Hyeonae                                              |
 | ------------- | --------------------------------- | --------------------------------- | --------------------------------------------------------- | --------------------------------------------------------- |
 | Role          | Front-end Developer               | Front-end Developer               | Back-end Developer                                        | Back-end Developer                                        |
-| Profile Image | ![](https://github.com/mori8.png) | ![](https://github.com/0hee0.png) | ![](https://avatars.githubusercontent.com/u/49220095?v=4) | ![](https://avatars.githubusercontent.com/u/63450463?v=4) |
+| Profile Image | ![](https://github.com/mori8.png) | ![](https://github.com/hee-suh.png) | ![](https://avatars.githubusercontent.com/u/49220095?v=4) | ![](https://avatars.githubusercontent.com/u/63450463?v=4) |
 
